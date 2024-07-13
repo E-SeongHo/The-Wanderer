@@ -6,7 +6,8 @@
 #include "WandererGameplayTags.h"
 #include "Character/WandererCharacter.h"
 
-UWandererActiveGameplayAbility_Jump::UWandererActiveGameplayAbility_Jump() : Super(WandererGameplayTags::InputTag_Jump)
+UWandererActiveGameplayAbility_Jump::UWandererActiveGameplayAbility_Jump()
+	: Super(WandererGameplayTags::InputTag_Jump)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	

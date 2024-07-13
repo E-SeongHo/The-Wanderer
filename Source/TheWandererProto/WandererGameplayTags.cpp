@@ -11,6 +11,7 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Jump, "InputTag.Jump", "Jump input.");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Vault, "InputTag.Vault", "Vault input.");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Attack, "InputTag.Attack", "Attack input.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_TargetLock, "InputTag.TargetLock", "Target Lock");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_ToggleWeapon_Sword, "InputTag.ToggleWeapon.Sword", "Toggle weapon : Sword.");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Die, "Ability.Die", "Die.");
@@ -27,6 +28,7 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Sword, "State.Weapon.Sword", "Armed Sword");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Bow, "State.Weapon.Bow", "Armed Bow");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Trace, "State.Weapon.Trace", "Weapon Tracing");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Combat_TargetLock, "State.Combat.TargetLock", "Target Locking");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Base, "Data.Damage.Base", "Base Damage Data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Critical, "Data.Damage.Critical", "Critical Damage Data");

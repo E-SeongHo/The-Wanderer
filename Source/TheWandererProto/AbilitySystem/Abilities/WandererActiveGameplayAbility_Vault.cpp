@@ -11,7 +11,8 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Utility/WandererUtils.h"
 
-UWandererActiveGameplayAbility_Vault::UWandererActiveGameplayAbility_Vault() : Super(WandererGameplayTags::InputTag_Vault)
+UWandererActiveGameplayAbility_Vault::UWandererActiveGameplayAbility_Vault()
+	: Super(WandererGameplayTags::InputTag_Vault)
 {
 }
 
@@ -36,7 +37,7 @@ void UWandererActiveGameplayAbility_Vault::ActivateAbility(const FGameplayAbilit
 		const FVector ForwardEnd = ForwardStart + WandererCharacter->GetActorRotation().Vector() * ForwardTraceDepth;
 
 		FHitResult HitResult;
-		const bool bForwardHit = WandererUtils::SphereTrace(GetWorld(), HitResult, WandererCharacter, ForwardStart, ForwardEnd);
+		const bool bForwardHit = WandererUtils::SphereTrace(HitResult, WandererCharacter, ForwardStart, ForwardEnd);
 		if(bForwardHit)
 		{
 			const FVector Offset = HitResult.Location + WandererCharacter->GetActorRotation().Vector() * 5.0f; // add little bit offset 
@@ -45,7 +46,7 @@ void UWandererActiveGameplayAbility_Vault::ActivateAbility(const FGameplayAbilit
 				const FVector DownwardEnd =  Offset + WandererCharacter->GetActorRotation().Vector() * WidthStride * j;
 				const FVector DownwardStart = DownwardEnd + FVector(0.0f, 0.0f, DownwardTraceDepth);
 				
-				const bool bDownwardHit = WandererUtils::SphereTrace(GetWorld(), HitResult, WandererCharacter, DownwardStart, DownwardEnd);
+				const bool bDownwardHit = WandererUtils::SphereTrace(HitResult, WandererCharacter, DownwardStart, DownwardEnd);
 				if(bDownwardHit)
 				{
 					if(j == 0) VaultStart = HitResult.Location;
@@ -56,7 +57,7 @@ void UWandererActiveGameplayAbility_Vault::ActivateAbility(const FGameplayAbilit
 					const FVector ToGroundStart = DownwardEnd; // Add little more offset to look nice
 					const FVector ToGroundEnd = ToGroundStart - FVector(0.0f, 0.0f, GroundTraceDepth); // until the ground
 
-					bool bGroundHit = WandererUtils::SphereTrace(GetWorld(), HitResult, WandererCharacter, ToGroundStart, ToGroundEnd);
+					bool bGroundHit = WandererUtils::SphereTrace(HitResult, WandererCharacter, ToGroundStart, ToGroundEnd);
 					check(bGroundHit);
 
 					bCanWarp = bGroundHit;

@@ -4,14 +4,17 @@
 #include "WandererActiveGameplayAbility_Attack.h"
 
 #include "AbilitySystemComponent.h"
+#include "MotionWarpingComponent.h"
 #include "WandererGameplayTags.h"
 #include "Character/WandererCharacter.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
+#include "Utility/WandererUtils.h"
 #include "Weapon/WandererSword.h"
 
-UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack() : Super(WandererGameplayTags::InputTag_Attack)
+UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
+	: Super(WandererGameplayTags::InputTag_Attack)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
@@ -25,6 +28,8 @@ bool UWandererActiveGameplayAbility_Attack::CanActivateAbility(const FGameplayAb
 
 void UWandererActiveGameplayAbility_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	SoftLock();
+	
 	// Generate AbilityTask : Play Montage
 	PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnims[FMath::RandRange(0, AttackAnims.Num()-1)]);
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
@@ -65,12 +70,50 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 
 		PlayMontageTask->ExternalCancel();
 
+		//SoftLock();
 		PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnims[FMath::RandRange(0, AttackAnims.Num()-1)]);
 		PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
 		PlayMontageTask->ReadyForActivation();
 		
 		ComboCount++;
 		bIsComboAvailable = false;
+	}
+}
+
+void UWandererActiveGameplayAbility_Attack::SoftLock()
+{
+	// Soft Locking and Motion warping
+	const AWandererCharacter* Instigator = Cast<AWandererCharacter>(GetCurrentActorInfo()->AvatarActor);
+	check(Instigator);
+	
+	TArray<AActor*> OverlapTargets = WandererUtils::FindOverlappingActorsInViewRange(AWandererBaseCharacter::StaticClass(), Instigator, 120.0f, 200.0f, ECC_GameTraceChannel1);
+	
+	AActor* NearestActor = nullptr;
+	const FVector Location = Instigator->GetActorLocation();
+	float MinDist = 9999.0f;
+	
+	for(AActor* Target : OverlapTargets)
+	{
+		const float Dist = FVector::DistXY(Target->GetActorLocation(), Location);
+		if(Dist < MinDist)
+		{
+			MinDist = Dist;
+			NearestActor = Target;
+		}
+	}
+
+	if(NearestActor)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Overlap detected!")));
+
+		FVector Direction = NearestActor->GetActorLocation() - Location;
+		Direction.Z = 0.0f;
+
+		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), NearestActor->GetActorLocation(), Direction.Rotation());
+	}
+	else
+	{
+		Instigator->GetMotionWarpComponent()->RemoveWarpTarget(TEXT("AttackTarget"));
 	}
 }
 

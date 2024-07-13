@@ -25,7 +25,7 @@ AWandererSword::AWandererSword()
 
 bool AWandererSword::Trace(FHitResult& OutHit)
 {
-	const bool bHit = WandererUtils::SphereTrace(GetWorld(), OutHit, this, BladeStart->GetComponentLocation(), BladeEnd->GetComponentLocation(), ECC_GameTraceChannel1);
+	const bool bHit = WandererUtils::SphereTrace(OutHit, this, BladeStart->GetComponentLocation(), BladeEnd->GetComponentLocation(), ECC_GameTraceChannel1);
 	
 	
 	return bHit;

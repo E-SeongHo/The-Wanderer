@@ -26,6 +26,8 @@ public:
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
 private:
+	void SoftLock();
+	
 	UFUNCTION()
 	void OnMontageCompleted();
 

@@ -9,7 +9,8 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Character/WandererCharacter.h"
 
-UWandererActiveGameplayAbility_ToggleWeapon::UWandererActiveGameplayAbility_ToggleWeapon() : Super(WandererGameplayTags::InputTag_ToggleWeapon_Sword)
+UWandererActiveGameplayAbility_ToggleWeapon::UWandererActiveGameplayAbility_ToggleWeapon()
+	: Super(WandererGameplayTags::InputTag_ToggleWeapon_Sword)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 }
