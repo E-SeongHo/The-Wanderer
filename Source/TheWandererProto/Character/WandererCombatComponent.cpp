@@ -38,10 +38,6 @@ void UWandererCombatComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 			Owner->GetController()->SetControlRotation(ToTarget.Rotation());
 		}
 	}
-
-	if(bOrientAttack)
-	{
-	}
 }
 
 bool UWandererCombatComponent::IsLockingOn() const

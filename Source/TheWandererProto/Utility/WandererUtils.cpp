@@ -28,7 +28,7 @@ namespace WandererUtils
 	TArray<AActor*> FindOverlappingActorsInViewRange(const TSubclassOf<AActor> Class, const ACharacter* SrcCharacter, const float ViewAngle, const float ViewDistance, const ECollisionChannel TraceChannel)
 	{
 		const FVector Location = SrcCharacter->GetActorLocation();
-		const FVector Forward = SrcCharacter->GetControlRotation().Vector();
+		const FVector Forward = SrcCharacter->GetControlRotation().Vector().GetSafeNormal2D();
 		const float HalfHeight = SrcCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 		
 		FCollisionQueryParams Params;
@@ -58,7 +58,7 @@ namespace WandererUtils
 		}
 
 		FColor Color = ActorsInViewRange.IsEmpty() ? FColor::Red : FColor::Green;
-		//DrawDebugViewRange(SrcCharacter->GetWorld(), Location, Forward, HalfHeight*2.0f, ViewAngle, ViewDistance, Color);
+		DrawDebugViewRange(SrcCharacter->GetWorld(), Location, Forward, HalfHeight*2.0f, ViewAngle, ViewDistance, Color);
 
 		return ActorsInViewRange;
 	}

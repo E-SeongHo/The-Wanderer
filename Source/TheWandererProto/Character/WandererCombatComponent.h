@@ -31,8 +31,6 @@ public:
 	UPROPERTY()
 	FWandererCombat_TargetLost OnTargetLost;
 
-	bool bOrientAttack = false;
-	
 private:
 	bool IsLockingOn() const;
 	

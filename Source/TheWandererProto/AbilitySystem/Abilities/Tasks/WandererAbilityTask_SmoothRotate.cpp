@@ -3,24 +3,22 @@
 
 #include "AbilitySystem/Abilities/Tasks/WandererAbilityTask_SmoothRotate.h"
 
-#include "GameFramework/Character.h"
-
 UWandererAbilityTask_SmoothRotate* UWandererAbilityTask_SmoothRotate::SmoothRotate(UGameplayAbility* OwningAbility, const FRotator StartRotation, const FRotator GoalRotation)
 {
 	UWandererAbilityTask_SmoothRotate* MyObj = NewAbilityTask<UWandererAbilityTask_SmoothRotate>(OwningAbility);
 
 	MyObj->ActorToRotate = OwningAbility->GetCurrentActorInfo()->AvatarActor;
 	MyObj->CurrentRotation = StartRotation;
-	MyObj->GoalRotation = GoalRotation;
+	MyObj->GoalRotation = FRotator(StartRotation.Pitch, GoalRotation.Yaw, StartRotation.Roll);
 
 	return MyObj;
 }
 
 void UWandererAbilityTask_SmoothRotate::Activate()
 {
-	if((CurrentRotation.Vector() - GoalRotation.Vector()).Size() < RotationThreshold)
+	if(!CurrentRotation.Equals(GoalRotation, RotationThreshold))
 	{
-		GetWorld()->GetTimerManager().SetTimer(RotateTimerHandle, this, &UWandererAbilityTask_SmoothRotate::RotateTick, 0.1f, true, false);
+		bTickingTask = true;
 	}
 	else
 	{
@@ -30,18 +28,22 @@ void UWandererAbilityTask_SmoothRotate::Activate()
 
 void UWandererAbilityTask_SmoothRotate::OnDestroy(bool bInOwnerFinished)
 {
-	GetWorld()->GetTimerManager().ClearTimer(RotateTimerHandle);
 	
 	Super::OnDestroy(bInOwnerFinished);
 }
 
-void UWandererAbilityTask_SmoothRotate::RotateTick()
+void UWandererAbilityTask_SmoothRotate::TickTask(float DeltaTime)
 {
-	ACharacter* Character = Cast<ACharacter>(ActorToRotate);
+	Super::TickTask(DeltaTime);
+
 	DrawDebugLine(ActorToRotate->GetWorld(), ActorToRotate->GetActorLocation(), ActorToRotate->GetActorLocation() + ActorToRotate->GetActorForwardVector() * 100.0f, FColor::Red, false, 1.0f);
-	if((CurrentRotation.Vector() - Character->GetControlRotation().Vector()).Size() < RotationThreshold)
+
+	float diff = FMath::Abs(CurrentRotation.Yaw - GoalRotation.Yaw);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Diff : %f"), diff));
+
+	if(!CurrentRotation.Equals(GoalRotation, RotationThreshold))
 	{
-		CurrentRotation = FMath::RInterpTo(CurrentRotation, Character->GetControlRotation(), GetWorld()->GetDeltaSeconds(), 10.0f);
+		CurrentRotation = FMath::RInterpTo(CurrentRotation, GoalRotation, GetWorld()->GetDeltaSeconds(), 10.0f);
 		ActorToRotate->SetActorRotation(CurrentRotation);
 	}
 	else
