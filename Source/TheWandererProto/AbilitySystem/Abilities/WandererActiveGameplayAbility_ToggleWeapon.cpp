@@ -38,6 +38,8 @@ void UWandererActiveGameplayAbility_ToggleWeapon::ActivateAbility(const FGamepla
 		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_DrawSword);
 		WaitEventTask->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_ToggleWeapon::OnDrawSword);
 		WaitEventTask->ReadyForActivation();
+
+		
 	}
 	else if(ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Sword))
 	{

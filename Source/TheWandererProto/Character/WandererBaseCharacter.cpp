@@ -3,21 +3,22 @@
 
 #include "WandererBaseCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
- AWandererBaseCharacter::AWandererBaseCharacter()
+AWandererBaseCharacter::AWandererBaseCharacter()
 {
-	
+	CombatComponent = CreateDefaultSubobject<UWandererCombatComponent>(TEXT("Combat Component"));
 }
 
- void AWandererBaseCharacter::Die()
- {
- 	GetCharacterMovement()->DisableMovement();
- }
+void AWandererBaseCharacter::Die()
+{
+	GetCharacterMovement()->DisableMovement();
+}
 
- void AWandererBaseCharacter::GrantStartupAbilities()
- {
+void AWandererBaseCharacter::GrantStartupAbilities()
+{
 	// Grant Startup Active Abilities
 	// I'm considering it might be better if it happens in ASC class?
 	for(auto ActiveAbility : StartupActiveAbilities)
@@ -31,17 +32,17 @@
 		}
 	}
 
- 	// Grant Startup Triggered Abilities ( until now, it just means all abilities which doesn't need an input )
- 	for(auto TriggeredAbility : StartupTriggeredAbilities)
- 	{
+	// Grant Startup Triggered Abilities ( until now, it just means all abilities which doesn't need an input )
+	for(auto TriggeredAbility : StartupTriggeredAbilities)
+	{
  		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(TriggeredAbility, 1);
 
  		if(const UWandererGameplayAbility* WandererGA = Cast<UWandererGameplayAbility>(AbilitySpec.Ability))
  		{
  			AbilitySystemComponent->GiveAbility(AbilitySpec);
  		}
- 	}
- }
+	}
+}
 
 
 

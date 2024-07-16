@@ -35,7 +35,7 @@ private:
 	void Input_AbilityInputTagHeld(FGameplayTag InputTag);
 	
 private:
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	
 	// Input
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))

@@ -32,8 +32,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UMotionWarpingComponent* GetMotionWarpComponent() const { return MotionWarpComponent.Get(); }
-	UCharacterTrajectoryComponent* GetTrajectoryComponent() const { return TrajectoryComponent.Get(); } 
-	
+	UCharacterTrajectoryComponent* GetTrajectoryComponent() const { return TrajectoryComponent.Get(); }
+
 	void AttachWeaponMeshToSocket(FName SocketName);
 	
 protected:
@@ -53,8 +53,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Trajectory, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCharacterTrajectoryComponent> TrajectoryComponent;
-	
+ 
 	// Set in BluePrint
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AWandererSword> SwordType;
+
 };

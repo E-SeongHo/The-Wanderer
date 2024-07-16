@@ -39,6 +39,8 @@ void UWandererActiveGameplayAbility_Jump::EndAbility(const FGameplayAbilitySpecH
 
 void UWandererActiveGameplayAbility_Jump::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Jump Ended")));
+
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 

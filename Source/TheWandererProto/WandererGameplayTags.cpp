@@ -23,7 +23,7 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_SheathSword, "Event.Montage.SheathSword", "Sheath sword animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_ComboAvailable, "Event.Montage.ComboAvailable", "ComboAvailable animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_WeaponTrace, "Event.Montage.WeaponTrace", "WeaponTrace animation event");
-
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Unarmed, "State.Weapon.Unarmed", "Unarmed");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Sword, "State.Weapon.Sword", "Armed Sword");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Bow, "State.Weapon.Bow", "Armed Bow");

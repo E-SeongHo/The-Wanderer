@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "WandererBaseCharacter.generated.h"
 
+class UWandererCombatComponent;
 class UWandererGameplayAbility;
 class UWandererActiveGameplayAbility;
 class AWandererWeapon;
@@ -23,6 +24,8 @@ public:
 	AWandererBaseCharacter();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent.Get(); }
+
+	UWandererCombatComponent* GetCombatComponent() const {return CombatComponent.Get(); }
 	UWandererHealthAttributeSet* GetHealthAttributeSet() const { return HealthAttributeSet.Get(); }
 	UWandererCombatAttributeSet* GetCombatAttributeSet() const { return CombatAttributeSet.Get(); }
 
@@ -35,13 +38,16 @@ protected:
 protected:
 	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
+	
 	UPROPERTY()
 	TObjectPtr<UWandererHealthAttributeSet> HealthAttributeSet;
 
 	UPROPERTY()
 	TObjectPtr<UWandererCombatAttributeSet> CombatAttributeSet;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UWandererCombatComponent> CombatComponent;
+	
 	// Weapon
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<AWandererWeapon> Weapon;
@@ -51,9 +57,9 @@ protected:
 	TSubclassOf<UGameplayEffect> DefaultAttributesInitter;
 	
 	// Active Ability has Input Tag
-	UPROPERTY(EditAnywhere, Category = "Abilities")
+	UPROPERTY(EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UWandererActiveGameplayAbility>> StartupActiveAbilities;
 
-	UPROPERTY(EditAnywhere, Category = "Abilities")
+	UPROPERTY(EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UWandererGameplayAbility>> StartupTriggeredAbilities;
 };

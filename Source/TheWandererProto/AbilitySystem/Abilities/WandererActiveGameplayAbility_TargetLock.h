@@ -6,6 +6,7 @@
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "WandererActiveGameplayAbility_TargetLock.generated.h"
 
+class AWandererBaseCharacter;
 /**
  * 
  */
@@ -21,4 +22,13 @@ public:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
+	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
+
+private:
+	UFUNCTION()
+	void OnTargetLost();
+
+	AWandererBaseCharacter* FindTarget(const AWandererBaseCharacter* SrcCharacter);
 };

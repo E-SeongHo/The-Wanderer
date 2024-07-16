@@ -22,8 +22,7 @@ void AWandererPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(WandererMappingContext, 0);
 	}
 
-	AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>());
-	check(AbilitySystemComponent);
+	AbilitySystemComponent = Cast<AWandererCharacter>(GetPawn())->GetAbilitySystemComponent();
 }
 
 void AWandererPlayerController::SetupInputComponent()
@@ -99,10 +98,14 @@ void AWandererPlayerController::Input_AbilityInputTagPressed(FGameplayTag InputT
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
-			AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
 			if (!AbilitySpec.IsActive())
 			{
+				AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
 				AbilitySystemComponent->TryActivateAbility(AbilitySpec.Handle);
+			}
+			else
+			{
+				AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
 			}
 		}
 	}
@@ -129,11 +132,7 @@ void AWandererPlayerController::Input_AbilityInputTagHeld(FGameplayTag InputTag)
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
-			AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
-			if (!AbilitySpec.IsActive())
-			{
-				AbilitySystemComponent->TryActivateAbility(AbilitySpec.Handle);
-			}
+			//AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
 		}
 	}
 }

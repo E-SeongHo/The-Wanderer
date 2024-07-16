@@ -9,7 +9,11 @@
 #include "Character/WandererCharacter.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_Repeat.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
+#include "Character/WandererCombatComponent.h"
+#include "Tasks/GameplayTask_TimeLimitedExecution.h"
+#include "Tasks/WandererAbilityTask_SmoothRotate.h"
 #include "Utility/WandererUtils.h"
 #include "Weapon/WandererSword.h"
 
@@ -70,6 +74,7 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 
 		PlayMontageTask->ExternalCancel();
 
+		// I don't want this happen on combo attack
 		//SoftLock();
 		PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnims[FMath::RandRange(0, AttackAnims.Num()-1)]);
 		PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
@@ -83,8 +88,14 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 void UWandererActiveGameplayAbility_Attack::SoftLock()
 {
 	// Soft Locking and Motion warping
-	const AWandererCharacter* Instigator = Cast<AWandererCharacter>(GetCurrentActorInfo()->AvatarActor);
+	AWandererCharacter* Instigator = Cast<AWandererCharacter>(GetCurrentActorInfo()->AvatarActor);
 	check(Instigator);
+
+	Instigator->GetCombatComponent()->bOrientAttack = true;
+	const FRotator Rotation = Instigator->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+	//UWandererAbilityTask_SmoothRotate* SmoothRotator = UWandererAbilityTask_SmoothRotate::SmoothRotate(this, Instigator->GetActorRotation(), YawRotation);
+	//SmoothRotator->ReadyForActivation();
 	
 	TArray<AActor*> OverlapTargets = WandererUtils::FindOverlappingActorsInViewRange(AWandererBaseCharacter::StaticClass(), Instigator, 120.0f, 200.0f, ECC_GameTraceChannel1);
 	
