@@ -16,6 +16,8 @@
 UWandererActiveGameplayAbility_TargetLock::UWandererActiveGameplayAbility_TargetLock()
 	: Super(WandererGameplayTags::InputTag_TargetLock)
 {
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
 	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Combat_TargetLock);
 }
 
@@ -26,16 +28,16 @@ bool UWandererActiveGameplayAbility_TargetLock::CanActivateAbility(const FGamepl
 
 void UWandererActiveGameplayAbility_TargetLock::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	AWandererBaseCharacter* Indicator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
-	check(Indicator);
+	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
+	check(Instigator);
 	
-	AWandererBaseCharacter* Target = FindTarget(Indicator);
+	AWandererBaseCharacter* Target = FindTarget(Instigator);
 	if(Target)
 	{
-		Indicator->GetCombatComponent()->LockOnTarget(Target);
-		Indicator->GetCharacterMovement()->bOrientRotationToMovement = false;
-		Indicator->GetCharacterMovement()->bUseControllerDesiredRotation = true;
-		Indicator->GetCombatComponent()->OnTargetLost.AddDynamic(this, &UWandererActiveGameplayAbility_TargetLock::OnTargetLost);
+		Instigator->GetCombatComponent()->LockOnTarget(Target);
+		Instigator->GetCharacterMovement()->bOrientRotationToMovement = false;
+		Instigator->GetCharacterMovement()->bUseControllerDesiredRotation = true;
+		Instigator->GetCombatComponent()->OnTargetLost.AddDynamic(this, &UWandererActiveGameplayAbility_TargetLock::OnTargetLost);
 	}
 	else
 	{
@@ -47,10 +49,10 @@ void UWandererActiveGameplayAbility_TargetLock::EndAbility(const FGameplayAbilit
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("End Locking On")));
 
-	const AWandererBaseCharacter* Indicator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
-	Indicator->GetCombatComponent()->LockOnTarget(nullptr);
-	Indicator->GetCharacterMovement()->bOrientRotationToMovement = true;
-	Indicator->GetCharacterMovement()->bUseControllerDesiredRotation = false; 
+	const AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
+	Instigator->GetCombatComponent()->LockOnTarget(nullptr);
+	Instigator->GetCharacterMovement()->bOrientRotationToMovement = true;
+	Instigator->GetCharacterMovement()->bUseControllerDesiredRotation = false; 
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

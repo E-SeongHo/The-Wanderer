@@ -10,7 +10,7 @@ class AWandererBaseCharacter;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWandererCombat_TargetLost);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWandererCombat_StartCombat);
 /**
  * 
  */
@@ -22,6 +22,7 @@ class THEWANDERERPROTO_API UWandererCombatComponent : public UWandererActorCompo
 public:
 	UWandererCombatComponent();
 
+	void StartCombat();
 	float GetLockOnDistance() const { return LockOnDistance; }
 	void LockOnTarget(AWandererBaseCharacter* TargetToLock);
 
@@ -30,6 +31,9 @@ public:
 public:
 	UPROPERTY()
 	FWandererCombat_TargetLost OnTargetLost;
+
+	UPROPERTY()
+	FWandererCombat_TargetLost OnStartCombat;
 
 private:
 	bool IsLockingOn() const;

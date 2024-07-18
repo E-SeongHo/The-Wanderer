@@ -20,10 +20,10 @@ void UWandererGameplayAbility_Die::ActivateAbility(const FGameplayAbilitySpecHan
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
 	PlayMontageTask->ReadyForActivation();
 
-	AWandererBaseCharacter* WandererCharacter = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
-	if(WandererCharacter)
+	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+	if(Instigator)
 	{
-		WandererCharacter->Die();
+		Instigator->Die();
 	}
 }
 

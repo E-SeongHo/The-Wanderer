@@ -6,6 +6,7 @@
 #include "Character/WandererBaseCharacter.h"
 #include "WandererEnemy.generated.h"
 
+class UWidgetComponent;
 /**
  * 
  */
@@ -17,8 +18,14 @@ class THEWANDERERPROTO_API AWandererEnemy : public AWandererBaseCharacter
 public:
 	AWandererEnemy();
 
+	virtual void Tick(float DeltaSeconds) override;
+	
+	void SetUIRender(bool bIsTargeting);
+
 protected:
 	virtual void BeginPlay() override;
 
-	
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UWidgetComponent> WidgetComponent;
 };

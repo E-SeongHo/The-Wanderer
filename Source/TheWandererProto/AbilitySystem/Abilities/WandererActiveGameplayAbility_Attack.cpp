@@ -70,8 +70,6 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 
 	if(IsActive() && bIsComboAvailable) 
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Combo resume")));
-
 		PlayMontageTask->ExternalCancel();
 		
 		SoftLock();
@@ -88,10 +86,6 @@ void UWandererActiveGameplayAbility_Attack::SoftLock()
 {
 	AWandererCharacter* Instigator = Cast<AWandererCharacter>(GetCurrentActorInfo()->AvatarActor);
 	check(Instigator);
-
-	// Attack orientation
-	UWandererAbilityTask_SmoothRotate* SmoothRotator = UWandererAbilityTask_SmoothRotate::SmoothRotate(this, Instigator->GetActorRotation(), Instigator->GetControlRotation());
-	SmoothRotator->ReadyForActivation();
 	
 	TArray<AActor*> OverlapTargets = WandererUtils::FindOverlappingActorsInViewRange(AWandererBaseCharacter::StaticClass(), Instigator, 120.0f, 200.0f, ECC_GameTraceChannel1);
 	
@@ -114,13 +108,27 @@ void UWandererActiveGameplayAbility_Attack::SoftLock()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Overlap detected!")));
 
 		FVector Direction = NearestActor->GetActorLocation() - Location;
-		Direction.Z = 0.0f;
+		Direction = Direction.GetSafeNormal2D();
 
-		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), NearestActor->GetActorLocation(), Direction.Rotation());
+		// subtle adjustment 
+		Instigator->SetActorRotation(Direction.Rotation());
+		Instigator->SetActorLocation(NearestActor->GetActorLocation() - Direction * 100.0f);
+
+		if(!Instigator->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+		{
+			Instigator->GetController()->SetControlRotation(Direction.Rotation());
+		}
+		//Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), NearestActor->GetActorLocation() - Direction * 100.0f, Direction.Rotation());
 	}
 	else
 	{
-		Instigator->GetMotionWarpComponent()->RemoveWarpTarget(TEXT("AttackTarget"));
+		// Attack orientation
+		if(!Instigator->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+		{
+			UWandererAbilityTask_SmoothRotate* SmoothRotator = UWandererAbilityTask_SmoothRotate::SmoothRotate(this, Instigator->GetActorRotation(), Instigator->GetControlRotation());
+			SmoothRotator->ReadyForActivation();	
+		}
+		//Instigator->GetMotionWarpComponent()->RemoveWarpTarget(TEXT("AttackTarget"));
 	}
 }
 
@@ -145,11 +153,11 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace(FGameplayEventData Pay
 		UAbilitySystemComponent* CauserASC = this->GetActorInfo().AbilitySystemComponent.Get();
 		if(CauserASC->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Trace))
 		{
-			const AWandererBaseCharacter* WandererBaseCharacter = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
-			check(WandererBaseCharacter);
+			const AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+			check(Instigator);
 			
 			FHitResult HitResult;
-			bool bHit = WandererBaseCharacter->GetWeapon()->Trace(HitResult);
+			bool bHit = Instigator->GetWeapon()->Trace(HitResult);
 			if(bHit)
 			{
 				DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
@@ -174,6 +182,9 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace(FGameplayEventData Pay
 					// 4. Animation
 
 					CauserASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
+					Instigator->GetCombatComponent()->StartCombat();
+					
+					
 					GetWorld()->GetTimerManager().ClearTimer(WeaponTraceTimer);
 				}
 			}
@@ -182,7 +193,7 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace(FGameplayEventData Pay
 		{
 			GetWorld()->GetTimerManager().ClearTimer(WeaponTraceTimer);
 		}
-	}, 0.1f, true);
+	}, 0.01f, true);
 }
 
 

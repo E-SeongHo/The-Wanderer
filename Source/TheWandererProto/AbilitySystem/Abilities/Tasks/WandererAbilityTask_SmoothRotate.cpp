@@ -28,18 +28,12 @@ void UWandererAbilityTask_SmoothRotate::Activate()
 
 void UWandererAbilityTask_SmoothRotate::OnDestroy(bool bInOwnerFinished)
 {
-	
 	Super::OnDestroy(bInOwnerFinished);
 }
 
 void UWandererAbilityTask_SmoothRotate::TickTask(float DeltaTime)
 {
 	Super::TickTask(DeltaTime);
-
-	DrawDebugLine(ActorToRotate->GetWorld(), ActorToRotate->GetActorLocation(), ActorToRotate->GetActorLocation() + ActorToRotate->GetActorForwardVector() * 100.0f, FColor::Red, false, 1.0f);
-
-	float diff = FMath::Abs(CurrentRotation.Yaw - GoalRotation.Yaw);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Diff : %f"), diff));
 
 	if(!CurrentRotation.Equals(GoalRotation, RotationThreshold))
 	{

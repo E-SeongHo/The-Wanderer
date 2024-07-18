@@ -27,6 +27,8 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Guard);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Avoid);
 	
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_AutoTarget);
+	
 	// AnimNotifies (including notify state)
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_DrawSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_SheathSword);
@@ -38,6 +40,8 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Weapon_Sword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Weapon_Bow);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Weapon_Trace);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat_TargetLock);
 
 	// Damages

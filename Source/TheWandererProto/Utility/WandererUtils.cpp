@@ -18,9 +18,9 @@ namespace WandererUtils
 	
 		const FColor TraceColor = bHit ? FColor::Green : FColor::Red;
 	
-		DrawDebugSphere(SrcActor->GetWorld(), Start, TraceRadius, 12, TraceColor, false, 1.0f);
+		/*DrawDebugSphere(SrcActor->GetWorld(), Start, TraceRadius, 12, TraceColor, false, 1.0f);
 		DrawDebugSphere(SrcActor->GetWorld(), End, TraceRadius, 12, TraceColor, false, 1.0f);
-		DrawDebugLine(SrcActor->GetWorld(), Start, End, TraceColor, false, 1.0f);
+		DrawDebugLine(SrcActor->GetWorld(), Start, End, TraceColor, false, 1.0f);*/
 
 		return bHit;
 	}
@@ -28,7 +28,7 @@ namespace WandererUtils
 	TArray<AActor*> FindOverlappingActorsInViewRange(const TSubclassOf<AActor> Class, const ACharacter* SrcCharacter, const float ViewAngle, const float ViewDistance, const ECollisionChannel TraceChannel)
 	{
 		const FVector Location = SrcCharacter->GetActorLocation();
-		const FVector Forward = SrcCharacter->GetControlRotation().Vector().GetSafeNormal2D();
+		const FVector Forward = SrcCharacter->GetActorForwardVector();
 		const float HalfHeight = SrcCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 		
 		FCollisionQueryParams Params;
@@ -58,7 +58,7 @@ namespace WandererUtils
 		}
 
 		FColor Color = ActorsInViewRange.IsEmpty() ? FColor::Red : FColor::Green;
-		DrawDebugViewRange(SrcCharacter->GetWorld(), Location, Forward, HalfHeight*2.0f, ViewAngle, ViewDistance, Color);
+		//DrawDebugViewRange(SrcCharacter->GetWorld(), Location, Forward, HalfHeight*2.0f, ViewAngle, ViewDistance, Color);
 
 		return ActorsInViewRange;
 	}

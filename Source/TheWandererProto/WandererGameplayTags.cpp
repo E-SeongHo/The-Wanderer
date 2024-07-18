@@ -18,6 +18,9 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Hit, "Ability.Hit", "Hit reaction when get hit.");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Guard, "Ability.Guard", "Guard attack when get hit.");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Avoid, "Ability.Avoid", "Avoid attack when get hit.");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_AutoTarget, "Ability.AutoTarget", "Auto Lock Target (this is not same with target lock(hard lock).");
+
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_DrawSword, "Event.Montage.DrawSword", "Draw sword animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_SheathSword, "Event.Montage.SheathSword", "Sheath sword animation event");
@@ -28,6 +31,8 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Sword, "State.Weapon.Sword", "Armed Sword");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Bow, "State.Weapon.Bow", "Armed Bow");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Trace, "State.Weapon.Trace", "Weapon Tracing");
+	
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Combat, "State.Combat", "On Combat");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Combat_TargetLock, "State.Combat.TargetLock", "Target Locking");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Base, "Data.Damage.Base", "Base Damage Data");
