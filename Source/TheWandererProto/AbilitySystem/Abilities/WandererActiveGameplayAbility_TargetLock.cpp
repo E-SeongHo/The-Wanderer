@@ -53,7 +53,8 @@ void UWandererActiveGameplayAbility_TargetLock::EndAbility(const FGameplayAbilit
 	Instigator->GetCombatComponent()->LockOnTarget(nullptr);
 	Instigator->GetCharacterMovement()->bOrientRotationToMovement = true;
 	Instigator->GetCharacterMovement()->bUseControllerDesiredRotation = false; 
-
+	Instigator->GetCombatComponent()->OnTargetLost.RemoveDynamic(this, &UWandererActiveGameplayAbility_TargetLock::OnTargetLost);
+	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

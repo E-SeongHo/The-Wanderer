@@ -175,7 +175,6 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace(FGameplayEventData Pay
 					
 					ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SpecHandle, TargetHandle);
 					// ApplyGameplayEffectToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, TargetHandle, DamageEffect, GetAbilityLevel());
-					
 					// TODO:
 					// 2. Blood Effect
 					// 3. Sound

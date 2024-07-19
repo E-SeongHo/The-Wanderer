@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
 #include "Character/WandererCharacter.h"
+#include "Character/WandererCharacterMovementComponent.h"
 #include "Character/WandererCombatComponent.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -28,9 +29,11 @@ void UWandererGameplayAbility_AutoTarget::ActivateAbility(const FGameplayAbility
 	SearchTarget->OnPerformAction.AddDynamic(this, &UWandererGameplayAbility_AutoTarget::SearchTargetAvailable);
 	SearchTarget->ReadyForActivation();
 
-	// TODO : Camera mode 
-	CastChecked<AWandererCharacter>(ActorInfo->AvatarActor)->GetCharacterMovement()->bOrientRotationToMovement = false;
-	CastChecked<AWandererCharacter>(ActorInfo->AvatarActor)->GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	// TODO : Camera mode
+	UWandererCharacterMovementComponent* CharacterMovement = CastChecked<UWandererCharacterMovementComponent>(CastChecked<AWandererCharacter>(ActorInfo->AvatarActor)->GetCharacterMovement()); 
+	CharacterMovement->bOrientRotationToMovement = false;
+	CharacterMovement->bUseControllerDesiredRotation = false;
+	CharacterMovement->StartWalking();	
 }
 
 void UWandererGameplayAbility_AutoTarget::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -41,6 +44,12 @@ void UWandererGameplayAbility_AutoTarget::EndAbility(const FGameplayAbilitySpecH
 
 	Instigator->GetAbilitySystemComponent()->RemoveLooseGameplayTag(WandererGameplayTags::State_Combat);
 	Instigator->GetCombatComponent()->LockOnTarget(nullptr);
+
+	// TODO : Camera mode
+	UWandererCharacterMovementComponent* CharacterMovement = CastChecked<UWandererCharacterMovementComponent>(CastChecked<AWandererCharacter>(ActorInfo->AvatarActor)->GetCharacterMovement()); 
+	CharacterMovement->bOrientRotationToMovement = true;
+	CharacterMovement->bUseControllerDesiredRotation = false;
+	CharacterMovement->StopWalking();	
 	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
@@ -50,7 +59,11 @@ void UWandererGameplayAbility_AutoTarget::SearchTargetAvailable()
 	AWandererCharacter* Instigator = Cast<AWandererCharacter>(CurrentActorInfo->AvatarActor);
 
 	// skip finding target since it's already hard locking 
-	if(Instigator->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat_TargetLock)) return;
+	if(Instigator->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat_TargetLock))
+	{
+		CurrentTarget = nullptr;
+		return;
+	}
 
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(Instigator);

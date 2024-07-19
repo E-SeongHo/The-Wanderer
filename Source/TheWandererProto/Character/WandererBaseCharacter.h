@@ -21,7 +21,7 @@ class THEWANDERERPROTO_API AWandererBaseCharacter : public ACharacter, public IA
 	GENERATED_BODY()
 
 public:
-	AWandererBaseCharacter();
+	AWandererBaseCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent.Get(); }
 

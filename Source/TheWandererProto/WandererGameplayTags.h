@@ -21,6 +21,9 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Attack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_TargetLock);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ToggleWeapon_Sword);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Sprint);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Walk);
+	
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Die);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Hit);
@@ -47,5 +50,7 @@ namespace WandererGameplayTags
 	// Damages
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Base);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Critical);
-	
+
+	// For Debugging
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Debug);
 };

@@ -3,11 +3,13 @@
 
 #include "WandererBaseCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "WandererCharacterMovementComponent.h"
 #include "WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-AWandererBaseCharacter::AWandererBaseCharacter()
+AWandererBaseCharacter::AWandererBaseCharacter(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer.SetDefaultSubobjectClass<UWandererCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	CombatComponent = CreateDefaultSubobject<UWandererCombatComponent>(TEXT("Combat Component"));
 }

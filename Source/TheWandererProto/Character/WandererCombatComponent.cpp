@@ -63,6 +63,9 @@ void UWandererCombatComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		{
 			const FVector Forward = Owner->GetActorForwardVector();
 			const FVector ToTarget = (LockTarget->GetActorLocation() - Owner->GetActorLocation()).GetSafeNormal2D();
+
+			DrawDebugLine(GetWorld(), Owner->GetActorLocation(), Owner->GetActorLocation() + Forward * 100.0f, FColor::Red, false, 1.0f);
+			DrawDebugLine(GetWorld(), Owner->GetActorLocation(), Owner->GetActorLocation() + ToTarget * 100.0f, FColor::Green, false, 1.0f);
 			Owner->SetActorRotation(FMath::RInterpTo(Forward.Rotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
 		}
 	}
