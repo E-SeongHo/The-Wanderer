@@ -11,6 +11,9 @@ UWandererActiveGameplayAbility_Walk::UWandererActiveGameplayAbility_Walk()
 	:Super(WandererGameplayTags::InputTag_Walk)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
+	AbilityTags.AddTag(WandererGameplayTags::Ability_Walk);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Combat);
 }
 
 void UWandererActiveGameplayAbility_Walk::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -34,5 +37,6 @@ void UWandererActiveGameplayAbility_Walk::InputReleased(const FGameplayAbilitySp
 {
 	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
 
+	check(IsActive());
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }

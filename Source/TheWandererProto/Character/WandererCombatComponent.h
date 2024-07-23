@@ -6,6 +6,7 @@
 #include "Character/WandererActorComponent.h"
 #include "WandererCombatComponent.generated.h"
 
+class UNiagaraSystem;
 class AWandererBaseCharacter;
 
 

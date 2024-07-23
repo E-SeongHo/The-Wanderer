@@ -33,7 +33,7 @@ public:
 	void StopWalking();
 
 private:
-	void SetUprightLocomotionMode(const EWandererUprightMovement InMode) { UprightLocomotionMode = InMode; }
+	void SetUprightLocomotionMode(const EWandererUprightMovement InMode);
  
 private:
 	EWandererUprightMovement UprightLocomotionMode;

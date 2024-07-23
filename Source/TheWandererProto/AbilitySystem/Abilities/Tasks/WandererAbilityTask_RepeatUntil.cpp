@@ -5,6 +5,10 @@
 
 void UWandererAbilityTask_RepeatUntil::PerformAction()
 {
+	if(OnCycleEndConditionCheck.IsBound() && OnCycleEndConditionCheck.Execute())
+	{
+		EndTask();
+	}
 	OnPerformAction.Broadcast();
 }
 

@@ -12,6 +12,7 @@ UWandererActiveGameplayAbility_Sprint::UWandererActiveGameplayAbility_Sprint()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
+	AbilityTags.AddTag(WandererGameplayTags::Ability_Sprint);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Combat);
 }
 
@@ -36,6 +37,7 @@ void UWandererActiveGameplayAbility_Sprint::InputReleased(const FGameplayAbility
 {
 	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
 
+	check(IsActive());
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 

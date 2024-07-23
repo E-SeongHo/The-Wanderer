@@ -28,4 +28,7 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UAnimMontage>> HitReactAnims;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, meta = (AllowPrivateAccess = "true"))
+	TArray<TObjectPtr<USoundBase>> HitSounds;
 };

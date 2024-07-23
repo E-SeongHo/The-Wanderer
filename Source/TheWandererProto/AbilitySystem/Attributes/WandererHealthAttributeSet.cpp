@@ -2,6 +2,8 @@
 
 
 #include "AbilitySystem/Attributes/WandererHealthAttributeSet.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "WandererGameplayTags.h"
 
@@ -18,11 +20,21 @@ void UWandererHealthAttributeSet::PostGameplayEffectExecute(const FGameplayEffec
 	{
 		if (GetDamage() > 0.0f)
 		{
-			// TODO: Guard / Avoid / Hit
-			SetHealth(FMath::Clamp(GetHealth() - GetDamage(), 0.0f, GetMaxHealth()));
-			GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Get Damaged %f, Current Health : %f"), GetDamage(), GetHealth()));
+			// Parry
+			if(Data.Target.HasMatchingGameplayTag(WandererGameplayTags::State_Combat_Parry))
+			{
+				FGameplayEventData EventData;
+				EventData.Instigator = Data.EffectSpec.GetEffectContext().GetEffectCauser();
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Data.Target.GetAvatarActor(), WandererGameplayTags::Event_Combat_ParryAttack, EventData);
+			}
+			// Hit
+			else
+			{
+				SetHealth(FMath::Clamp(GetHealth() - GetDamage(), 0.0f, GetMaxHealth()));
+				GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Get Damaged %f, Current Health : %f"), GetDamage(), GetHealth()));
 
-			Data.Target.TryActivateAbilitiesByTag(FGameplayTagContainer(WandererGameplayTags::Ability_Hit));
+				Data.Target.TryActivateAbilitiesByTag(FGameplayTagContainer(WandererGameplayTags::Ability_Hit));
+			}
 		}
 		
 		SetDamage(0.0f);

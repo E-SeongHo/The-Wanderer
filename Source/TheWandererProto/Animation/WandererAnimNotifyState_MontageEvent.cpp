@@ -11,7 +11,10 @@ void UWandererAnimNotifyState_MontageEvent::NotifyBegin(USkeletalMeshComponent* 
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(MeshComp->GetOwner(), EventTag, FGameplayEventData());
+	if(EventTag.IsValid()) // it can be null if not sending event
+	{
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(MeshComp->GetOwner(), EventTag, FGameplayEventData());
+	}
 
 	IAbilitySystemInterface* GASInterface = Cast<IAbilitySystemInterface>(MeshComp->GetOwner());
 	// Do not make assertion here : it is calling even at previewing montage

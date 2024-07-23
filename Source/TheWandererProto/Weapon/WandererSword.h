@@ -16,7 +16,7 @@ class THEWANDERERPROTO_API AWandererSword : public AWandererWeapon
 
 public:
 	AWandererSword();
-	bool Trace(FHitResult& OutHit) override;
+	virtual bool Trace(FHitResult& OutHit) override;
 	
 private:
 	UPROPERTY(EditAnywhere, Category = Sheath)

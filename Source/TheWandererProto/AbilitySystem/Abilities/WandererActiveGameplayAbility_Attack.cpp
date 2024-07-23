@@ -5,14 +5,15 @@
 
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "WandererGameplayTags.h"
 #include "Character/WandererCharacter.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Abilities/Tasks/AbilityTask_Repeat.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
 #include "Character/WandererCombatComponent.h"
-#include "Tasks/GameplayTask_TimeLimitedExecution.h"
+#include "Kismet/GameplayStatics.h"
+#include "Tasks/WandererAbilityTask_RepeatUntil.h"
 #include "Tasks/WandererAbilityTask_SmoothRotate.h"
 #include "Utility/WandererUtils.h"
 #include "Weapon/WandererSword.h"
@@ -21,6 +22,8 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 	: Super(WandererGameplayTags::InputTag_Attack)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+
+	AbilityTags.AddTag(WandererGameplayTags::Ability_Attack);
 }
 
 bool UWandererActiveGameplayAbility_Attack::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
@@ -35,7 +38,7 @@ void UWandererActiveGameplayAbility_Attack::ActivateAbility(const FGameplayAbili
 	SoftLock();
 	
 	// Generate AbilityTask : Play Montage
-	PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnims[FMath::RandRange(0, AttackAnims.Num()-1)]);
+	PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnimsFromLeftLead[FMath::RandRange(0, AttackAnimsFromLeftLead.Num()-1)]); 
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
 	PlayMontageTask->ReadyForActivation();
 
@@ -51,7 +54,7 @@ void UWandererActiveGameplayAbility_Attack::ActivateAbility(const FGameplayAbili
 		if(CurrentActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Sword))
 		{
 			UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_WeaponTrace);
-			WaitEventTask->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnWeaponTrace);
+			WaitEventTask->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnWeaponTraceStart);
 			WaitEventTask->ReadyForActivation();
 		}
 	}
@@ -73,7 +76,17 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 		PlayMontageTask->ExternalCancel();
 		
 		SoftLock();
-		PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnims[FMath::RandRange(0, AttackAnims.Num()-1)]);
+		UAnimMontage* MontageToPlay;
+		if(ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Combat_RightLead))
+		{
+			MontageToPlay = AttackAnimsFromRightLead[FMath::RandRange(0, AttackAnimsFromRightLead.Num()-1)];
+		}
+		else
+		{
+			MontageToPlay = AttackAnimsFromLeftLead[FMath::RandRange(0, AttackAnimsFromLeftLead.Num()-1)];
+		}
+		
+		PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), MontageToPlay);
 		PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
 		PlayMontageTask->ReadyForActivation();
 		
@@ -126,7 +139,7 @@ void UWandererActiveGameplayAbility_Attack::SoftLock()
 		if(!Instigator->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
 		{
 			UWandererAbilityTask_SmoothRotate* SmoothRotator = UWandererAbilityTask_SmoothRotate::SmoothRotate(this, Instigator->GetActorRotation(), Instigator->GetControlRotation());
-			SmoothRotator->ReadyForActivation();	
+			//SmoothRotator->ReadyForActivation();	
 		}
 		//Instigator->GetMotionWarpComponent()->RemoveWarpTarget(TEXT("AttackTarget"));
 	}
@@ -144,55 +157,63 @@ void UWandererActiveGameplayAbility_Attack::OnComboAvailable(FGameplayEventData 
 	bIsComboAvailable = true;
 }
 
-void UWandererActiveGameplayAbility_Attack::OnWeaponTrace(FGameplayEventData Payload)
+void UWandererActiveGameplayAbility_Attack::OnWeaponTraceStart(FGameplayEventData Payload)
 {
+	const AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+	check(Instigator);
+	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
+	
+	// basic tracing sound of the weapon (don't need to replicate)
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Instigator->GetWeapon()->GetTraceSound(), Instigator->GetWeapon()->GetActorLocation());
+	
 	// Trace until WandererGameplayTags::State_Weapon_Trace is set or until hit something
-	FTimerHandle WeaponTraceTimer;
-	GetWorld()->GetTimerManager().SetTimer(WeaponTraceTimer, [this, &WeaponTraceTimer]()
+	UWandererAbilityTask_RepeatUntil* WeaponTrace = UWandererAbilityTask_RepeatUntil::RepeatAction(this, 0.01f);
+	WeaponTrace->OnPerformAction.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnWeaponTrace);
+	WeaponTrace->OnCycleEndConditionCheck.BindDynamic(this, &UWandererActiveGameplayAbility_Attack::ShouldStopWeaponTrace);
+	WeaponTrace->ReadyForActivation();
+}
+
+void UWandererActiveGameplayAbility_Attack::OnWeaponTrace()
+{
+	const AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+	check(Instigator);
+	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
+
+	if(InstigatorASC->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Trace))
 	{
-		UAbilitySystemComponent* CauserASC = this->GetActorInfo().AbilitySystemComponent.Get();
-		if(CauserASC->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Trace))
+		FHitResult HitResult;
+		bool bHit = Instigator->GetWeapon()->Trace(HitResult);
+		if(bHit)
 		{
-			const AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
-			check(Instigator);
-			
-			FHitResult HitResult;
-			bool bHit = Instigator->GetWeapon()->Trace(HitResult);
-			if(bHit)
+			DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
+
+			const AWandererBaseCharacter* Target = Cast<AWandererBaseCharacter>(HitResult.GetActor());
+			if(Target)
 			{
-				DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
+				// 1. Damage Gameplay Effect
+				check(DamageEffect);
+				const FGameplayAbilityTargetDataHandle TargetHandle(new FGameplayAbilityTargetData_SingleTargetHit(HitResult));
+				const FGameplayEffectSpecHandle SpecHandle = InstigatorASC->MakeOutgoingSpec(DamageEffect, GetAbilityLevel(), InstigatorASC->MakeEffectContext());
 
-				const AWandererBaseCharacter* TargetWandererCharacter = Cast<AWandererBaseCharacter>(HitResult.GetActor());
-				if(TargetWandererCharacter)
-				{
-					// 1. Damage Gameplay Effect
-					check(DamageEffect);
-					const FGameplayAbilityTargetDataHandle TargetHandle(new FGameplayAbilityTargetData_SingleTargetHit(HitResult));
-					const FGameplayEffectSpecHandle SpecHandle = CauserASC->MakeOutgoingSpec(DamageEffect, GetAbilityLevel(), CauserASC->MakeEffectContext());
+				const AWandererBaseCharacter* CauserWandererCharacter = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+				SpecHandle.Data->SetSetByCallerMagnitude(WandererGameplayTags::Data_Damage_Base, CauserWandererCharacter->GetCombatAttributeSet()->GetBaseDamage() * 0.25f);
+					
+				ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SpecHandle, TargetHandle);
+				// ApplyGameplayEffectToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, TargetHandle, DamageEffect, GetAbilityLevel());
 
-					const AWandererBaseCharacter* CauserWandererCharacter = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
-					SpecHandle.Data->SetSetByCallerMagnitude(WandererGameplayTags::Data_Damage_Base, CauserWandererCharacter->GetCombatAttributeSet()->GetBaseDamage());
-					
-					ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SpecHandle, TargetHandle);
-					// ApplyGameplayEffectToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, TargetHandle, DamageEffect, GetAbilityLevel());
-					// TODO:
-					// 2. Blood Effect
-					// 3. Sound
-					// 4. Animation
-
-					CauserASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
-					Instigator->GetCombatComponent()->StartCombat();
-					
-					
-					GetWorld()->GetTimerManager().ClearTimer(WeaponTraceTimer);
-				}
+				// 2. Blood Effect TODO: Gameplay Cue
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BloodEffect, HitResult.ImpactPoint);
+				
+				InstigatorASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
+				Instigator->GetCombatComponent()->StartCombat();
 			}
 		}
-		else
-		{
-			GetWorld()->GetTimerManager().ClearTimer(WeaponTraceTimer);
-		}
-	}, 0.01f, true);
+	}
+}
+
+bool UWandererActiveGameplayAbility_Attack::ShouldStopWeaponTrace()
+{
+	return !GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Trace);
 }
 
 

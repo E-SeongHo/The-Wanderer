@@ -46,4 +46,10 @@ void UWandererCharacterMovementComponent::StopWalking()
 	SetUprightLocomotionMode(DefaultUprightLocomotion); 
 }
 
+void UWandererCharacterMovementComponent::SetUprightLocomotionMode(const EWandererUprightMovement InMode)
+{
+	check(InMode != UprightLocomotionMode);
+	UprightLocomotionMode = InMode;
+}
+
 

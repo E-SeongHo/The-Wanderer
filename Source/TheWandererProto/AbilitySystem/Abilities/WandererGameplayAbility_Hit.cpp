@@ -5,6 +5,8 @@
 
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Character/WandererBaseCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 UWandererGameplayAbility_Hit::UWandererGameplayAbility_Hit()
 {
@@ -15,6 +17,10 @@ UWandererGameplayAbility_Hit::UWandererGameplayAbility_Hit()
 void UWandererGameplayAbility_Hit::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	// Generate AbilityTask : Play Montage
+	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
+	
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSounds[FMath::RandRange(0, HitSounds.Num()-1)], Instigator->GetActorLocation());
+
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Hit React"), HitReactAnims[FMath::RandRange(0, HitReactAnims.Num()-1)]);
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Hit::OnMontageCompleted);
 	PlayMontageTask->ReadyForActivation();

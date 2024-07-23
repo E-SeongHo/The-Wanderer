@@ -2,6 +2,8 @@
 
 #include "WandererAnimInstance.h"
 
+#include "AbilitySystemComponent.h"
+#include "WandererGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "TheWandererProto/Character/WandererCharacter.h"
 
@@ -28,6 +30,7 @@ void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bShouldMove = GroundSpeed >= 3.0f && MovementComp->GetCurrentAcceleration().Length();
 	bIsFalling = MovementComp->IsFalling();
 	bIsCrouched = MovementComp->IsCrouching();
-
+	bIsDefensing = Character->GetAbilitySystemComponent() ? Character->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat_Parry) : false;
+	
 	TrajectoryComp = Character->GetTrajectoryComponent();
 }

@@ -19,12 +19,15 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Jump);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Vault);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Attack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Parry);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_TargetLock);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ToggleWeapon_Sword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Sprint);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Walk);
 	
-
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Attack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Sprint);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Walk);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Die);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Hit);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Guard);
@@ -37,6 +40,8 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_SheathSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_ComboAvailable);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_WeaponTrace);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParryAttack);
 	
 	// States
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Weapon_Unarmed);
@@ -46,6 +51,8 @@ namespace WandererGameplayTags
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat_TargetLock);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat_Parry);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat_RightLead);
 
 	// Damages
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Base);

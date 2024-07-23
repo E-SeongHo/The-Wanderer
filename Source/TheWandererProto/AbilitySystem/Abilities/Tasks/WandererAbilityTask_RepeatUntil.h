@@ -7,6 +7,7 @@
 #include "WandererAbilityTask_RepeatUntil.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRepeatedAction);
+DECLARE_DYNAMIC_DELEGATE_RetVal(bool, FRepeatedActionTerminator);
 
 /**
  *  This class is designed because AbilityTask_Repeat doesn't support unlimited repetition
@@ -19,6 +20,7 @@ class THEWANDERERPROTO_API UWandererAbilityTask_RepeatUntil : public UWandererAb
 
 public:
 	FRepeatedAction OnPerformAction;
+	FRepeatedActionTerminator OnCycleEndConditionCheck;
 	
 	void PerformAction();
 	
