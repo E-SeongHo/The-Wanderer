@@ -7,11 +7,18 @@
 #include "WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
+#include "Weapon/WandererWeapon.h"
 
-AWandererBaseCharacter::AWandererBaseCharacter(const FObjectInitializer& ObjectInitializer)
+ AWandererBaseCharacter::AWandererBaseCharacter(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer.SetDefaultSubobjectClass<UWandererCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	CombatComponent = CreateDefaultSubobject<UWandererCombatComponent>(TEXT("Combat Component"));
+	
+	StimuliComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSource Component");
+	StimuliComponent->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	StimuliComponent->RegisterWithPerceptionSystem();
 }
 
 void AWandererBaseCharacter::Die()

@@ -25,7 +25,7 @@ void UWandererAbilityTask_RepeatUntil::Activate()
 {
 	Super::Activate();
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UWandererAbilityTask_RepeatUntil::PerformAction, TimeBetweenActions, true);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UWandererAbilityTask_RepeatUntil::PerformAction, TimeBetweenActions, true, 0.0f);
 }
 
 void UWandererAbilityTask_RepeatUntil::OnDestroy(bool bInOwnerFinished)

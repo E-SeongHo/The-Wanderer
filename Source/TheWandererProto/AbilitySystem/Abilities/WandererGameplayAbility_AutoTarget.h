@@ -26,6 +26,4 @@ public:
 private:
 	UFUNCTION()
 	void SearchTargetAvailable();
-	
-	TWeakObjectPtr<AWandererBaseCharacter> CurrentTarget;
 };

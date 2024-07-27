@@ -3,10 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "WandererWeapon.generated.h"
-
-class UArrowComponent;
 
 UCLASS()
 class THEWANDERERPROTO_API AWandererWeapon : public AActor
@@ -22,8 +21,11 @@ public:
 	// 2) define interface Traceable
 	// 3) Grant Ability to weapon  
 	virtual bool Trace(FHitResult& OutHit) { check(false); return false; }
-
 	USoundBase* GetTraceSound() const { return TraceSound.Get(); }
+
+public:
+	FGameplayTag EquippedTag;
+	FGameplayTag DrawnTag;
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

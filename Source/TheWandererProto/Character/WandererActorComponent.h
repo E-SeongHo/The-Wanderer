@@ -7,6 +7,8 @@
 #include "Components/ActorComponent.h"
 #include "WandererActorComponent.generated.h"
 
+class AWandererBaseCharacter;
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class THEWANDERERPROTO_API UWandererActorComponent : public UActorComponent, public IAbilitySystemInterface
 {
@@ -15,10 +17,12 @@ class THEWANDERERPROTO_API UWandererActorComponent : public UActorComponent, pub
 public:
 	UWandererActorComponent();
 
-	void AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC);
+	virtual void AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC);
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent.Get(); }
 
 protected:
 	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	TWeakObjectPtr<AWandererBaseCharacter> Owner;
 };

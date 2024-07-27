@@ -6,6 +6,7 @@
 #include "Weapon/WandererWeapon.h"
 #include "WandererSword.generated.h"
 
+class UArrowComponent;
 /**
  * 
  */

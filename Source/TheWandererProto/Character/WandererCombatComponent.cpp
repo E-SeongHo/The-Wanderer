@@ -7,74 +7,110 @@
 #include "WandererBaseCharacter.h"
 #include "WandererEnemy.h"
 #include "WandererGameplayTags.h"
-#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Weapon/WandererWeapon.h"
 
 UWandererCombatComponent::UWandererCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UWandererCombatComponent::StartCombat()
+void UWandererCombatComponent::AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC)
 {
-	AbilitySystemComponent->AddLooseGameplayTag(WandererGameplayTags::State_Combat);
-	AbilitySystemComponent->TryActivateAbilitiesByTag(FGameplayTagContainer(WandererGameplayTags::Ability_AutoTarget));
-	// TODO: Zoom-out camera : i want to see the combat in wide-scene 
+	Super::AssignAbilitySystemComponent(OwnerASC);
 }
 
-void UWandererCombatComponent::LockOnTarget(AWandererBaseCharacter* TargetToLock)
+void UWandererCombatComponent::EquipWeapon(AWandererWeapon* NewWeapon, FName SocketName)
 {
-	if(TargetToLock)
+	Weapon = NewWeapon;
+	Weapon->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+	AbilitySystemComponent->AddLooseGameplayTag(Weapon->EquippedTag);	
+}
+
+void UWandererCombatComponent::AttachWeaponMeshToSocket(FName SocketName)
+{
+	check(Weapon);
+	Weapon->GetWeaponMesh()->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+}
+
+void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* Target)
+{
+	if(Target == CombatTarget) return;
+
+	// Combat can be started via
+	// 1) Set valid Combat Target
+	// 2) Directly call StartCombat()
+	if(!bIsInCombat)
 	{
-		CastChecked<AWandererEnemy>(TargetToLock)->SetUIRender(true);
+		StartCombat();	
 	}
-	if(LockTarget)
+	
+	OnTargetChanged.Broadcast();
+
+	if(Target)
 	{
-		CastChecked<AWandererEnemy>(LockTarget)->SetUIRender(false);
+		if(Cast<AWandererEnemy>(Target))
+		{
+			Cast<AWandererEnemy>(Target)->SetUIRender(true);
+		}
 	}
-	LockTarget = TargetToLock;
+	else
+	{
+		FTimerHandle CombatExitDelayHandle;
+		GetWorld()->GetTimerManager().SetTimer(CombatExitDelayHandle, [this]
+		{
+			if(!CombatTarget)
+			{
+				EndCombat();
+			}
+		}, CombatExitDelay, false);
+	}
+
+	CombatTarget = Target;
+}
+
+void UWandererCombatComponent::StartCombat()
+{
+	check(!bIsInCombat);
+	bIsInCombat = true;
+	
+	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
+	
+	AbilitySystemComponent->AddLooseGameplayTag(WandererGameplayTags::State_Combat);
+}
+
+void UWandererCombatComponent::EndCombat()
+{
+	check(bIsInCombat);
+	check(!CombatTarget);
+	bIsInCombat = false;
+
+	Owner->GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	AbilitySystemComponent->RemoveLooseGameplayTag(WandererGameplayTags::State_Combat);
 }
 
 void UWandererCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if(AbilitySystemComponent == nullptr) return;
+	if(!AbilitySystemComponent.Get()) return;
+	if(!bIsInCombat) return;
+	if(!CombatTarget) return;
 	
-	if(IsLockingOn())
-	{
-		// TODO: maybe define corresponding camera mode?
-		
-		check(LockTarget);
-		AWandererBaseCharacter* Owner = Cast<AWandererBaseCharacter>(GetOwner());
-		if(AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Combat_TargetLock))
-		{
-			const float Distance = FVector::Distance(Owner->GetActorLocation(), LockTarget->GetActorLocation());
-			if(Distance > LockOnDistance)
-			{
-				OnTargetLost.Broadcast();
-			}
-			else
-			{
-				const FVector ToTarget = LockTarget->GetActorLocation() - Owner->FindComponentByClass<UCameraComponent>()->GetComponentLocation();
-				Owner->GetController()->SetControlRotation(ToTarget.Rotation()); // lagged camera rotation makes this rotate smoothly
-			}
-		}
-		else if(AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
-		{
-			const FVector Forward = Owner->GetActorForwardVector();
-			const FVector ToTarget = (LockTarget->GetActorLocation() - Owner->GetActorLocation()).GetSafeNormal2D();
+	// Rotates the actor itself to face the target
+	const FVector Forward = Owner->GetActorForwardVector();
+	const FVector ToTarget = (CombatTarget->GetActorLocation() - Owner->GetActorLocation()).GetSafeNormal2D();
+	
+	DrawDebugLine(GetWorld(), Owner->GetActorLocation(), Owner->GetActorLocation() + Forward * 100.0f, FColor::Red, false, 1.0f);
+	DrawDebugLine(GetWorld(), Owner->GetActorLocation(), Owner->GetActorLocation() + ToTarget * 100.0f, FColor::Green, false, 1.0f);
+	Owner->SetActorRotation(FMath::RInterpTo(Forward.Rotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
 
-			/*DrawDebugLine(GetWorld(), Owner->GetActorLocation(), Owner->GetActorLocation() + Forward * 100.0f, FColor::Red, false, 1.0f);
-			DrawDebugLine(GetWorld(), Owner->GetActorLocation(), Owner->GetActorLocation() + ToTarget * 100.0f, FColor::Green, false, 1.0f);*/
-			Owner->SetActorRotation(FMath::RInterpTo(Forward.Rotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
-		}
+	// in order to rotate cameraboom (make sure this controlled by controller)
+	if(bUseActorDesiredControlRotation)
+	{
+		Owner->GetController()->SetControlRotation(FMath::RInterpTo(Owner->GetControlRotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
 	}
 }
-
-bool UWandererCombatComponent::IsLockingOn() const
-{
-	return LockTarget != nullptr;
-}
-
 
 

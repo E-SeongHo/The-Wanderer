@@ -24,11 +24,13 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Attack);
+	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Attack);
 }
 
 bool UWandererActiveGameplayAbility_Attack::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
-	if(ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Unarmed)) return false;
+	// if nothing on hand(drawn weapon)
+	if(!ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Draw)) return false;
 	
 	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
 }
@@ -51,7 +53,7 @@ void UWandererActiveGameplayAbility_Attack::ActivateAbility(const FGameplayAbili
 
 	// Generate AbilityTask : Wait Event (Event.Montage.WeaponTrace)
 	{
-		if(CurrentActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Sword))
+		if(CurrentActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Equip_Sword))
 		{
 			UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_WeaponTrace);
 			WaitEventTask->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnWeaponTraceStart);
@@ -77,7 +79,7 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 		
 		SoftLock();
 		UAnimMontage* MontageToPlay;
-		if(ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Combat_RightLead))
+		if(ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Stance_RightLead))
 		{
 			MontageToPlay = AttackAnimsFromRightLead[FMath::RandRange(0, AttackAnimsFromRightLead.Num()-1)];
 		}
@@ -164,9 +166,9 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTraceStart(FGameplayEventDat
 	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
 	
 	// basic tracing sound of the weapon (don't need to replicate)
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Instigator->GetWeapon()->GetTraceSound(), Instigator->GetWeapon()->GetActorLocation());
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Instigator->GetCombatComponent()->GetWeapon()->GetTraceSound(), Instigator->GetCombatComponent()->GetWeapon()->GetActorLocation());
 	
-	// Trace until WandererGameplayTags::State_Weapon_Trace is set or until hit something
+	// Trace while WandererGameplayTags::State_Weapon_Trace is set or until hit something
 	UWandererAbilityTask_RepeatUntil* WeaponTrace = UWandererAbilityTask_RepeatUntil::RepeatAction(this, 0.01f);
 	WeaponTrace->OnPerformAction.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnWeaponTrace);
 	WeaponTrace->OnCycleEndConditionCheck.BindDynamic(this, &UWandererActiveGameplayAbility_Attack::ShouldStopWeaponTrace);
@@ -182,7 +184,7 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace()
 	if(InstigatorASC->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Trace))
 	{
 		FHitResult HitResult;
-		bool bHit = Instigator->GetWeapon()->Trace(HitResult);
+		bool bHit = Instigator->GetCombatComponent()->GetWeapon()->Trace(HitResult);
 		if(bHit)
 		{
 			DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
@@ -205,7 +207,6 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace()
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BloodEffect, HitResult.ImpactPoint);
 				
 				InstigatorASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
-				Instigator->GetCombatComponent()->StartCombat();
 			}
 		}
 	}

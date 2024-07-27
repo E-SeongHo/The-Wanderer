@@ -27,8 +27,14 @@ public:
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
 private:
+	AWandererBaseCharacter* FindTarget(const AWandererBaseCharacter* SrcCharacter);
+
 	UFUNCTION()
 	void OnTargetLost();
 
-	AWandererBaseCharacter* FindTarget(const AWandererBaseCharacter* SrcCharacter);
+	UFUNCTION()
+	void MonitorTarget();
+
+private:
+	TWeakObjectPtr<AWandererBaseCharacter> Target;
 };

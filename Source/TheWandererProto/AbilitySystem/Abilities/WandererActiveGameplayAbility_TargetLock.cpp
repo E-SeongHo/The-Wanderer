@@ -4,13 +4,14 @@
 #include "WandererActiveGameplayAbility_TargetLock.h"
 
 #include "WandererGameplayTags.h"
-#include "Abilities/Tasks/AbilityTask_WaitInputPress.h"
 #include "AbilitySystem/Effects/WandererGameplayEffect.h"
 #include "Camera/CameraComponent.h"
 #include "Character/WandererCharacter.h"
 #include "Character/WandererCombatComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Tasks/WandererAbilityTask.h"
+#include "Tasks/WandererAbilityTask_RepeatUntil.h"
 #include "Utility/WandererUtils.h"
 
 UWandererActiveGameplayAbility_TargetLock::UWandererActiveGameplayAbility_TargetLock()
@@ -28,16 +29,18 @@ bool UWandererActiveGameplayAbility_TargetLock::CanActivateAbility(const FGamepl
 
 void UWandererActiveGameplayAbility_TargetLock::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
+	const AWandererCharacter* Instigator = Cast<AWandererCharacter>(ActorInfo->AvatarActor);
 	check(Instigator);
 	
-	AWandererBaseCharacter* Target = FindTarget(Instigator);
-	if(Target)
+	Target = FindTarget(Instigator);
+	if(Target.Get())
 	{
-		Instigator->GetCombatComponent()->LockOnTarget(Target);
-		Instigator->GetCharacterMovement()->bOrientRotationToMovement = false;
-		Instigator->GetCharacterMovement()->bUseControllerDesiredRotation = true;
-		Instigator->GetCombatComponent()->OnTargetLost.AddDynamic(this, &UWandererActiveGameplayAbility_TargetLock::OnTargetLost);
+		Instigator->GetCombatComponent()->bUseActorDesiredControlRotation = true;
+		Instigator->GetCombatComponent()->SetCombatTarget(Target.Get());
+		
+		// target monitoring 
+		UWandererAbilityTask_RepeatUntil* MonitorTargetTask = UWandererAbilityTask_RepeatUntil::RepeatAction(this, 1.0f);
+		MonitorTargetTask->OnPerformAction.AddDynamic(this, &UWandererActiveGameplayAbility_TargetLock::MonitorTarget);
 	}
 	else
 	{
@@ -49,11 +52,10 @@ void UWandererActiveGameplayAbility_TargetLock::EndAbility(const FGameplayAbilit
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("End Locking On")));
 
-	const AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
-	Instigator->GetCombatComponent()->LockOnTarget(nullptr);
-	Instigator->GetCharacterMovement()->bOrientRotationToMovement = true;
-	Instigator->GetCharacterMovement()->bUseControllerDesiredRotation = false; 
-	Instigator->GetCombatComponent()->OnTargetLost.RemoveDynamic(this, &UWandererActiveGameplayAbility_TargetLock::OnTargetLost);
+	const AWandererCharacter* Instigator = Cast<AWandererCharacter>(ActorInfo->AvatarActor);
+	Instigator->GetCombatComponent()->bUseActorDesiredControlRotation = false;
+	// if still in combat, GA_AutoTarget will find another target immediately
+	Instigator->GetCombatComponent()->SetCombatTarget(nullptr);
 	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
@@ -62,15 +64,30 @@ void UWandererActiveGameplayAbility_TargetLock::InputPressed(const FGameplayAbil
 {
 	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Lock Pressed")));
 
-	if(IsActive())
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
-	}
+	check(IsActive())
+	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
 void UWandererActiveGameplayAbility_TargetLock::OnTargetLost()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+}
+
+void UWandererActiveGameplayAbility_TargetLock::MonitorTarget()
+{
+	const AWandererCharacter* Instigator = Cast<AWandererCharacter>(GetAvatarActorFromActorInfo());
+
+	// while this GA is activating, combat component's combat target always same with this GA's monitoring target   
+	check(Target == Instigator->GetCombatComponent()->GetCombatTarget());
+
+	const float DistanceToTarget = FVector::Distance(Instigator->GetActorLocation(), Target->GetActorLocation());
+
+	// TODO: Check Target is alive ? 
+	
+	if(DistanceToTarget > Instigator->GetCombatComponent()->CombatAcceptanceRadius)
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	}
 }
 
 AWandererBaseCharacter* UWandererActiveGameplayAbility_TargetLock::FindTarget(const AWandererBaseCharacter* SrcCharacter)
@@ -82,12 +99,12 @@ AWandererBaseCharacter* UWandererActiveGameplayAbility_TargetLock::FindTarget(co
 	const float TraceRadius = SrcCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
 	
 	FHitResult HitResult;
-	const bool bHit = WandererUtils::SphereTrace(HitResult, SrcCharacter, Location, Location + CameraDirection * CombatComponent->GetLockOnDistance(), TraceRadius, ECC_GameTraceChannel1);
+	const bool bHit = WandererUtils::SphereTrace(HitResult, SrcCharacter, Location, Location + CameraDirection * CombatComponent->CombatAcceptanceRadius, TraceRadius, ECC_GameTraceChannel1);
 	if(bHit)
 	{
 		AWandererBaseCharacter* TargetCharaceter = Cast<AWandererBaseCharacter>(HitResult.GetActor());
-		check(TargetCharaceter); // TODO : make something more specific : e.g) Enemy Interface?
-
+		check(TargetCharaceter);
+		
 		return TargetCharaceter;
 	}
 

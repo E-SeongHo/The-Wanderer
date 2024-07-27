@@ -14,6 +14,7 @@ class AWandererWeapon;
 class UGameplayEffect;
 class UWandererHealthAttributeSet;
 class UWandererCombatAttributeSet;
+class UAIPerceptionStimuliSourceComponent;
 
 UCLASS()
 class THEWANDERERPROTO_API AWandererBaseCharacter : public ACharacter, public IAbilitySystemInterface
@@ -29,7 +30,6 @@ public:
 	UWandererHealthAttributeSet* GetHealthAttributeSet() const { return HealthAttributeSet.Get(); }
 	UWandererCombatAttributeSet* GetCombatAttributeSet() const { return CombatAttributeSet.Get(); }
 
-	AWandererWeapon* GetWeapon() const { return Weapon.Get(); }
 	virtual void Die();
 	
 protected:
@@ -62,4 +62,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UWandererGameplayAbility>> StartupTriggeredAbilities;
+
+	// AI
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AI, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAIPerceptionStimuliSourceComponent> StimuliComponent;
 };

@@ -11,7 +11,9 @@
 UWandererGameplayAbility_Hit::UWandererGameplayAbility_Hit()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Hit);
+	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Hit);
 }
 
 void UWandererGameplayAbility_Hit::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

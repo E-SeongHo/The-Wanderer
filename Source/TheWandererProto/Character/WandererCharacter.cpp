@@ -4,6 +4,7 @@
 #include "WandererCharacter.h"
 
 #include "AbilitySystemComponent.h"
+#include "CharacterTrajectoryComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -11,7 +12,6 @@
 #include "MotionWarpingComponent.h"
 #include "WandererCombatComponent.h"
 #include "WandererGameplayTags.h"
-#include "../../../../../../Installed Files/UnrealEngine/UE_5.4/Engine/Plugins/Experimental/Animation/MotionTrajectory/Source/MotionTrajectory/Public/CharacterTrajectoryComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "AbilitySystem/Abilities/WandererGameplayAbility.h"
 #include "Player/WandererPlayerState.h"
@@ -67,21 +67,10 @@ void AWandererCharacter::PossessedBy(AController* NewController)
 	CombatComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
 	
 	GrantStartupAbilities();
-	
-	// Default Gameplay Tag
-	AbilitySystemComponent->AddLooseGameplayTag(WandererGameplayTags::State_Weapon_Unarmed);
 
 	// Init Default Attributes By GE
 	const UGameplayEffect* InitterGE = DefaultAttributesInitter->GetDefaultObject<UGameplayEffect>();
 	AbilitySystemComponent->ApplyGameplayEffectToSelf(InitterGE, 1.0f, AbilitySystemComponent->MakeEffectContext());
-
-	
-}
-
-void AWandererCharacter::AttachWeaponMeshToSocket(FName SocketName)
-{
-	check(Weapon);
-	Weapon->GetWeaponMesh()->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 }
 
 void AWandererCharacter::BeginPlay()
@@ -91,13 +80,7 @@ void AWandererCharacter::BeginPlay()
 	if(SwordType)
 	{
 		Weapon = GetWorld()->SpawnActor<AWandererSword>(SwordType, FVector::ZeroVector, FRotator::ZeroRotator);
-		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("SheathSocket"));
-		AttachWeaponMeshToSocket(TEXT("SheathSocket"));
+		CombatComponent->EquipWeapon(Weapon, TEXT("SheathSocket"));
 	}
-}
-
-void AWandererCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 

@@ -13,6 +13,7 @@ UWandererActiveGameplayAbility_Sprint::UWandererActiveGameplayAbility_Sprint()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Sprint);
+	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Sprint);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Combat);
 }
 

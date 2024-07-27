@@ -3,6 +3,10 @@
 
 #include "WandererCharacterMovementComponent.h"
 
+#include "AbilitySystemComponent.h"
+#include "WandererBaseCharacter.h"
+#include "WandererGameplayTags.h"
+
 UWandererCharacterMovementComponent::UWandererCharacterMovementComponent()
 	: UprightLocomotionMode(DefaultUprightLocomotion)
 {
@@ -13,6 +17,14 @@ float UWandererCharacterMovementComponent::GetMaxSpeed() const
 	if(MovementMode != MOVE_Walking) return Super::GetMaxSpeed();
 	if(IsCrouching()) return MaxWalkSpeedCrouched;
 
+	AWandererBaseCharacter* Owner = Cast<AWandererBaseCharacter>(GetOwner());
+	if(!Owner) return Super::GetMaxSpeed();
+
+	if(Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+	{
+		return MaxWalkSpeed * 0.5f;
+	}
+	
 	switch(UprightLocomotionMode)
 	{
 	case EWandererUprightMovement::Run:
@@ -48,7 +60,7 @@ void UWandererCharacterMovementComponent::StopWalking()
 
 void UWandererCharacterMovementComponent::SetUprightLocomotionMode(const EWandererUprightMovement InMode)
 {
-	check(InMode != UprightLocomotionMode);
+	//check(InMode != UprightLocomotionMode);
 	UprightLocomotionMode = InMode;
 }
 

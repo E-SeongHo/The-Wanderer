@@ -13,6 +13,7 @@ UWandererActiveGameplayAbility_Walk::UWandererActiveGameplayAbility_Walk()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Walk);
+	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Walk);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Combat);
 }
 

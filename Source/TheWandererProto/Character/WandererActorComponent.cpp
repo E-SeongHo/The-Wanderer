@@ -13,11 +13,10 @@ UWandererActorComponent::UWandererActorComponent()
 
 void UWandererActorComponent::AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC)
 {
-	const AWandererBaseCharacter* Owner = Cast<AWandererBaseCharacter>(GetOwner());
-	check(Owner);
-
+	Owner = Cast<AWandererBaseCharacter>(GetOwner());
+	check(Owner.Get());
+	
 	check(Owner->GetAbilitySystemComponent() == OwnerASC);
-
 	AbilitySystemComponent = OwnerASC;
 }
 

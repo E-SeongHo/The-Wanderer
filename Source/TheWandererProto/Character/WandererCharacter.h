@@ -29,12 +29,11 @@ public:
 	AWandererCharacter();
 
 	virtual void PossessedBy(AController* NewController) override;
-	virtual void Tick(float DeltaTime) override;
 
 	UMotionWarpingComponent* GetMotionWarpComponent() const { return MotionWarpComponent.Get(); }
 	UCharacterTrajectoryComponent* GetTrajectoryComponent() const { return TrajectoryComponent.Get(); }
 
-	void AttachWeaponMeshToSocket(FName SocketName);
+	// void SetCameraMode()
 	
 protected:
 	virtual void BeginPlay() override;

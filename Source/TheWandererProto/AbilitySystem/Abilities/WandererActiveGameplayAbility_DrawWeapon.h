@@ -4,34 +4,39 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
-#include "WandererActiveGameplayAbility_ToggleWeapon.generated.h"
+#include "WandererActiveGameplayAbility_DrawWeapon.generated.h"
 
 /**
  * 
  */
-UCLASS(Blueprintable)
-class THEWANDERERPROTO_API UWandererActiveGameplayAbility_ToggleWeapon : public UWandererActiveGameplayAbility
+UCLASS()
+class THEWANDERERPROTO_API UWandererActiveGameplayAbility_DrawWeapon : public UWandererActiveGameplayAbility
 {
 	GENERATED_BODY()
 
-	UWandererActiveGameplayAbility_ToggleWeapon();
+public:
+	UWandererActiveGameplayAbility_DrawWeapon();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
+
 private:
 	UFUNCTION()
-	void OnMontageCompleted();
+	void OnDraw(FGameplayEventData Payload);
 
 	UFUNCTION()
-	void OnDrawSword(FGameplayEventData Payload);
+	void SheathAndEndAbility();
 	
 	UFUNCTION()
-	void OnSheathSword(FGameplayEventData Payload);
-	
+	void OnSheath(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void OnSheathCompleted();
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> DrawSwordAnim;
+	TObjectPtr<UAnimMontage> DrawAnim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> SheathSwordAnim;
+	TObjectPtr<UAnimMontage> SheathAnim;
 };
