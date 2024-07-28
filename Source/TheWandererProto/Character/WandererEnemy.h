@@ -23,7 +23,7 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaSeconds) override;
 	
-	void SetUIRender(bool bIsTargeting);
+	void SetUIRender(bool bIsTargeted);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -34,9 +34,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = AI, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBehaviorTree> BehaviorTree;
-
-	// testing
-public:
-	UPROPERTY()
-	TObjectPtr<AWandererBaseCharacter> CombatTarget;
 };

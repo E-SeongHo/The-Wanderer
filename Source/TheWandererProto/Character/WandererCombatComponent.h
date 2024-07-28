@@ -11,7 +11,6 @@ class UNiagaraSystem;
 class AWandererBaseCharacter;
 class AWandererWeapon;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWandererCombat_Target);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWandererCombat_Combat);
 /**
  * 
@@ -32,14 +31,11 @@ public:
 	void EquipWeapon(AWandererWeapon* NewWeapon, FName SocketName);
 	void AttachWeaponMeshToSocket(FName SocketName);
 
-	void SetCombatTarget(AWandererBaseCharacter* Target);
+	void SetCombatTarget(AWandererBaseCharacter* InTarget);
 	void StartCombat();
 	void EndCombat();
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-private:
-	bool CheckTargetState();
 	
 public:
 	// GA can add it's own logic with delegates
@@ -48,9 +44,6 @@ public:
 
 	UPROPERTY()
 	FWandererCombat_Combat OnCombatEnded;
-	
-	UPROPERTY()
-	FWandererCombat_Target OnTargetChanged;
 
 public:
 	// Hard lock (GA_TargetLock) needs it

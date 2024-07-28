@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Character/WandererCharacter.h"
 #include "Character/WandererCombatComponent.h"
+#include "Character/WandererEnemy.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Tasks/WandererAbilityTask.h"
@@ -44,14 +45,13 @@ void UWandererActiveGameplayAbility_TargetLock::ActivateAbility(const FGameplayA
 	}
 	else
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 	}
 }
 
 void UWandererActiveGameplayAbility_TargetLock::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("End Locking On")));
-
 	const AWandererCharacter* Instigator = Cast<AWandererCharacter>(ActorInfo->AvatarActor);
 	Instigator->GetCombatComponent()->bUseActorDesiredControlRotation = false;
 	// if still in combat, GA_AutoTarget will find another target immediately
@@ -90,7 +90,7 @@ void UWandererActiveGameplayAbility_TargetLock::MonitorTarget()
 	}
 }
 
-AWandererBaseCharacter* UWandererActiveGameplayAbility_TargetLock::FindTarget(const AWandererBaseCharacter* SrcCharacter)
+AWandererEnemy* UWandererActiveGameplayAbility_TargetLock::FindTarget(const AWandererCharacter* SrcCharacter)
 {
 	const UWandererCombatComponent* CombatComponent = SrcCharacter->GetCombatComponent();
 
@@ -102,10 +102,10 @@ AWandererBaseCharacter* UWandererActiveGameplayAbility_TargetLock::FindTarget(co
 	const bool bHit = WandererUtils::SphereTrace(HitResult, SrcCharacter, Location, Location + CameraDirection * CombatComponent->CombatAcceptanceRadius, TraceRadius, ECC_GameTraceChannel1);
 	if(bHit)
 	{
-		AWandererBaseCharacter* TargetCharaceter = Cast<AWandererBaseCharacter>(HitResult.GetActor());
-		check(TargetCharaceter);
+		AWandererEnemy* TargetEnemy = Cast<AWandererEnemy>(HitResult.GetActor());
+		check(TargetEnemy);
 		
-		return TargetCharaceter;
+		return TargetEnemy;
 	}
 
 	return nullptr;	

@@ -6,7 +6,8 @@
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "WandererActiveGameplayAbility_TargetLock.generated.h"
 
-class AWandererBaseCharacter;
+class AWandererCharacter;
+class AWandererEnemy;
 /**
  * 
  */
@@ -27,7 +28,7 @@ public:
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
 private:
-	AWandererBaseCharacter* FindTarget(const AWandererBaseCharacter* SrcCharacter);
+	AWandererEnemy* FindTarget(const AWandererCharacter* SrcCharacter);
 
 	UFUNCTION()
 	void OnTargetLost();
@@ -36,5 +37,5 @@ private:
 	void MonitorTarget();
 
 private:
-	TWeakObjectPtr<AWandererBaseCharacter> Target;
+	TWeakObjectPtr<AWandererEnemy> Target;
 };

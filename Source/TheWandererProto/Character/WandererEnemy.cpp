@@ -53,9 +53,9 @@ void AWandererEnemy::Tick(float DeltaSeconds)
 	}
 }
 
-void AWandererEnemy::SetUIRender(bool bIsTargeting)
+void AWandererEnemy::SetUIRender(bool bIsTargeted)
 {
-	WidgetComponent->SetVisibility(bIsTargeting);
+	WidgetComponent->SetVisibility(bIsTargeted);
 }
 
 void AWandererEnemy::BeginPlay()

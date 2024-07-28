@@ -33,9 +33,9 @@ void UWandererCombatComponent::AttachWeaponMeshToSocket(FName SocketName)
 	Weapon->GetWeaponMesh()->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
 }
 
-void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* Target)
+void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* InTarget)
 {
-	if(Target == CombatTarget) return;
+	if(InTarget == CombatTarget) return;
 
 	// Combat can be started via
 	// 1) Set valid Combat Target
@@ -45,16 +45,16 @@ void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* Target)
 		StartCombat();	
 	}
 	
-	OnTargetChanged.Broadcast();
-
-	if(Target)
+	if(Cast<AWandererEnemy>(CombatTarget))
 	{
-		if(Cast<AWandererEnemy>(Target))
-		{
-			Cast<AWandererEnemy>(Target)->SetUIRender(true);
-		}
+		Cast<AWandererEnemy>(CombatTarget)->SetUIRender(false);
 	}
-	else
+	if(Cast<AWandererEnemy>(InTarget))
+	{
+		Cast<AWandererEnemy>(InTarget)->SetUIRender(true);
+	}
+	
+	if(!InTarget)
 	{
 		FTimerHandle CombatExitDelayHandle;
 		GetWorld()->GetTimerManager().SetTimer(CombatExitDelayHandle, [this]
@@ -66,13 +66,15 @@ void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* Target)
 		}, CombatExitDelay, false);
 	}
 
-	CombatTarget = Target;
+	CombatTarget = InTarget;
 }
 
 void UWandererCombatComponent::StartCombat()
 {
 	check(!bIsInCombat);
-	bIsInCombat = true;
+	// bIsInCombat can be true whether the CombatTarget set or not
+	// but when its becoming false CombatTarget will be nullptr
+	bIsInCombat = true;  
 	
 	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
 	
@@ -101,9 +103,6 @@ void UWandererCombatComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// Rotates the actor itself to face the target
 	const FVector Forward = Owner->GetActorForwardVector();
 	const FVector ToTarget = (CombatTarget->GetActorLocation() - Owner->GetActorLocation()).GetSafeNormal2D();
-	
-	DrawDebugLine(GetWorld(), Owner->GetActorLocation(), Owner->GetActorLocation() + Forward * 100.0f, FColor::Red, false, 1.0f);
-	DrawDebugLine(GetWorld(), Owner->GetActorLocation(), Owner->GetActorLocation() + ToTarget * 100.0f, FColor::Green, false, 1.0f);
 	Owner->SetActorRotation(FMath::RInterpTo(Forward.Rotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
 
 	// in order to rotate cameraboom (make sure this controlled by controller)
