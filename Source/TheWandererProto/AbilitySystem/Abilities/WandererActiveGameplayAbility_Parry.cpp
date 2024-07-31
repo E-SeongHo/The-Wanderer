@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEffectApplied.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Character/WandererCharacter.h"
 #include "Character/WandererCharacterMovementComponent.h"
@@ -15,10 +16,26 @@ UWandererActiveGameplayAbility_Parry::UWandererActiveGameplayAbility_Parry()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
-	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Combat_Parry);
+	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
+	//ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
+	
+	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Parry);
+	
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Attack);
-	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Sprint);
-	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Walk);
+}
+
+bool UWandererActiveGameplayAbility_Parry::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	const UAbilitySystemComponent* OwnerASC = ActorInfo->AbilitySystemComponent.Get();
+	if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::Ability_Attack))
+	{
+		if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable))
+		{
+			return true;
+		}
+		return false;
+	}
+	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
 }
 
 void UWandererActiveGameplayAbility_Parry::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -53,10 +70,24 @@ void UWandererActiveGameplayAbility_Parry::InputReleased(const FGameplayAbilityS
 
 void UWandererActiveGameplayAbility_Parry::OnParrySucceeded(FGameplayEventData Payload)
 {
-	// get direction of the instigator and play corresponding parry animation   
-	//const FVector AttackFrom = Payload.Instigator->GetActorLocation();
+	// Get direction of the instigator and play corresponding parry animation   
+	const FVector AttackFrom = Payload.Instigator->GetActorForwardVector();
+	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
 
-	UAbilityTask_PlayMontageAndWait* PlayMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Parry"), ParryAnimFromRight);
+	const float Cos = FVector::DotProduct(Forward, AttackFrom);
+	const bool bIsClockWise = FVector::CrossProduct(Forward, AttackFrom).Z > 0.0f;
+
+	UAnimMontage* MontageToPlay;
+	if(Cos < -0.7f) // forward (-45 < angle < 45)
+	{
+		MontageToPlay = ParryAnimFromFront;
+	}
+	else // left or right
+	{
+		MontageToPlay = bIsClockWise ? ParryAnimFromLeft : ParryAnimFromRight;
+	}
+
+ 	UAbilityTask_PlayMontageAndWait* PlayMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Parry"), MontageToPlay);
 	PlayMontage->ReadyForActivation();
 }
 

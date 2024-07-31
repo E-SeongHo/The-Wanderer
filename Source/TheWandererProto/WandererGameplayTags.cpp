@@ -43,10 +43,12 @@ namespace WandererGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Trace, "State.Weapon.Trace", "Weapon tracing");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Stance_RightLead, "State.Stance.RightLead", "Right lead stance");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Parry, "State.Parry", "On parry");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Combat, "State.Combat", "On combat");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Combat_Parry, "State.Combat.Parry", "On parry");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Combat_TargetLock, "State.Combat.TargetLock", "Target locking");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Attack_ComboAvailable, "State.Attack.ComboAvailable", "Combo available state while attack ability is working on");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Base, "Data.Damage.Base", "Base damage data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Critical, "Data.Damage.Critical", "Critical damage data");

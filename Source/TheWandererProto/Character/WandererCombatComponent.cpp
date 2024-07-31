@@ -5,7 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "WandererBaseCharacter.h"
-#include "WandererEnemy.h"
+#include "Enemy/WandererEnemy.h"
 #include "WandererGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Weapon/WandererWeapon.h"
@@ -18,19 +18,27 @@ UWandererCombatComponent::UWandererCombatComponent()
 void UWandererCombatComponent::AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC)
 {
 	Super::AssignAbilitySystemComponent(OwnerASC);
+
+	EquipWeapon();
 }
 
-void UWandererCombatComponent::EquipWeapon(AWandererWeapon* NewWeapon, FName SocketName)
+bool UWandererCombatComponent::IsTargetInAttackRange() const
 {
-	Weapon = NewWeapon;
-	Weapon->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
-	AbilitySystemComponent->AddLooseGameplayTag(Weapon->EquippedTag);	
+	if(!CombatTarget) return false;
+	
+	return Owner->GetDistanceTo(CombatTarget) < AttackAvailableDistance;
 }
 
-void UWandererCombatComponent::AttachWeaponMeshToSocket(FName SocketName)
+void UWandererCombatComponent::AttachWeaponToDrawSocket() const
 {
 	check(Weapon);
-	Weapon->GetWeaponMesh()->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, SocketName);
+	Weapon->GetWeaponMesh()->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponConfig.DrawSocket);
+}
+
+void UWandererCombatComponent::AttachWeaponToSheathSocket() const
+{
+	check(Weapon);
+	Weapon->GetWeaponMesh()->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponConfig.SheathSocket);
 }
 
 void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* InTarget)
@@ -42,6 +50,7 @@ void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* InTarget)
 	// 2) Directly call StartCombat()
 	if(!bIsInCombat)
 	{
+		check(!CombatTarget);
 		StartCombat();	
 	}
 	
@@ -59,7 +68,7 @@ void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* InTarget)
 		FTimerHandle CombatExitDelayHandle;
 		GetWorld()->GetTimerManager().SetTimer(CombatExitDelayHandle, [this]
 		{
-			if(!CombatTarget)
+			if(!CombatTarget && bIsInCombat) // Combat may have already ended due to a runaway
 			{
 				EndCombat();
 			}
@@ -74,7 +83,8 @@ void UWandererCombatComponent::StartCombat()
 	check(!bIsInCombat);
 	// bIsInCombat can be true whether the CombatTarget set or not
 	// but when its becoming false CombatTarget will be nullptr
-	bIsInCombat = true;  
+	bIsInCombat = true;
+	OnCombatStarted.Broadcast();
 	
 	Owner->GetCharacterMovement()->bOrientRotationToMovement = false;
 	
@@ -86,10 +96,22 @@ void UWandererCombatComponent::EndCombat()
 	check(bIsInCombat);
 	check(!CombatTarget);
 	bIsInCombat = false;
+	OnCombatEnded.Broadcast();
 
 	Owner->GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	AbilitySystemComponent->RemoveLooseGameplayTag(WandererGameplayTags::State_Combat);
+}
+
+void UWandererCombatComponent::Runaway()
+{
+	check(bIsInCombat);
+
+	bIsInCombat = false;
+	CombatTarget = nullptr;
+
+	// End combat immediately
+	EndCombat();
 }
 
 void UWandererCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -103,12 +125,25 @@ void UWandererCombatComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// Rotates the actor itself to face the target
 	const FVector Forward = Owner->GetActorForwardVector();
 	const FVector ToTarget = (CombatTarget->GetActorLocation() - Owner->GetActorLocation()).GetSafeNormal2D();
-	Owner->SetActorRotation(FMath::RInterpTo(Forward.Rotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
+	if(FVector::DotProduct(Forward, ToTarget) < 0.999f)
+	{
+		Owner->SetActorRotation(FMath::RInterpTo(Forward.Rotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
+	}
 
 	// in order to rotate cameraboom (make sure this controlled by controller)
 	if(bUseActorDesiredControlRotation)
 	{
 		Owner->GetController()->SetControlRotation(FMath::RInterpTo(Owner->GetControlRotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
+	}
+}
+
+void UWandererCombatComponent::EquipWeapon()
+{
+	if(WeaponConfig.WeaponType)
+	{
+		Weapon = GetWorld()->SpawnActor<AWandererWeapon>(WeaponConfig.WeaponType, FVector::ZeroVector, FRotator::ZeroRotator);
+		Weapon->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponConfig.SheathSocket);
+		AbilitySystemComponent->AddLooseGameplayTag(Weapon->EquippedTag);	
 	}
 }
 

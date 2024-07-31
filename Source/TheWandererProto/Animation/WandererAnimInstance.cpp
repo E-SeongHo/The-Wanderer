@@ -21,7 +21,9 @@ void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	const AWandererCharacter* Character = Cast<AWandererCharacter>(GetOwningActor());
 	if (!Character) return;
-
+	const UAbilitySystemComponent* ASC = Character->GetAbilitySystemComponent();
+	if (!ASC) return;
+	
 	MovementComp = Character->GetCharacterMovement();
 		
 	Velocity = MovementComp->Velocity;
@@ -30,7 +32,8 @@ void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bShouldMove = GroundSpeed >= 3.0f && MovementComp->GetCurrentAcceleration().Length();
 	bIsFalling = MovementComp->IsFalling();
 	bIsCrouched = MovementComp->IsCrouching();
-	bIsDefensing = Character->GetAbilitySystemComponent() ? Character->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat_Parry) : false;
+	bIsDefensing = ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Parry);
+	bIsInCombat = ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Combat);
 	
 	TrajectoryComp = Character->GetTrajectoryComponent();
 }

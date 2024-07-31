@@ -6,6 +6,15 @@
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "WandererActiveGameplayAbility_Attack.generated.h"
 
+UENUM()
+enum class EWandererAttackResult : uint8
+{
+	Success,
+	Miss,
+	Block,
+};
+
+class AWandererBaseCharacter;
 class UAbilityTask_PlayMontageAndWait;
 class UNiagaraSystem;
 /**
@@ -17,8 +26,6 @@ class THEWANDERERPROTO_API UWandererActiveGameplayAbility_Attack : public UWande
 	GENERATED_BODY()
 public:
 	UWandererActiveGameplayAbility_Attack();
-
-	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
@@ -43,20 +50,24 @@ private:
 
 	UFUNCTION()
 	bool ShouldStopWeaponTrace();
-		
-private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Damage, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UGameplayEffect> DamageEffect;
+
+	EWandererAttackResult EvaluateAttackResult(AWandererBaseCharacter* Target);
+
+	// it is just for readability
+	void SetComboAvailable(bool bIsAvailable);
+	bool IsComboAvailable() const;
 	
+private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UAnimMontage>> AttackAnimsFromLeftLead;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<UAnimMontage>> AttackAnimsFromRightLead;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
+	TArray<TObjectPtr<UAnimMontage>> AttackFailedAnims;
 	
-	TObjectPtr<UAbilityTask_PlayMontageAndWait> PlayMontageTask;
-	bool bIsComboAvailable = false;
+	TObjectPtr<UAbilityTask_PlayMontageAndWait> CurrentPlayingMontageTask;
 	int32 ComboCount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Blood, meta = (AllowPrivateAccess = "true"))

@@ -8,7 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Character/WandererCharacter.h"
 #include "Character/WandererCombatComponent.h"
-#include "Character/WandererEnemy.h"
+#include "Character/Enemy/WandererEnemy.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Tasks/WandererAbilityTask.h"

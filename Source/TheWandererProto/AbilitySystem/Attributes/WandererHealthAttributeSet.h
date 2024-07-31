@@ -29,6 +29,9 @@ protected:
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 private:
+	void ProcessDamageEffect(const FGameplayEffectModCallbackData& Data);
+	
+private:
 	UPROPERTY(BlueprintReadOnly, Category = "Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Health;
 

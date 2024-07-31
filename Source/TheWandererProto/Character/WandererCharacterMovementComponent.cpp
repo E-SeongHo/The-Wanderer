@@ -24,6 +24,10 @@ float UWandererCharacterMovementComponent::GetMaxSpeed() const
 	{
 		return MaxWalkSpeed * 0.5f;
 	}
+	if(Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Parry))
+	{
+		return MaxWalkSpeed * 0.5f;
+	}
 	
 	switch(UprightLocomotionMode)
 	{

@@ -47,10 +47,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWandererCombatComponent> CombatComponent;
-	
-	// Weapon
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<AWandererWeapon> Weapon;
 
 	// Attribute Set
 	UPROPERTY(EditAnywhere, Category = "Attributes")

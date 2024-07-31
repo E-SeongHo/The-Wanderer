@@ -10,5 +10,4 @@ UCLASS()
 class THEWANDERERPROTO_API UWandererGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
-	
 };

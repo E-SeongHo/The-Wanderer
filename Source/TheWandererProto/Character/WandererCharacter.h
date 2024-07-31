@@ -32,12 +32,7 @@ public:
 
 	UMotionWarpingComponent* GetMotionWarpComponent() const { return MotionWarpComponent.Get(); }
 	UCharacterTrajectoryComponent* GetTrajectoryComponent() const { return TrajectoryComponent.Get(); }
-
-	// void SetCameraMode()
 	
-protected:
-	virtual void BeginPlay() override;
-
 private:
 	// Scene Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -52,9 +47,4 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Trajectory, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCharacterTrajectoryComponent> TrajectoryComponent;
- 
-	// Set in BluePrint
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AWandererSword> SwordType;
-
 };

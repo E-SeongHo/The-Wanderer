@@ -1,11 +1,10 @@
 //  
 
 
-#include "Character/WandererEnemy.h"
+#include "WandererEnemy.h"
 
 #include "AbilitySystemComponent.h"
-#include "WandererCombatComponent.h"
-#include "WandererGameplayTags.h"
+#include "Character/WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
 #include "AbilitySystem/Attributes/WandererHealthAttributeSet.h"
@@ -22,8 +21,8 @@ AWandererEnemy::AWandererEnemy()
 	HealthAttributeSet = CreateDefaultSubobject<UWandererHealthAttributeSet>("Health AttributeSet");
 	CombatAttributeSet = CreateDefaultSubobject<UWandererCombatAttributeSet>("Combat AttributeSet");
 
-	GetCharacterMovement()->bUseControllerDesiredRotation = true;
-	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->bUseControllerDesiredRotation = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>("UI");
 	WidgetComponent->SetupAttachment(RootComponent);

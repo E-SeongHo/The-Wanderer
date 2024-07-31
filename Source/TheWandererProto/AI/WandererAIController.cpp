@@ -9,7 +9,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Character/WandererCharacter.h"
 #include "Character/WandererCombatComponent.h"
-#include "Character/WandererEnemy.h"
+#include "Character/Enemy/WandererEnemy.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 
@@ -57,7 +57,12 @@ void AWandererAIController::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus
 	if(Stimulus.WasSuccessfullySensed())
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Detected")));
-		ControllingEnemy->GetCombatComponent()->SetCombatTarget(Target); 
+		ControllingEnemy->GetCombatComponent()->SetCombatTarget(Target);
+
+		if(!Target->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+		{
+			Target->GetCombatComponent()->StartCombat();
+		}
 	}
 	else
 	{

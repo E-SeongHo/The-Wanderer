@@ -3,6 +3,7 @@
 
 #include "WandererActiveGameplayAbility_Attack.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
 #include "NiagaraFunctionLibrary.h"
@@ -11,6 +12,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
+#include "AbilitySystem/Effects/WandererGameplayEffect_Damage.h"
 #include "Character/WandererCombatComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tasks/WandererAbilityTask_RepeatUntil.h"
@@ -25,47 +27,44 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Attack);
 	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Attack);
+	
+	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
+	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::State_Parry);
 }
 
-bool UWandererActiveGameplayAbility_Attack::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
-{
-	// if nothing on hand(drawn weapon)
-	if(!ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Draw)) return false;
-	
-	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
-}
 
 void UWandererActiveGameplayAbility_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	SoftLock();
+	//SoftLock();
 	
-	// Generate AbilityTask : Play Montage
-	PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnimsFromLeftLead[FMath::RandRange(0, AttackAnimsFromLeftLead.Num()-1)]); 
-	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
-	PlayMontageTask->ReadyForActivation();
+	CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnimsFromLeftLead[FMath::RandRange(0, AttackAnimsFromLeftLead.Num()-1)]); 
+	CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
+	CurrentPlayingMontageTask->ReadyForActivation();
+	
+	UAbilityTask_WaitGameplayEvent* WaitComboAvailable = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_ComboAvailable);
+	WaitComboAvailable->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnComboAvailable);
+	WaitComboAvailable->ReadyForActivation();
 
-	// Generate AbilityTask : Wait Event (Event.Montage.ComboAvailable)
-	{
-		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_ComboAvailable);
-		WaitEventTask->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnComboAvailable);
-		WaitEventTask->ReadyForActivation();
-	}
-
-	// Generate AbilityTask : Wait Event (Event.Montage.WeaponTrace)
-	{
-		if(CurrentActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Equip_Sword))
-		{
-			UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_WeaponTrace);
-			WaitEventTask->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnWeaponTraceStart);
-			WaitEventTask->ReadyForActivation();
-		}
-	}
+	UAbilityTask_WaitGameplayEvent* WaitWeaponTrace = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_WeaponTrace);
+	WaitWeaponTrace->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnWeaponTraceStart);
+	WaitWeaponTrace->ReadyForActivation();
 }
 
 void UWandererActiveGameplayAbility_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	ComboCount = 0;
-	
+	SetComboAvailable(false);
+
+	if(bWasCancelled)
+	{
+		ActorInfo->AbilitySystemComponent->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
+		CurrentPlayingMontageTask->ExternalCancel();
+	}
+
+	if(Cast<AWandererCharacter>(ActorInfo->AvatarActor))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("End Attack %d"), bWasCancelled));
+	}
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -73,11 +72,12 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 {
 	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
 
-	if(IsActive() && bIsComboAvailable) 
+	// Perform combo attack if the input has pressed in right timing 
+	if(IsActive() && IsComboAvailable()) 
 	{
-		PlayMontageTask->ExternalCancel();
+		CurrentPlayingMontageTask->ExternalCancel();
 		
-		SoftLock();
+		//SoftLock();
 		UAnimMontage* MontageToPlay;
 		if(ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Stance_RightLead))
 		{
@@ -88,18 +88,18 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 			MontageToPlay = AttackAnimsFromLeftLead[FMath::RandRange(0, AttackAnimsFromLeftLead.Num()-1)];
 		}
 		
-		PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), MontageToPlay);
-		PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
-		PlayMontageTask->ReadyForActivation();
+		CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), MontageToPlay);
+		CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
+		CurrentPlayingMontageTask->ReadyForActivation();
 		
 		ComboCount++;
-		bIsComboAvailable = false;
+		SetComboAvailable(false);
 	}
 }
 
 void UWandererActiveGameplayAbility_Attack::SoftLock()
 {
-	AWandererCharacter* Instigator = Cast<AWandererCharacter>(GetCurrentActorInfo()->AvatarActor);
+	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(GetCurrentActorInfo()->AvatarActor);
 	check(Instigator);
 	
 	TArray<AActor*> OverlapTargets = WandererUtils::FindOverlappingActorsInViewRange(AWandererBaseCharacter::StaticClass(), Instigator, 120.0f, 200.0f, ECC_GameTraceChannel1);
@@ -149,14 +149,14 @@ void UWandererActiveGameplayAbility_Attack::SoftLock()
 
 void UWandererActiveGameplayAbility_Attack::OnMontageCompleted()
 {
-	bIsComboAvailable = false;
+	SetComboAvailable(false);
 	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UWandererActiveGameplayAbility_Attack::OnComboAvailable(FGameplayEventData Payload)
 {
-	bIsComboAvailable = true;
+	SetComboAvailable(true);
 }
 
 void UWandererActiveGameplayAbility_Attack::OnWeaponTraceStart(FGameplayEventData Payload)
@@ -180,41 +180,98 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace()
 	const AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
 	check(Instigator);
 	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
-
-	if(InstigatorASC->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Trace))
+	
+	FHitResult HitResult;
+	const bool bHit = Instigator->GetCombatComponent()->GetWeapon()->Trace(HitResult);
+	if(bHit)
 	{
-		FHitResult HitResult;
-		bool bHit = Instigator->GetCombatComponent()->GetWeapon()->Trace(HitResult);
-		if(bHit)
-		{
-			DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
+		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
+		AWandererBaseCharacter* Target = CastChecked<AWandererBaseCharacter>(HitResult.GetActor());
 
-			const AWandererBaseCharacter* Target = Cast<AWandererBaseCharacter>(HitResult.GetActor());
-			if(Target)
+		// Can Actually Hit?
+		switch(EvaluateAttackResult(Target))
+		{
+		case EWandererAttackResult::Success:
 			{
 				// 1. Damage Gameplay Effect
-				check(DamageEffect);
 				const FGameplayAbilityTargetDataHandle TargetHandle(new FGameplayAbilityTargetData_SingleTargetHit(HitResult));
-				const FGameplayEffectSpecHandle SpecHandle = InstigatorASC->MakeOutgoingSpec(DamageEffect, GetAbilityLevel(), InstigatorASC->MakeEffectContext());
+				const FGameplayEffectSpecHandle SpecHandle = InstigatorASC->MakeOutgoingSpec(UWandererGameplayEffect_Damage::StaticClass(), GetAbilityLevel(), InstigatorASC->MakeEffectContext());
 
 				const AWandererBaseCharacter* CauserWandererCharacter = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
 				SpecHandle.Data->SetSetByCallerMagnitude(WandererGameplayTags::Data_Damage_Base, CauserWandererCharacter->GetCombatAttributeSet()->GetBaseDamage() * 0.25f);
-					
+		
 				ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SpecHandle, TargetHandle);
 				// ApplyGameplayEffectToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, TargetHandle, DamageEffect, GetAbilityLevel());
 
 				// 2. Blood Effect TODO: Gameplay Cue
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BloodEffect, HitResult.ImpactPoint);
-				
-				InstigatorASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
+				break;	
 			}
+		case EWandererAttackResult::Block:
+			{
+				// To Target
+				FGameplayEventData EventData;
+				EventData.Instigator = Instigator;
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Target, WandererGameplayTags::Event_Combat_ParryAttack, EventData);
+
+				// To myself
+				CurrentPlayingMontageTask->ExternalCancel();
+				CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack Failed"), AttackFailedAnims[0]);
+				CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
+				CurrentPlayingMontageTask->ReadyForActivation();
+
+				SetComboAvailable(false);
+				break;
+			}
+		case EWandererAttackResult::Miss:
+			check(false);
+		}
+
+		InstigatorASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
+		
+		if(!InstigatorASC->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+		{
+			Instigator->GetCombatComponent()->StartCombat();
 		}
 	}
+	
 }
 
 bool UWandererActiveGameplayAbility_Attack::ShouldStopWeaponTrace()
 {
 	return !GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(WandererGameplayTags::State_Weapon_Trace);
 }
+
+EWandererAttackResult UWandererActiveGameplayAbility_Attack::EvaluateAttackResult(AWandererBaseCharacter* Target)
+{
+	if(Target->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Parry))
+	{
+		// Attack succeeds if from behind, even if target is parrying
+		const FVector TargetForward = Target->GetActorForwardVector();
+		const FVector AttackOrientation = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+		const float Cos = FVector::DotProduct(TargetForward, AttackOrientation);
+
+		if(Cos < 0.7f) return EWandererAttackResult::Block;
+	}
+	/*if(Target->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Dodge))
+	{
+		return EWandererAttackResult::Miss;
+	}*/
+	
+	
+	return EWandererAttackResult::Success;
+}
+
+void UWandererActiveGameplayAbility_Attack::SetComboAvailable(bool bIsAvailable)
+{
+	if(bIsAvailable) GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
+	else GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
+}
+
+bool UWandererActiveGameplayAbility_Attack::IsComboAvailable() const
+{
+	return GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
+}
+
 
 

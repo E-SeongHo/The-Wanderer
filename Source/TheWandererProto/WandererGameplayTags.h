@@ -56,8 +56,10 @@ namespace WandererGameplayTags
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat_TargetLock);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat_Parry);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Parry);
 
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Attack_ComboAvailable);
+	
 	// Damages
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Base);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Critical);

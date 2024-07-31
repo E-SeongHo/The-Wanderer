@@ -73,14 +73,3 @@ void AWandererCharacter::PossessedBy(AController* NewController)
 	AbilitySystemComponent->ApplyGameplayEffectToSelf(InitterGE, 1.0f, AbilitySystemComponent->MakeEffectContext());
 }
 
-void AWandererCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if(SwordType)
-	{
-		Weapon = GetWorld()->SpawnActor<AWandererSword>(SwordType, FVector::ZeroVector, FRotator::ZeroRotator);
-		CombatComponent->EquipWeapon(Weapon, TEXT("SheathSocket"));
-	}
-}
-

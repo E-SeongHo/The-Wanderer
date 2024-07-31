@@ -22,7 +22,8 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaSeconds) override;
-	
+
+	//virtual void OnDectectionLevelUpdated(const float DetectionLevel);
 	void SetUIRender(bool bIsTargeted);
 	
 protected:
