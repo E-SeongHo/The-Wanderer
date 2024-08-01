@@ -6,6 +6,7 @@
 #include "WandererCharacterMovementComponent.h"
 #include "WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
@@ -23,6 +24,7 @@
 
 void AWandererBaseCharacter::Die()
 {
+ 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement();
 }
 

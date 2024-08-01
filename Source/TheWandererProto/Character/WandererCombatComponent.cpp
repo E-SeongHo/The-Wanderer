@@ -107,7 +107,6 @@ void UWandererCombatComponent::Runaway()
 {
 	check(bIsInCombat);
 
-	bIsInCombat = false;
 	CombatTarget = nullptr;
 
 	// End combat immediately

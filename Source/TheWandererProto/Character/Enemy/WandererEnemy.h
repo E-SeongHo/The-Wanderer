@@ -23,12 +23,13 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void Die() override;
 	//virtual void OnDectectionLevelUpdated(const float DetectionLevel);
 	void SetUIRender(bool bIsTargeted);
 	
 protected:
 	virtual void BeginPlay() override;
-
+	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> WidgetComponent;

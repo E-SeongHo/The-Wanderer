@@ -46,6 +46,8 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParryAttack);
 	
 	// States
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Dead);
+	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Equip);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Equip_Sword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Draw);

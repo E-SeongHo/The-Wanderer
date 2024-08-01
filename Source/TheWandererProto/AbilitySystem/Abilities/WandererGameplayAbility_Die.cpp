@@ -3,24 +3,31 @@
 
 #include "AbilitySystem/Abilities/WandererGameplayAbility_Die.h"
 
+#include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Character/WandererBaseCharacter.h"
 
 UWandererGameplayAbility_Die::UWandererGameplayAbility_Die()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Die);
+	
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Dead);
 }
 
 void UWandererGameplayAbility_Die::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	ActorInfo->AbilitySystemComponent->CancelAbilities(nullptr, nullptr, this);
+	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(WandererGameplayTags::State_Dead);
+
 	// Generate AbilityTask : Play Montage
-	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Hit React"), DieAnims[FMath::RandRange(0, DieAnims.Num()-1)]);
+	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Die"), DieAnims[FMath::RandRange(0, DieAnims.Num()-1)]);
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
 	PlayMontageTask->ReadyForActivation();
-
-	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+	
+	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
 	if(Instigator)
 	{
 		Instigator->Die();

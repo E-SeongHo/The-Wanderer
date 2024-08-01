@@ -52,6 +52,12 @@ void AWandererEnemy::Tick(float DeltaSeconds)
 	}
 }
 
+void AWandererEnemy::Die()
+{
+	Super::Die();
+	DetachFromControllerPendingDestroy();
+}
+
 void AWandererEnemy::SetUIRender(bool bIsTargeted)
 {
 	WidgetComponent->SetVisibility(bIsTargeted);

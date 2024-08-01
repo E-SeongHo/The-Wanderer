@@ -36,6 +36,8 @@ namespace WandererGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParryAttack, "Event.Combat.ParryAttack", "Succeeded to parry attack event");
 
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Dead, "State.Dead", "Dead status");
+
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Equip, "State.Equip", "Tags for equip statements, it exists for making query");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Equip_Sword, "State.Equip.Sword", "Armed sword");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Draw, "State.Draw", "Tags for drawn statements, it exists for making query");
