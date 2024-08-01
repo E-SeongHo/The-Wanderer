@@ -33,7 +33,7 @@ void UWandererActiveGameplayAbility_DrawWeapon::ActivateAbility(const FGameplayA
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
 	UAbilitySystemComponent* ASC = Instigator->GetAbilitySystemComponent();
 	
-	UAbilityTask_PlayMontageAndWait* DrawSwordAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DrawSword"), DrawAnim);
+	UAbilityTask_PlayMontageAndWait* DrawSwordAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DrawSword"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_DrawWeapon));
 	DrawSwordAnimTask->ReadyForActivation();
 
 	UAbilityTask_WaitGameplayEvent* WaitGrabInHand = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_DrawSword);
@@ -80,7 +80,7 @@ void UWandererActiveGameplayAbility_DrawWeapon::OnDraw(FGameplayEventData Payloa
 
 void UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility()
 {
-	UAbilityTask_PlayMontageAndWait* SheathSwordAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SheathSword"), SheathAnim);
+	UAbilityTask_PlayMontageAndWait* SheathSwordAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SheathSword"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_SheathWeapon));
 	SheathSwordAnimTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::OnSheathCompleted);
 	SheathSwordAnimTask->ReadyForActivation();
 

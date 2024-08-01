@@ -10,6 +10,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Character/WandererCharacter.h"
 #include "Character/WandererCharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 UWandererActiveGameplayAbility_Parry::UWandererActiveGameplayAbility_Parry()
 	: Super(WandererGameplayTags::InputTag_Parry)
@@ -20,6 +21,7 @@ UWandererActiveGameplayAbility_Parry::UWandererActiveGameplayAbility_Parry()
 	//ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
 	
 	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Parry);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
 	
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Attack);
 }
@@ -80,14 +82,16 @@ void UWandererActiveGameplayAbility_Parry::OnParrySucceeded(FGameplayEventData P
 	UAnimMontage* MontageToPlay;
 	if(Cos < -0.7f) // forward (-45 < angle < 45)
 	{
-		MontageToPlay = ParryAnimFromFront;
+		MontageToPlay = GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Front);
 	}
 	else // left or right
 	{
-		MontageToPlay = bIsClockWise ? ParryAnimFromLeft : ParryAnimFromRight;
+		MontageToPlay = bIsClockWise ? GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Left) : GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Right);
 	}
 
  	UAbilityTask_PlayMontageAndWait* PlayMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Parry"), MontageToPlay);
 	PlayMontage->ReadyForActivation();
+
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParrySounds[FMath::RandRange(0, ParrySounds.Num()-1)], GetAvatarActorFromActorInfo()->GetActorLocation());
 }
 

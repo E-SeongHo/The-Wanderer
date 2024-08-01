@@ -24,8 +24,4 @@ public:
 private:
 	UFUNCTION()
 	void OnMontageCompleted();
-	
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	TArray<TObjectPtr<UAnimMontage>> DieAnims;
 };

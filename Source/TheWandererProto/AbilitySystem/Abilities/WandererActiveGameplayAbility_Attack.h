@@ -53,20 +53,11 @@ private:
 
 	EWandererAttackResult EvaluateAttackResult(AWandererBaseCharacter* Target);
 
-	// it is just for readability
+	void PlayNewMontageForTag(const FGameplayTag& GameplayTag);
 	void SetComboAvailable(bool bIsAvailable);
 	bool IsComboAvailable() const;
 	
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	TArray<TObjectPtr<UAnimMontage>> AttackAnimsFromLeftLead;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	TArray<TObjectPtr<UAnimMontage>> AttackAnimsFromRightLead;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	TArray<TObjectPtr<UAnimMontage>> AttackFailedAnims;
-	
 	TObjectPtr<UAbilityTask_PlayMontageAndWait> CurrentPlayingMontageTask;
 	int32 ComboCount = 0;
 

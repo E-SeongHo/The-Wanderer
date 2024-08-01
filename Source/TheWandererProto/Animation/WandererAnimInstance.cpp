@@ -3,6 +3,7 @@
 #include "WandererAnimInstance.h"
 
 #include "AbilitySystemComponent.h"
+#include "WandererAnimMontageConfig.h"
 #include "WandererGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "TheWandererProto/Character/WandererCharacter.h"
@@ -36,4 +37,11 @@ void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsInCombat = ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Combat);
 	
 	TrajectoryComp = Character->GetTrajectoryComponent();
+}
+
+UAnimMontage* UWandererAnimInstance::GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const
+{
+	check(MontageConfig);
+	// check(MontageConfig->HasExactMatchingActionMontage(GameplayTag));	
+	return MontageConfig->FindAnimMontageForTag(GameplayTag);
 }

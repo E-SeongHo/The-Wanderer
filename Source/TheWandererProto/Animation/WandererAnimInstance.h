@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "WandererAnimInstance.generated.h"
 
+struct FGameplayTag;
+class UWandererAnimMontageConfig;
 class AWandererCharacter;
 class UCharacterMovementComponent;
 class UCharacterTrajectoryComponent;
@@ -20,8 +22,14 @@ class THEWANDERERPROTO_API UWandererAnimInstance : public UAnimInstance
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	UFUNCTION(BlueprintCallable)
+	UAnimMontage* GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const;
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = Montage)
+	TObjectPtr<UWandererAnimMontageConfig> MontageConfig;	
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCharacterMovementComponent> MovementComp;
 

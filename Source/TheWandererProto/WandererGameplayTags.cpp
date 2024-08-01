@@ -55,5 +55,44 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Base, "Data.Damage.Base", "Base damage data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Critical, "Data.Damage.Critical", "Critical damage data");
 
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack, "ActionTag.Attack", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_RightLead, "ActionTag.Attack.RightLead", "Attack action from rightlead status");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_LeftLead, "ActionTag.Attack.LeftLead", "Attack action from leftlead status");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_AttackFailed, "ActionTag.AttackFailed", "Attack failed action");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_DrawWeapon, "ActionTag.DrawWeapon", "Draw weapon action");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_SheathWeapon, "ActionTag.SheathWeapon", "Sheath weapon action");
+	
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry, "ActionTag.Parry", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry_Front, "ActionTag.Parry.Front", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry_Back, "ActionTag.Parry.Back", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry_Right, "ActionTag.Parry.Right", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry_Left, "ActionTag.Parry.Left", "ActionTag");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Hit, "ActionTag.Hit", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Hit_Front, "ActionTag.Hit.Front", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Hit_Back, "ActionTag.Hit.Back", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Hit_Right, "ActionTag.Hit.Right", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Hit_Left, "ActionTag.Hit.Left", "ActionTag");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Die, "ActionTag.Die", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Die_Front, "ActionTag.Die.Front", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Die_Back, "ActionTag.Die.Back", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Die_Right, "ActionTag.Die.Right", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Die_Left, "ActionTag.Die.Left", "ActionTag");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Dodge, "ActionTag.Dodge", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Dodge_Front, "ActionTag.Dodge.Front", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Dodge_Back, "ActionTag.Dodge.Back", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Dodge_Right, "ActionTag.Dodge.Right", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Dodge_Left, "ActionTag.Dodge.Left", "ActionTag");
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Roll, "ActionTag.Roll", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Roll_Front, "ActionTag.Roll.Front", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Roll_Back, "ActionTag.Roll.Back", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Roll_Right, "ActionTag.Roll.Right", "ActionTag");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Roll_Left, "ActionTag.Roll.Left", "ActionTag");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Debug, "Debug", "Activation Tag for debugging");
 };

@@ -23,7 +23,7 @@ void UWandererGameplayAbility_Die::ActivateAbility(const FGameplayAbilitySpecHan
 	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(WandererGameplayTags::State_Dead);
 
 	// Generate AbilityTask : Play Montage
-	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Die"), DieAnims[FMath::RandRange(0, DieAnims.Num()-1)]);
+	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Die"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Die));
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
 	PlayMontageTask->ReadyForActivation();
 	

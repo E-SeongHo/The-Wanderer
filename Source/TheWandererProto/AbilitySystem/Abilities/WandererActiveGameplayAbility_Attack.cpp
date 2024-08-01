@@ -27,6 +27,7 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Attack);
 	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Attack);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
 	
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::State_Parry);
@@ -36,10 +37,8 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 void UWandererActiveGameplayAbility_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	//SoftLock();
-	
-	CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), AttackAnimsFromLeftLead[FMath::RandRange(0, AttackAnimsFromLeftLead.Num()-1)]); 
-	CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
-	CurrentPlayingMontageTask->ReadyForActivation();
+
+	PlayNewMontageForTag(WandererGameplayTags::ActionTag_Attack_LeftLead);
 	
 	UAbilityTask_WaitGameplayEvent* WaitComboAvailable = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_ComboAvailable);
 	WaitComboAvailable->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnComboAvailable);
@@ -75,23 +74,15 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 	// Perform combo attack if the input has pressed in right timing 
 	if(IsActive() && IsComboAvailable()) 
 	{
-		CurrentPlayingMontageTask->ExternalCancel();
-		
 		//SoftLock();
-		UAnimMontage* MontageToPlay;
 		if(ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Stance_RightLead))
 		{
-			MontageToPlay = AttackAnimsFromRightLead[FMath::RandRange(0, AttackAnimsFromRightLead.Num()-1)];
+			PlayNewMontageForTag(WandererGameplayTags::ActionTag_Attack_RightLead);
 		}
 		else
 		{
-			MontageToPlay = AttackAnimsFromLeftLead[FMath::RandRange(0, AttackAnimsFromLeftLead.Num()-1)];
+			PlayNewMontageForTag(WandererGameplayTags::ActionTag_Attack_LeftLead);
 		}
-		
-		CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack"), MontageToPlay);
-		CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
-		CurrentPlayingMontageTask->ReadyForActivation();
-		
 		ComboCount++;
 		SetComboAvailable(false);
 	}
@@ -150,6 +141,7 @@ void UWandererActiveGameplayAbility_Attack::SoftLock()
 void UWandererActiveGameplayAbility_Attack::OnMontageCompleted()
 {
 	SetComboAvailable(false);
+	CurrentPlayingMontageTask = nullptr;
 	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
@@ -215,10 +207,7 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace()
 				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Target, WandererGameplayTags::Event_Combat_ParryAttack, EventData);
 
 				// To myself
-				CurrentPlayingMontageTask->ExternalCancel();
-				CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Attack Failed"), AttackFailedAnims[0]);
-				CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
-				CurrentPlayingMontageTask->ReadyForActivation();
+				PlayNewMontageForTag(WandererGameplayTags::ActionTag_AttackFailed);
 
 				SetComboAvailable(false);
 				break;
@@ -260,6 +249,18 @@ EWandererAttackResult UWandererActiveGameplayAbility_Attack::EvaluateAttackResul
 	
 	
 	return EWandererAttackResult::Success;
+}
+
+void UWandererActiveGameplayAbility_Attack::PlayNewMontageForTag(const FGameplayTag& GameplayTag)
+{
+	if(CurrentPlayingMontageTask)
+	{
+		CurrentPlayingMontageTask->ExternalCancel();
+	}
+	
+	CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, FName(FString::Printf(TEXT("%s action montage"), *GameplayTag.ToString())), GetMatchingMontageForTag(GameplayTag));
+	CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
+	CurrentPlayingMontageTask->ReadyForActivation();
 }
 
 void UWandererActiveGameplayAbility_Attack::SetComboAvailable(bool bIsAvailable)
