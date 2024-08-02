@@ -27,7 +27,9 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Attack);
 	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Attack);
+
 	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Avoid);
 	
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::State_Parry);
@@ -59,11 +61,7 @@ void UWandererActiveGameplayAbility_Attack::EndAbility(const FGameplayAbilitySpe
 		ActorInfo->AbilitySystemComponent->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
 		CurrentPlayingMontageTask->ExternalCancel();
 	}
-
-	if(Cast<AWandererCharacter>(ActorInfo->AvatarActor))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("End Attack %d"), bWasCancelled));
-	}
+	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -213,7 +211,9 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace()
 				break;
 			}
 		case EWandererAttackResult::Miss:
-			check(false);
+			{
+				break;
+			}
 		}
 
 		InstigatorASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
@@ -242,10 +242,10 @@ EWandererAttackResult UWandererActiveGameplayAbility_Attack::EvaluateAttackResul
 
 		if(Cos < 0.7f) return EWandererAttackResult::Block;
 	}
-	/*if(Target->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Dodge))
+	if(Target->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Avoid))
 	{
 		return EWandererAttackResult::Miss;
-	}*/
+	}
 	
 	
 	return EWandererAttackResult::Success;
@@ -253,7 +253,7 @@ EWandererAttackResult UWandererActiveGameplayAbility_Attack::EvaluateAttackResul
 
 void UWandererActiveGameplayAbility_Attack::PlayNewMontageForTag(const FGameplayTag& GameplayTag)
 {
-	if(CurrentPlayingMontageTask)
+	if(CurrentPlayingMontageTask && CurrentPlayingMontageTask->IsActive())
 	{
 		CurrentPlayingMontageTask->ExternalCancel();
 	}

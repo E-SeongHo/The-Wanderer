@@ -17,10 +17,12 @@ UWandererActiveGameplayAbility_Parry::UWandererActiveGameplayAbility_Parry()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
+	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Parry);
+
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
 	//ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
-	
-	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Parry);
+
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Avoid);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
 	
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Attack);
@@ -31,11 +33,7 @@ bool UWandererActiveGameplayAbility_Parry::CanActivateAbility(const FGameplayAbi
 	const UAbilitySystemComponent* OwnerASC = ActorInfo->AbilitySystemComponent.Get();
 	if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::Ability_Attack))
 	{
-		if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable))
-		{
-			return true;
-		}
-		return false;
+		return OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
 	}
 	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
 }

@@ -101,4 +101,35 @@ namespace WandererUtils
 			}
 		}
 	}
+
+	EDirection EvaluateDirectionRelativeToActor(const AActor* SrcActor, const FVector& Vector)
+	{
+		check(SrcActor);
+
+		const FVector ActorForward = SrcActor->GetActorForwardVector().GetSafeNormal();
+		const FVector ActorRight = SrcActor->GetActorRightVector().GetSafeNormal();
+
+		const float CosForward = FVector::DotProduct(Vector.GetSafeNormal(), ActorForward);
+		const float CosRight = FVector::DotProduct(Vector.GetSafeNormal(), ActorRight);
+		const float Threshold = FMath::Cos(FMath::DegreesToRadians(45.0f));
+		
+		if(CosForward >= Threshold)
+		{
+			return EDirection::Forward;
+		}
+		if(CosForward <= -Threshold)
+		{
+			return EDirection::Backward;
+		}
+		if(CosRight >= Threshold)
+		{
+			return EDirection::Right;
+		}
+		if(CosRight <= -Threshold)
+		{
+			return EDirection::Left;
+		}
+
+		return EDirection::None;
+	}
 }
