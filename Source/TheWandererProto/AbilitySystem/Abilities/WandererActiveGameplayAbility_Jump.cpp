@@ -10,7 +10,8 @@ UWandererActiveGameplayAbility_Jump::UWandererActiveGameplayAbility_Jump()
 	: Super(WandererGameplayTags::InputTag_Jump)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	
+
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Combat);
 }
 
 bool UWandererActiveGameplayAbility_Jump::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
