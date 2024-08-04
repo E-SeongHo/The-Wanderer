@@ -12,7 +12,9 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
+#include "AbilitySystem/Attributes/WandererHealthAttributeSet.h"
 #include "AbilitySystem/Effects/WandererGameplayEffect_Damage.h"
+#include "Animation/WandererAnimMontageConfig.h"
 #include "Character/WandererCombatComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tasks/WandererAbilityTask_RepeatUntil.h"
@@ -29,17 +31,17 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Attack);
 
 	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Finisher);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Avoid);
 	
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
-	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::State_Parry);
+	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Parry);
 }
 
 
 void UWandererActiveGameplayAbility_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	//SoftLock();
-
 	PlayNewMontageForTag(WandererGameplayTags::ActionTag_Attack_LeftLead);
 	
 	UAbilityTask_WaitGameplayEvent* WaitComboAvailable = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_ComboAvailable);
@@ -73,6 +75,18 @@ void UWandererActiveGameplayAbility_Attack::InputPressed(const FGameplayAbilityS
 	if(IsActive() && IsComboAvailable()) 
 	{
 		//SoftLock();
+		AWandererCharacter* Instigator = Cast<AWandererCharacter>(GetAvatarActorFromActorInfo());
+		if(Instigator && Instigator->GetCombatComponent()->CanFinishTarget())
+		{
+			FGameplayEventData EventData;
+			EventData.OptionalObject = GetMatchingMontagePairForTag(WandererGameplayTags::ActionTag_Pair_Finisher);
+			
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Instigator, WandererGameplayTags::Event_Combat_Finisher, EventData);
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Instigator->GetCombatComponent()->GetCombatTarget(), WandererGameplayTags::Event_Combat_Victim, EventData);
+
+			return; // will be end
+		}	
+		
 		if(ActorInfo->AbilitySystemComponent->HasMatchingGameplayTag(WandererGameplayTags::State_Stance_RightLead))
 		{
 			PlayNewMontageForTag(WandererGameplayTags::ActionTag_Attack_RightLead);
@@ -260,6 +274,7 @@ void UWandererActiveGameplayAbility_Attack::PlayNewMontageForTag(const FGameplay
 	
 	CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, FName(FString::Printf(TEXT("%s action montage"), *GameplayTag.ToString())), GetMatchingMontageForTag(GameplayTag));
 	CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
+	//CurrentPlayingMontageTask->OnInterrupted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
 	CurrentPlayingMontageTask->ReadyForActivation();
 }
 

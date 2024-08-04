@@ -23,6 +23,7 @@ UWandererActiveGameplayAbility_Dodge::UWandererActiveGameplayAbility_Dodge()
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Avoid);
 	
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Attack);
+	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Parry);
 }
 
 void UWandererActiveGameplayAbility_Dodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

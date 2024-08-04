@@ -45,3 +45,9 @@ UAnimMontage* UWandererAnimInstance::GetMatchingMontageForTag(const FGameplayTag
 	// check(MontageConfig->HasExactMatchingActionMontage(GameplayTag));	
 	return MontageConfig->FindAnimMontageForTag(GameplayTag);
 }
+
+UWandererMontagePair* UWandererAnimInstance::GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const
+{
+	check(MontageConfig);
+	return MontageConfig->FindAnimMontagePairForTag(GameplayTag);
+}

@@ -46,6 +46,8 @@ public:
 	void AttachWeaponToDrawSocket() const;
 	void AttachWeaponToSheathSocket() const;
 
+	bool CanFinishTarget() const;
+	
 	void SetCombatTarget(AWandererBaseCharacter* InTarget);
 	void StartCombat();
 	void EndCombat();
@@ -69,7 +71,7 @@ public:
 	bool bUseActorDesiredControlRotation = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
-	float CombatAcceptanceRadius = 2000.0f;
+	float CombatAcceptanceRadius = 700.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float CombatExitDelay = 3.0f;

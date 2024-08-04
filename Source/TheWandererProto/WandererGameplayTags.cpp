@@ -20,14 +20,14 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Roll, "InputTag.Roll", "Roll input");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Attack, "Ability.Attack", "Attack");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Finisher, "Ability.Finisher", "Finisher");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Sprint, "Ability.Sprint", "Sprint");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_TargetLock, "Ability.TargetLock", "Target lock");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_DrawWeapon, "Ability.DrawWeapon", "Draw weapon");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Walk, "Ability.Walk", "Walk");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Die, "Ability.Die", "Die");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Hit, "Ability.Hit", "Hit reaction when get hit");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Guard, "Ability.Guard", "Guard attack when get hit");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Avoid, "Ability.Avoid", "Avoid attack when get hit");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Parry, "Ability.Parry", "Parry attack when get hit");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_AutoTarget, "Ability.AutoTarget", "Auto Lock Target (this is not same with target lock(hard lock)");
 
@@ -39,6 +39,9 @@ namespace WandererGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParryAttack, "Event.Combat.ParryAttack", "Succeeded to parry attack event");
 
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_Finisher, "Event.Combat.Finisher", "Finisher event to activate finisher ability with event data");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_Victim, "Event.Combat.Victim", "Victim event to activate die ability with event data");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Dead, "State.Dead", "Dead status");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Equip, "State.Equip", "Tags for equip statements, it exists for making query");
@@ -67,6 +70,8 @@ namespace WandererGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_AttackFailed, "ActionTag.AttackFailed", "Attack failed action");
 
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Pair_Finisher, "ActionTag.Pair.Finisher", "Finisher pair action");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_DrawWeapon, "ActionTag.DrawWeapon", "Draw weapon action");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_SheathWeapon, "ActionTag.SheathWeapon", "Sheath weapon action");
 	

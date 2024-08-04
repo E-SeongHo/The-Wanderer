@@ -7,7 +7,11 @@
 #include "WandererBaseCharacter.h"
 #include "Enemy/WandererEnemy.h"
 #include "WandererGameplayTags.h"
+#include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
+#include "AbilitySystem/Attributes/WandererHealthAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "Utility/WandererUtils.h"
 #include "Weapon/WandererWeapon.h"
 
 UWandererCombatComponent::UWandererCombatComponent()
@@ -39,6 +43,24 @@ void UWandererCombatComponent::AttachWeaponToSheathSocket() const
 {
 	check(Weapon);
 	Weapon->GetWeaponMesh()->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponConfig.SheathSocket);
+}
+
+bool UWandererCombatComponent::CanFinishTarget() const
+{
+	if(!IsTargetInAttackRange()) return false;
+
+	if(WandererUtils::EvaluateDirectionRelativeToActor(Owner.Get(), -CombatTarget->GetActorForwardVector()) != EDirection::Forward) return false;
+	
+	UE_LOG(LogTemp, Display, TEXT("%f left percentage"), (CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()));
+	return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());
+
+	
+	/*if((CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()) < 0.2f)
+	{
+		return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());
+	}
+
+	return false;*/
 }
 
 void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* InTarget)
@@ -124,9 +146,12 @@ void UWandererCombatComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// Rotates the actor itself to face the target
 	const FVector Forward = Owner->GetActorForwardVector();
 	const FVector ToTarget = (CombatTarget->GetActorLocation() - Owner->GetActorLocation()).GetSafeNormal2D();
-	if(FVector::DotProduct(Forward, ToTarget) < 0.999f)
+	if(!Owner->IsPlayingRootMotion())
 	{
-		Owner->SetActorRotation(FMath::RInterpTo(Forward.Rotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
+		if(FVector::DotProduct(Forward, ToTarget) < 0.999f)
+		{
+			Owner->SetActorRotation(FMath::RInterpTo(Forward.Rotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
+		}
 	}
 
 	// in order to rotate cameraboom (make sure this controlled by controller)

@@ -16,8 +16,12 @@ class THEWANDERERPROTO_API UWandererCombatAttributeSet : public UWandererAttribu
 
 public:
 	ATTRIBUTE_ACCESSORS(UWandererCombatAttributeSet, BaseDamage);
+	ATTRIBUTE_ACCESSORS(UWandererCombatAttributeSet, FinisherChance);
 
 private:
 	UPROPERTY(BlueprintReadOnly, Category = "Combat", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData BaseDamage;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Combat", Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData FinisherChance;
 };

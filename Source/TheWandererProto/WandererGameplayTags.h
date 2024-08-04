@@ -28,14 +28,14 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Roll);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Attack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Finisher);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Sprint);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_TargetLock);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_DrawWeapon);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Walk);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Die);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Hit);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Guard);
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Avoid);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Parry);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_AutoTarget);
 	
@@ -47,6 +47,9 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_Land);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParryAttack);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_Finisher);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_Victim);
 	
 	// States
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Dead);
@@ -78,6 +81,8 @@ namespace WandererGameplayTags
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_AttackFailed);
 
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Pair_Finisher);
+	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_DrawWeapon);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_SheathWeapon);
 	

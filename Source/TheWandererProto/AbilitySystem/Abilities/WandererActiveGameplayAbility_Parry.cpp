@@ -17,6 +17,7 @@ UWandererActiveGameplayAbility_Parry::UWandererActiveGameplayAbility_Parry()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
+	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Parry);
 	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Parry);
 
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);

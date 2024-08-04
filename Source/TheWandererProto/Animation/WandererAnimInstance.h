@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Animation/AnimInstance.h"
 #include "WandererAnimInstance.generated.h"
 
 struct FGameplayTag;
+class UWandererMontagePair;
 class UWandererAnimMontageConfig;
 class AWandererCharacter;
 class UCharacterMovementComponent;
@@ -25,6 +27,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UAnimMontage* GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const;
+
+	UFUNCTION(BlueprintCallable)
+	UWandererMontagePair* GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Montage)

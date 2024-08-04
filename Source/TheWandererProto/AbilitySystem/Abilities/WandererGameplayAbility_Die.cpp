@@ -7,6 +7,7 @@
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "Animation/WandererAnimMontageConfig.h"
 #include "Character/WandererBaseCharacter.h"
 
 UWandererGameplayAbility_Die::UWandererGameplayAbility_Die()
@@ -15,6 +16,11 @@ UWandererGameplayAbility_Die::UWandererGameplayAbility_Die()
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Die);
 	
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Dead);
+
+	FAbilityTriggerData TriggerData;
+	TriggerData.TriggerTag = WandererGameplayTags::Event_Combat_Victim;
+	TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
+	AbilityTriggers.Add(TriggerData);
 }
 
 void UWandererGameplayAbility_Die::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -22,10 +28,19 @@ void UWandererGameplayAbility_Die::ActivateAbility(const FGameplayAbilitySpecHan
 	ActorInfo->AbilitySystemComponent->CancelAbilities(nullptr, nullptr, this);
 	GetAbilitySystemComponentFromActorInfo()->AddLooseGameplayTag(WandererGameplayTags::State_Dead);
 
-	// Generate AbilityTask : Play Montage
-	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Die"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Die));
+	UAnimMontage* MontageToPlay = nullptr;
+	if(TriggerEventData)
+	{
+		MontageToPlay = Cast<UWandererMontagePair>(TriggerEventData->OptionalObject)->Data.VictimMontage;
+	}
+	else
+	{
+		MontageToPlay = GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Die);
+	}
+	
+	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Die"), MontageToPlay);
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
-	PlayMontageTask->ReadyForActivation();
+	PlayMontageTask->ReadyForActivation(); 
 	
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
 	if(Instigator)
@@ -41,5 +56,6 @@ void UWandererGameplayAbility_Die::EndAbility(const FGameplayAbilitySpecHandle H
 
 void UWandererGameplayAbility_Die::OnMontageCompleted()
 {
+	// TODO: Ragdoll
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

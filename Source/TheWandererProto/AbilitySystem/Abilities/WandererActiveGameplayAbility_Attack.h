@@ -52,8 +52,9 @@ private:
 	bool ShouldStopWeaponTrace();
 
 	EWandererAttackResult EvaluateAttackResult(AWandererBaseCharacter* Target);
-
+	
 	void PlayNewMontageForTag(const FGameplayTag& GameplayTag);
+
 	void SetComboAvailable(bool bIsAvailable);
 	bool IsComboAvailable() const;
 	
