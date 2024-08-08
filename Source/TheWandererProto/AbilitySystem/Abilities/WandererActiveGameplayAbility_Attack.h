@@ -61,7 +61,4 @@ private:
 private:
 	TObjectPtr<UAbilityTask_PlayMontageAndWait> CurrentPlayingMontageTask;
 	int32 ComboCount = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Blood, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UNiagaraSystem> BloodEffect;
 };

@@ -3,12 +3,19 @@
 
 #include "AbilitySystem/Abilities/Tasks/WandererAbilityTask_RepeatUntil.h"
 
+#include "AbilitySystemComponent.h"
+
 void UWandererAbilityTask_RepeatUntil::PerformAction()
 {
 	if(OnCycleEndConditionCheck.IsBound() && OnCycleEndConditionCheck.Execute())
 	{
 		EndTask();
 	}
+	if(RequiredTag.IsValid() && !AbilitySystemComponent->HasMatchingGameplayTag(RequiredTag))
+	{
+		EndTask();
+	}
+	
 	OnPerformAction.Broadcast();
 }
 
@@ -19,6 +26,11 @@ UWandererAbilityTask_RepeatUntil* UWandererAbilityTask_RepeatUntil::RepeatAction
 	MyObj->TimeBetweenActions = TimeBetweenActions;
 
 	return MyObj;
+}
+
+void UWandererAbilityTask_RepeatUntil::BindRequiredTag(const FGameplayTag& GameplayTag)
+{
+	RequiredTag = GameplayTag;
 }
 
 void UWandererAbilityTask_RepeatUntil::Activate()

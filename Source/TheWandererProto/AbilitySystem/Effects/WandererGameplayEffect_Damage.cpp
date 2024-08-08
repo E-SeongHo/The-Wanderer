@@ -25,4 +25,5 @@ UWandererGameplayEffect_Damage::UWandererGameplayEffect_Damage()
 	ModifierInfo.ModifierMagnitude = FGameplayEffectModifierMagnitude(CriticalDamage);
 
 	Modifiers.Add(ModifierInfo);
+	GameplayCues.Add(FGameplayEffectCue(WandererGameplayTags::GameplayCue_BloodSplatter, 0.0f, 0.0f));
 }

@@ -20,13 +20,14 @@ float UWandererCharacterMovementComponent::GetMaxSpeed() const
 	AWandererBaseCharacter* Owner = Cast<AWandererBaseCharacter>(GetOwner());
 	if(!Owner) return Super::GetMaxSpeed();
 
-	if(Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
-	{
-		return MaxWalkSpeed * 0.5f;
-	}
 	if(Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Parry))
 	{
 		return MaxWalkSpeed * 0.5f;
+	}
+	
+	if(Owner->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+	{
+		return MaxWalkSpeed * 0.65f;
 	}
 	
 	switch(UprightLocomotionMode)

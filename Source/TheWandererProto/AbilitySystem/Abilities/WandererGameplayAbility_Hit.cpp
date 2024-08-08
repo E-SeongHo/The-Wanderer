@@ -16,6 +16,7 @@ UWandererGameplayAbility_Hit::UWandererGameplayAbility_Hit()
 	bRetriggerInstancedAbility = true;
 	
 	AbilityTags.AddTag(WandererGameplayTags::Ability_Hit);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Dead);
 	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Hit);
 	
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Attack);
@@ -30,7 +31,6 @@ void UWandererGameplayAbility_Hit::ActivateAbility(const FGameplayAbilitySpecHan
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Hit React"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Hit));
 
-	// TODO: hack, maybe make function 'play montage and bind end ability to on completed and on canceled'
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Hit::OnMontageCompleted);
 	PlayMontageTask->OnCancelled.AddDynamic(this, &UWandererGameplayAbility_Hit::OnMontageCompleted);
 	

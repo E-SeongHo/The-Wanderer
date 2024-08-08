@@ -39,14 +39,14 @@ void UWandererGameplayAbility_Die::ActivateAbility(const FGameplayAbilitySpecHan
 	}
 	
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Die"), MontageToPlay);
-	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
+	PlayMontageTask->OnBlendOut.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
 	PlayMontageTask->ReadyForActivation(); 
 	
-	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
+	/*AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
 	if(Instigator)
 	{
 		Instigator->Die();
-	}
+	}*/
 }
 
 void UWandererGameplayAbility_Die::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -56,6 +56,11 @@ void UWandererGameplayAbility_Die::EndAbility(const FGameplayAbilitySpecHandle H
 
 void UWandererGameplayAbility_Die::OnMontageCompleted()
 {
-	// TODO: Ragdoll
+	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo());
+	if(Instigator)
+	{
+		Instigator->Die();
+	}
+	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

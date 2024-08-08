@@ -26,6 +26,12 @@ void AWandererBaseCharacter::Die()
 {
  	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement();
+ 	GetCharacterMovement()->GravityScale = 0;
+ 	GetCharacterMovement()->Velocity = FVector(0);
+ 	
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+ 	GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 void AWandererBaseCharacter::GrantStartupAbilities()

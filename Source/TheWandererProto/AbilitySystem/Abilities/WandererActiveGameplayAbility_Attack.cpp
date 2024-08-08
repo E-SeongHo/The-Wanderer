@@ -207,8 +207,6 @@ void UWandererActiveGameplayAbility_Attack::OnWeaponTrace()
 				ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SpecHandle, TargetHandle);
 				// ApplyGameplayEffectToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, TargetHandle, DamageEffect, GetAbilityLevel());
 
-				// 2. Blood Effect TODO: Gameplay Cue
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BloodEffect, HitResult.ImpactPoint);
 				break;	
 			}
 		case EWandererAttackResult::Block:
