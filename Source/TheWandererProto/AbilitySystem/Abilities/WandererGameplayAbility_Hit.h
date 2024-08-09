@@ -24,7 +24,4 @@ public:
 private:
 	UFUNCTION()
 	void OnMontageCompleted();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, meta = (AllowPrivateAccess = "true"))
-	TArray<TObjectPtr<USoundBase>> HitSounds;
 };

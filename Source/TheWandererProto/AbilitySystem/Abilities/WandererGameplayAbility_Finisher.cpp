@@ -70,7 +70,7 @@ void UWandererGameplayAbility_Finisher::StartSlowMotion()
 	AWandererBaseCharacter* Instigator = CastChecked<AWandererBaseCharacter>(GetAvatarActorFromActorInfo());
 	UGameplayStatics::SetGlobalTimeDilation(this, 0.3f);
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Instigator->GetCombatComponent()->GetWeapon()->GetTraceSound(), Instigator->GetCombatComponent()->GetWeapon()->GetActorLocation());
-
+	
 	if(WeaponTraceRepeatTask) check(!WeaponTraceRepeatTask->IsActive());
 	
 	WeaponTraceRepeatTask = UWandererAbilityTask_RepeatUntil::RepeatAction(this, 0.01f);

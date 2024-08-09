@@ -52,8 +52,11 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_Victim);
 
 	// GameplayCues
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_BloodSplatter);
-	
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Effect_BloodSplatter);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_Flesh);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_Parry);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_WeaponTrace);
+
 	// States
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Dead);
 	

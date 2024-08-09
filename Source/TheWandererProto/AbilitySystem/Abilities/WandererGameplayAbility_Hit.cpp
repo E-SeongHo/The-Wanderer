@@ -26,8 +26,6 @@ void UWandererGameplayAbility_Hit::ActivateAbility(const FGameplayAbilitySpecHan
 {
 	// Generate AbilityTask : Play Montage
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
-	
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSounds[FMath::RandRange(0, HitSounds.Num()-1)], Instigator->GetActorLocation());
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Hit React"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Hit));
 

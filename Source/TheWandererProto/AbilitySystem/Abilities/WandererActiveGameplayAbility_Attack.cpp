@@ -165,7 +165,7 @@ void UWandererActiveGameplayAbility_Attack::OnComboAvailable(FGameplayEventData 
 
 void UWandererActiveGameplayAbility_Attack::OnWeaponTraceStart(FGameplayEventData Payload)
 {
-	const AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
 	check(Instigator);
 	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
 	

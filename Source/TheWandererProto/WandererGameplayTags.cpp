@@ -42,7 +42,10 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_Finisher, "Event.Combat.Finisher", "Finisher event to activate finisher ability with event data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_Victim, "Event.Combat.Victim", "Victim event to activate die ability with event data");
 
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_BloodSplatter, "GameplayCue.BloodSplatter", "Blood splatter gameplay cue");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Effect_BloodSplatter, "GameplayCue.Effect.BloodSplatter", "Blood splatter gameplay cue");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_Flesh, "GameplayCue.Sound.Flesh", "Flesh sound gameplay cue");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_Parry, "GameplayCue.Sound.Parry", "Parry sound gameplay cue");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_WeaponTrace, "GameplayCue.Sound.WeaponTrace", "Sword trace sound gameplay cue");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Dead, "State.Dead", "Dead status");
 
