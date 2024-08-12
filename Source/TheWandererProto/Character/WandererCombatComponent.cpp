@@ -98,6 +98,7 @@ void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* InTarget)
 	}
 
 	CombatTarget = InTarget;
+	OnTargetChanged.Broadcast(CombatTarget);
 }
 
 void UWandererCombatComponent::StartCombat()

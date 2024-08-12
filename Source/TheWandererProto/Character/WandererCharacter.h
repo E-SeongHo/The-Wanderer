@@ -3,13 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "InputActionValue.h"
-#include "WandererBaseCharacter.h"
-#include "GameFramework/Character.h"
 #include "WandererBaseCharacter.h"
 
 #include "WandererCharacter.generated.h"
 
+class UWandererDynamicCameraComponent;
 class AWandererSword;
 class AWandererWeapon;
 class USpringArmComponent;
@@ -40,8 +38,11 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCameraComponent> CameraComponent;
-
+	
 	// Actor Components
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DynamicCamera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UWandererDynamicCameraComponent> DynamicCameraComponent;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionWarping, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UMotionWarpingComponent> MotionWarpComponent;
 

@@ -7,6 +7,7 @@
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 #include "Character/WandererBaseCharacter.h"
 #include "Character/WandererCombatComponent.h"
 
@@ -39,8 +40,9 @@ void UWandererActiveGameplayAbility_DrawWeapon::ActivateAbility(const FGameplayA
 	UAbilityTask_WaitGameplayEvent* WaitGrabInHand = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_DrawSword);
 	WaitGrabInHand->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::OnDraw);
 	WaitGrabInHand->ReadyForActivation();
-	
-	Instigator->GetCombatComponent()->OnCombatEnded.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility);
+
+	UAbilityTask_WaitGameplayTagRemoved* WaitCombatEnd = UAbilityTask_WaitGameplayTagRemoved::WaitGameplayTagRemove(this, WandererGameplayTags::State_Combat);
+	WaitCombatEnd->Removed.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility);
 }
 
 void UWandererActiveGameplayAbility_DrawWeapon::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
@@ -54,7 +56,6 @@ void UWandererActiveGameplayAbility_DrawWeapon::InputPressed(const FGameplayAbil
 void UWandererActiveGameplayAbility_DrawWeapon::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
-	Instigator->GetCombatComponent()->OnCombatEnded.RemoveDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility);
 
 	// If still in combat, sheathing the sword implies an intent to runaway
 	if(Instigator->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))

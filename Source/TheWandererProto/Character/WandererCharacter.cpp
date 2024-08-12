@@ -1,4 +1,4 @@
-;// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "WandererCharacter.h"
@@ -11,11 +11,10 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "MotionWarpingComponent.h"
 #include "WandererCombatComponent.h"
-#include "WandererGameplayTags.h"
-#include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "AbilitySystem/Abilities/WandererGameplayAbility.h"
 #include "Player/WandererPlayerState.h"
-#include "Weapon/WandererSword.h"
+#include "WandererDynamicCameraComponent.h"
+
 
 AWandererCharacter::AWandererCharacter()
 {
@@ -46,8 +45,11 @@ AWandererCharacter::AWandererCharacter()
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName); 
-	CameraComponent->bUsePawnControlRotation = false; 
+	CameraComponent->bUsePawnControlRotation = false;
 
+	DynamicCameraComponent = CreateDefaultSubobject<UWandererDynamicCameraComponent>(TEXT("DynamicCameraSystem"));
+	DynamicCameraComponent->SetupReferences(SpringArmComponent, CameraComponent);
+	
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
 	TrajectoryComponent = CreateDefaultSubobject<UCharacterTrajectoryComponent>(TEXT("Trajectory"));
 }

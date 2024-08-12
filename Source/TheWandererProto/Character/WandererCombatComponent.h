@@ -25,7 +25,9 @@ struct FWandererWeaponConfig
 };
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWandererCombat_Combat);
+DECLARE_MULTICAST_DELEGATE(FWandererCombat_Combat);
+DECLARE_MULTICAST_DELEGATE_OneParam(FWandererCombat_Target, AWandererBaseCharacter*);
+
 /**
  * 
  */
@@ -59,12 +61,11 @@ protected:
 	void EquipWeapon();
 	
 public:
-	// GA can add it's own logic with delegates
-	UPROPERTY()
 	FWandererCombat_Combat OnCombatStarted;
-
-	UPROPERTY()
+	
 	FWandererCombat_Combat OnCombatEnded;
+
+	FWandererCombat_Target OnTargetChanged;
 
 	// Hard lock (GA_TargetLock) needs it
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
