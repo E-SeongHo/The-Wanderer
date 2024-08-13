@@ -20,6 +20,10 @@ public:
 	bool CanRetrigger() const { return bRetriggerInstancedAbility; }
 	
 protected:
+	void AddLooseTagToOwner(const FGameplayTag& GameplayTag) const;
+	void RemoveLooseTagFromOwner(const FGameplayTag& GameplayTag) const;
+	bool DoesOwnerHaveTag(const FGameplayTag& GameplayTag) const;
+	
 	UAnimMontage* GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const;
 
 	UWandererMontagePair* GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const;

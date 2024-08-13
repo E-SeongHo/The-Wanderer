@@ -52,15 +52,14 @@ bool UWandererCombatComponent::CanFinishTarget() const
 	if(WandererUtils::EvaluateDirectionRelativeToActor(Owner.Get(), -CombatTarget->GetActorForwardVector()) != EDirection::Forward) return false;
 	
 	UE_LOG(LogTemp, Display, TEXT("%f left percentage"), (CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()));
-	return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());
-
+	//return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());
 	
-	/*if((CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()) < 0.2f)
+	if((CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()) < 0.2f)
 	{
 		return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());
 	}
 
-	return false;*/
+	return false;
 }
 
 void UWandererCombatComponent::SetCombatTarget(AWandererBaseCharacter* InTarget)

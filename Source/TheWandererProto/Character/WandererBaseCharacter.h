@@ -15,6 +15,8 @@ class UGameplayEffect;
 class UWandererHealthAttributeSet;
 class UWandererCombatAttributeSet;
 class UAIPerceptionStimuliSourceComponent;
+class UMotionWarpingComponent;
+class UCharacterTrajectoryComponent;
 
 UCLASS()
 class THEWANDERERPROTO_API AWandererBaseCharacter : public ACharacter, public IAbilitySystemInterface
@@ -29,6 +31,9 @@ public:
 	UWandererCombatComponent* GetCombatComponent() const {return CombatComponent.Get(); }
 	UWandererHealthAttributeSet* GetHealthAttributeSet() const { return HealthAttributeSet.Get(); }
 	UWandererCombatAttributeSet* GetCombatAttributeSet() const { return CombatAttributeSet.Get(); }
+
+	UMotionWarpingComponent* GetMotionWarpComponent() const { return MotionWarpComponent.Get(); }
+	UCharacterTrajectoryComponent* GetTrajectoryComponent() const { return TrajectoryComponent.Get(); }
 
 	virtual void Die();
 	
@@ -48,6 +53,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWandererCombatComponent> CombatComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionWarping, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UMotionWarpingComponent> MotionWarpComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Trajectory, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCharacterTrajectoryComponent> TrajectoryComponent;
+	
 	// Attribute Set
 	UPROPERTY(EditAnywhere, Category = "Attributes")
 	TSubclassOf<UGameplayEffect> DefaultAttributesInitter;

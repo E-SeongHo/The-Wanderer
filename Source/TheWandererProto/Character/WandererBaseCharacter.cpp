@@ -3,6 +3,8 @@
 
 #include "WandererBaseCharacter.h"
 #include "AbilitySystemComponent.h"
+#include "CharacterTrajectoryComponent.h"
+#include "MotionWarpingComponent.h"
 #include "WandererCharacterMovementComponent.h"
 #include "WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
@@ -20,6 +22,9 @@
 	StimuliComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSource Component");
 	StimuliComponent->RegisterForSense(TSubclassOf<UAISense_Sight>());
 	StimuliComponent->RegisterWithPerceptionSystem();
+
+ 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
+ 	TrajectoryComponent = CreateDefaultSubobject<UCharacterTrajectoryComponent>(TEXT("Trajectory"));
 }
 
 void AWandererBaseCharacter::Die()

@@ -13,10 +13,8 @@ class AWandererWeapon;
 class USpringArmComponent;
 class UCameraComponent;
 struct FInputActionValue;
-class UMotionWarpingComponent;
 class UInputMappingContext;
 class UInputAction;
-class UCharacterTrajectoryComponent;
 
 UCLASS(Blueprintable)
 class THEWANDERERPROTO_API AWandererCharacter : public AWandererBaseCharacter
@@ -28,9 +26,6 @@ public:
 
 	virtual void PossessedBy(AController* NewController) override;
 
-	UMotionWarpingComponent* GetMotionWarpComponent() const { return MotionWarpComponent.Get(); }
-	UCharacterTrajectoryComponent* GetTrajectoryComponent() const { return TrajectoryComponent.Get(); }
-	
 private:
 	// Scene Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -42,10 +37,4 @@ private:
 	// Actor Components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = DynamicCamera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWandererDynamicCameraComponent> DynamicCameraComponent;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionWarping, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UMotionWarpingComponent> MotionWarpComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Trajectory, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCharacterTrajectoryComponent> TrajectoryComponent;
 };

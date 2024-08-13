@@ -2,14 +2,11 @@
 
 
 #include "WandererCharacter.h"
-
 #include "AbilitySystemComponent.h"
-#include "CharacterTrajectoryComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "MotionWarpingComponent.h"
 #include "WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererGameplayAbility.h"
 #include "Player/WandererPlayerState.h"
@@ -49,9 +46,6 @@ AWandererCharacter::AWandererCharacter()
 
 	DynamicCameraComponent = CreateDefaultSubobject<UWandererDynamicCameraComponent>(TEXT("DynamicCameraSystem"));
 	DynamicCameraComponent->SetupReferences(SpringArmComponent, CameraComponent);
-	
-	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
-	TrajectoryComponent = CreateDefaultSubobject<UCharacterTrajectoryComponent>(TEXT("Trajectory"));
 }
 
 void AWandererCharacter::PossessedBy(AController* NewController)
