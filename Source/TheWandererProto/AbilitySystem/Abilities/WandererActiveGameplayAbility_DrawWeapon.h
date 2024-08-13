@@ -35,11 +35,7 @@ private:
 
 	UFUNCTION()
 	void OnSheathCompleted();
-	
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> DrawAnim;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Animation, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UAnimMontage> SheathAnim;
+	UFUNCTION()
+	void CreateWaitCombatEndTask();	
 };

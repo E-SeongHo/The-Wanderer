@@ -64,7 +64,8 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Attack_ComboAvailable, "State.Attack.ComboAvailable", "Combo available state while attack ability is working on");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Avoid, "State.Avoid", "Avoiding. not get damage");
-	
+
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_CanRecovery, "State.CanRecovery", "Can recovery while hitting");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Base, "Data.Damage.Base", "Base damage data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Critical, "Data.Damage.Critical", "Critical damage data");

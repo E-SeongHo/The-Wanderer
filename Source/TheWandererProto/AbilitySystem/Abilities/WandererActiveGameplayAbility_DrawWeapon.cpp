@@ -32,7 +32,7 @@ void UWandererActiveGameplayAbility_DrawWeapon::ActivateAbility(const FGameplayA
 {
 	// This ability is ended with sheath animation
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
-	UAbilitySystemComponent* ASC = Instigator->GetAbilitySystemComponent();
+	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
 	
 	UAbilityTask_PlayMontageAndWait* DrawSwordAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DrawSword"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_DrawWeapon));
 	DrawSwordAnimTask->ReadyForActivation();
@@ -41,8 +41,16 @@ void UWandererActiveGameplayAbility_DrawWeapon::ActivateAbility(const FGameplayA
 	WaitGrabInHand->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::OnDraw);
 	WaitGrabInHand->ReadyForActivation();
 
-	UAbilityTask_WaitGameplayTagRemoved* WaitCombatEnd = UAbilityTask_WaitGameplayTagRemoved::WaitGameplayTagRemove(this, WandererGameplayTags::State_Combat);
-	WaitCombatEnd->Removed.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility);
+	if(InstigatorASC->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+	{
+		CreateWaitCombatEndTask();
+	}
+	else
+	{
+		UAbilityTask_WaitGameplayTagAdded* WaitCombatStart = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, WandererGameplayTags::State_Combat);
+		WaitCombatStart->Added.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::CreateWaitCombatEndTask);
+		WaitCombatStart->ReadyForActivation();
+	}
 }
 
 void UWandererActiveGameplayAbility_DrawWeapon::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
@@ -69,6 +77,13 @@ void UWandererActiveGameplayAbility_DrawWeapon::EndAbility(const FGameplayAbilit
 void UWandererActiveGameplayAbility_DrawWeapon::OnSheathCompleted()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+}
+
+void UWandererActiveGameplayAbility_DrawWeapon::CreateWaitCombatEndTask()
+{
+	UAbilityTask_WaitGameplayTagRemoved* WaitCombatEnd = UAbilityTask_WaitGameplayTagRemoved::WaitGameplayTagRemove(this, WandererGameplayTags::State_Combat);
+	WaitCombatEnd->Removed.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility);
+	WaitCombatEnd->ReadyForActivation();
 }
 
 void UWandererActiveGameplayAbility_DrawWeapon::OnDraw(FGameplayEventData Payload)

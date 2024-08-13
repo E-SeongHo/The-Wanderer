@@ -9,6 +9,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
+#include "AbilitySystem/Abilities/WandererGameplayAbility.h"
 
 void AWandererPlayerController::BeginPlay()
 {
@@ -90,7 +91,7 @@ void AWandererPlayerController::Input_UnCrouch(const FInputActionValue& Value)
 
 void AWandererPlayerController::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Input Tag Pressed: %s"), *InputTag.ToString()));	
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Input Tag Pressed: %s"), *InputTag.ToString()));	
 
 	if (!InputTag.IsValid()) return;
 
@@ -105,7 +106,14 @@ void AWandererPlayerController::Input_AbilityInputTagPressed(FGameplayTag InputT
 			}
 			else
 			{
-				AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
+				if(Cast<UWandererGameplayAbility>(AbilitySpec.Ability)->CanRetrigger())
+				{
+					AbilitySystemComponent->TryActivateAbility(AbilitySpec.Handle);
+				}
+				else
+				{
+					AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
+				}
 			}
 		}
 	}

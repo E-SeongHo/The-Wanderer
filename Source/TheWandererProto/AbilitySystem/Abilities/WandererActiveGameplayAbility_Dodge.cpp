@@ -6,7 +6,6 @@
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Utility/WandererUtils.h"
 
@@ -19,24 +18,34 @@ UWandererActiveGameplayAbility_Dodge::UWandererActiveGameplayAbility_Dodge()
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
 	
-	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
+	//ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Avoid);
 	
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Attack);
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Parry);
+	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Hit);
+}
+
+bool UWandererActiveGameplayAbility_Dodge::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	const UAbilitySystemComponent* OwnerASC = ActorInfo->AbilitySystemComponent.Get();
+	if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::Ability_Hit))
+	{
+		return OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::State_CanRecovery);
+	}
+	
+	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
 }
 
 void UWandererActiveGameplayAbility_Dodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	const FVector Velocity = ActorInfo->AvatarActor->GetVelocity(); 
-	if(Velocity.Size2D() < 3.0f)
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
-	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("dodge")));	
+
+	const FVector MovementInput = Cast<APawn>(ActorInfo->AvatarActor)->GetLastMovementInputVector();
 
 	// Use actor's velocity as desired direction
 	UAnimMontage* MontageToPlay = nullptr;
-	switch(WandererUtils::EvaluateDirectionRelativeToActor(ActorInfo->AvatarActor.Get(), Velocity.GetSafeNormal2D()))
+	switch(WandererUtils::EvaluateDirectionRelativeToActor(ActorInfo->AvatarActor.Get(), MovementInput))
 	{
 	case EDirection::Forward:
 		MontageToPlay = GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Dodge_Front);

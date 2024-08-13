@@ -9,8 +9,6 @@
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
-#include "Abilities/Tasks/AbilityTask_WaitGameplayTagBase.h"
-#include "Abilities/Tasks/AbilityTask_WaitOverlap.h"
 #include "AbilitySystem/Effects/WandererGameplayEffect_Damage.h"
 #include "Animation/WandererAnimMontageConfig.h"
 #include "Character/WandererCharacter.h"
@@ -44,6 +42,8 @@ void UWandererGameplayAbility_Finisher::ActivateAbility(const FGameplayAbilitySp
 	
 	Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), WarpLocation, WarpDirection.Rotation());
 
+	// Note: This task is ensured to be completed without cancellation since this ability blocks the activation of all other abilities.
+	// For a better user experience, use anim notify and allow other abilities to be activated before this ability ends. 
 	UAnimMontage* MontageToPlay = Cast<UWandererMontagePair>(TriggerEventData->OptionalObject)->Data.InstigatorMontage;
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Finisher"), MontageToPlay);
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Finisher::CallEndAbility);

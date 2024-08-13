@@ -75,6 +75,8 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Attack_ComboAvailable);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Avoid);
+
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_CanRecovery);
 	
 	// Damages
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Base);

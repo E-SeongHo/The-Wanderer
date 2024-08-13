@@ -3,8 +3,13 @@
 
 #include "AbilitySystem/Abilities/WandererGameplayAbility.h"
 
+#include "WandererGameplayTags.h"
 #include "Animation/WandererAnimInstance.h"
-#include "Animation/WandererAnimMontageConfig.h"
+
+UWandererGameplayAbility::UWandererGameplayAbility()
+{
+	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Finisher);
+}
 
 UAnimMontage* UWandererGameplayAbility::GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const
 {

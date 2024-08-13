@@ -13,7 +13,12 @@ UCLASS()
 class THEWANDERERPROTO_API UWandererGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
-
+	
+public:
+	UWandererGameplayAbility();
+	
+	bool CanRetrigger() const { return bRetriggerInstancedAbility; }
+	
 protected:
 	UAnimMontage* GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const;
 

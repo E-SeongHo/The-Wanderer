@@ -16,7 +16,7 @@ class THEWANDERERPROTO_API UWandererGameplayAbility_Hit : public UWandererGamepl
 
 public:
 	UWandererGameplayAbility_Hit();
-
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
@@ -24,4 +24,7 @@ public:
 private:
 	UFUNCTION()
 	void OnMontageCompleted();
+
+	UFUNCTION()
+	void OnRecoveryAvailable(FGameplayEventData Payload);
 };
