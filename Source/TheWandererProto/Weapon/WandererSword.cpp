@@ -6,6 +6,7 @@
 #include "WandererGameplayTags.h"
 #include "Components/ArrowComponent.h"
 #include "Utility/WandererUtils.h"
+#include "Character/WandererBaseCharacter.h"
 
 AWandererSword::AWandererSword() 
 {
@@ -30,7 +31,9 @@ AWandererSword::AWandererSword()
 
 bool AWandererSword::Trace(FHitResult& OutHit)
 {
-	const bool bHit = WandererUtils::SphereTrace(OutHit, this, BladeStart->GetComponentLocation(), BladeEnd->GetComponentLocation(), 5.0f, ECC_GameTraceChannel1);
+	FCollisionQueryParams Param;
+	Param.AddIgnoredActor(WeaponOwner);
+	const bool bHit = WandererUtils::SphereTrace(OutHit, this, BladeStart->GetComponentLocation(), BladeEnd->GetComponentLocation(), 5.0f, ECC_GameTraceChannel1, Param);
 	
 	return bHit;
 }

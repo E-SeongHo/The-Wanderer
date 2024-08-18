@@ -9,9 +9,8 @@
 
 namespace WandererUtils
 {
-	bool SphereTrace(FHitResult& OutHit, const AActor* SrcActor, const FVector& Start, const FVector& End, const float TraceRadius, const ECollisionChannel TraceChannel)
+	bool SphereTrace(FHitResult& OutHit, const AActor* SrcActor, const FVector& Start, const FVector& End, const float TraceRadius, const ECollisionChannel TraceChannel, FCollisionQueryParams Param)
 	{
-		FCollisionQueryParams Param;
 		Param.AddIgnoredActor(SrcActor);
 
 		const bool bHit = SrcActor->GetWorld()->SweepSingleByChannel(OutHit, Start, End, FQuat::Identity, TraceChannel, FCollisionShape::MakeSphere(TraceRadius), Param);

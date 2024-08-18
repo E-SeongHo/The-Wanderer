@@ -16,7 +16,7 @@ enum class EDirection : uint8
 
 namespace WandererUtils
 {
-	bool SphereTrace(FHitResult& OutHit, const AActor* SrcActor, const FVector& Start, const FVector& End, const float TraceRadius, const ECollisionChannel TraceChannel = ECC_Visibility);
+	bool SphereTrace(FHitResult& OutHit, const AActor* SrcActor, const FVector& Start, const FVector& End, const float TraceRadius, const ECollisionChannel TraceChannel = ECC_Visibility, FCollisionQueryParams Param = FCollisionQueryParams());
 
 	TArray<AActor*> FindOverlappingActorsInViewRange(const TSubclassOf<AActor> Class, const ACharacter* SrcCharacter, const float ViewAngle, const float ViewDistance, const ECollisionChannel TraceChannel = ECC_Visibility);
 

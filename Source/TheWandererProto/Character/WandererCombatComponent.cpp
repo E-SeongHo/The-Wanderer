@@ -167,7 +167,7 @@ void UWandererCombatComponent::EquipWeapon()
 	{
 		Weapon = GetWorld()->SpawnActor<AWandererWeapon>(WeaponConfig.WeaponType, FVector::ZeroVector, FRotator::ZeroRotator);
 		Weapon->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponConfig.SheathSocket);
-		AbilitySystemComponent->AddLooseGameplayTag(Weapon->EquippedTag);	
+		Weapon->InitializeWithOwner(Owner.Get());
 	}
 }
 

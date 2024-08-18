@@ -7,6 +7,8 @@
 #include "GameFramework/Actor.h"
 #include "WandererWeapon.generated.h"
 
+class AWandererBaseCharacter;
+
 UCLASS()
 class THEWANDERERPROTO_API AWandererWeapon : public AActor
 {
@@ -16,6 +18,8 @@ public:
 	AWandererWeapon();
 	UStaticMeshComponent* GetWeaponMesh() const { return WeaponMesh.Get(); }
 
+	void InitializeWithOwner(AWandererBaseCharacter* InWeaponOwner);
+	
 	// TODO : Think about another options...
 	// 1) define class RangedWeapon
 	// 2) define interface Traceable
@@ -28,6 +32,9 @@ public:
 	FGameplayTag DrawnTag;
 	
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<AWandererBaseCharacter> WeaponOwner;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USceneComponent> Root;
 	
