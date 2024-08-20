@@ -8,9 +8,6 @@
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
 #include "AbilitySystem/Attributes/WandererHealthAttributeSet.h"
-#include "AI/WandererAIController.h"
-#include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -23,21 +20,11 @@ AWandererEnemy::AWandererEnemy()
 
 	GetCharacterMovement()->bUseControllerDesiredRotation = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->bRequestedMoveUseAcceleration = true;
 
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>("UI");
 	WidgetComponent->SetupAttachment(RootComponent);
 	WidgetComponent->SetVisibility(false);
-}
-
-void AWandererEnemy::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
-	
-	AWandererAIController* WandererAIController = Cast<AWandererAIController>(NewController);
-	check(WandererAIController);
-
-	WandererAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
-	WandererAIController->RunBehaviorTree(BehaviorTree);
 }
 
 void AWandererEnemy::Tick(float DeltaSeconds)

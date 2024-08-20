@@ -9,6 +9,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
+#include "WandererPlayerState.h"
 #include "AbilitySystem/Abilities/WandererGameplayAbility.h"
 
 void AWandererPlayerController::BeginPlay()
@@ -22,8 +23,6 @@ void AWandererPlayerController::BeginPlay()
 	{
 		Subsystem->AddMappingContext(WandererMappingContext, 0);
 	}
-
-	AbilitySystemComponent = Cast<AWandererCharacter>(GetPawn())->GetAbilitySystemComponent();
 }
 
 void AWandererPlayerController::SetupInputComponent()
@@ -94,25 +93,26 @@ void AWandererPlayerController::Input_AbilityInputTagPressed(FGameplayTag InputT
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Input Tag Pressed: %s"), *InputTag.ToString()));	
 
 	if (!InputTag.IsValid()) return;
-
-	for (FGameplayAbilitySpec& AbilitySpec : AbilitySystemComponent->GetActivatableAbilities())
+	check(GetAbilitySystemComponent());
+	
+	for (FGameplayAbilitySpec& AbilitySpec : GetAbilitySystemComponent()->GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
 			if (!AbilitySpec.IsActive())
 			{
-				AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
-				AbilitySystemComponent->TryActivateAbility(AbilitySpec.Handle);
+				GetAbilitySystemComponent()->AbilitySpecInputPressed(AbilitySpec);
+				GetAbilitySystemComponent()->TryActivateAbility(AbilitySpec.Handle);
 			}
 			else
 			{
 				if(Cast<UWandererGameplayAbility>(AbilitySpec.Ability)->CanRetrigger())
 				{
-					AbilitySystemComponent->TryActivateAbility(AbilitySpec.Handle);
+					GetAbilitySystemComponent()->TryActivateAbility(AbilitySpec.Handle);
 				}
 				else
 				{
-					AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
+					GetAbilitySystemComponent()->AbilitySpecInputPressed(AbilitySpec);
 				}
 			}
 		}
@@ -122,12 +122,13 @@ void AWandererPlayerController::Input_AbilityInputTagPressed(FGameplayTag InputT
 void AWandererPlayerController::Input_AbilityInputTagReleased(FGameplayTag InputTag)
 {
 	if (!InputTag.IsValid()) return;
+	check(GetAbilitySystemComponent());
 
-	for (FGameplayAbilitySpec& AbilitySpec : AbilitySystemComponent->GetActivatableAbilities())
+	for (FGameplayAbilitySpec& AbilitySpec : GetAbilitySystemComponent()->GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
-			AbilitySystemComponent->AbilitySpecInputReleased(AbilitySpec);
+			GetAbilitySystemComponent()->AbilitySpecInputReleased(AbilitySpec);
 		}
 	}
 }
@@ -135,8 +136,9 @@ void AWandererPlayerController::Input_AbilityInputTagReleased(FGameplayTag Input
 void AWandererPlayerController::Input_AbilityInputTagHeld(FGameplayTag InputTag)
 {
 	if (!InputTag.IsValid()) return;
-    	
-	for (FGameplayAbilitySpec& AbilitySpec : AbilitySystemComponent->GetActivatableAbilities())
+	check(GetAbilitySystemComponent());
+
+	for (FGameplayAbilitySpec& AbilitySpec : GetAbilitySystemComponent()->GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
@@ -145,3 +147,8 @@ void AWandererPlayerController::Input_AbilityInputTagHeld(FGameplayTag InputTag)
 	}
 }
 
+UAbilitySystemComponent* AWandererPlayerController::GetAbilitySystemComponent() const
+{
+	const AWandererPlayerState* WandererPS = GetPlayerState<AWandererPlayerState>();
+	return WandererPS ? WandererPS->GetAbilitySystemComponent() : nullptr;
+}

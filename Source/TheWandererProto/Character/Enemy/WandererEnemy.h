@@ -19,8 +19,7 @@ class THEWANDERERPROTO_API AWandererEnemy : public AWandererBaseCharacter
 
 public:
 	AWandererEnemy();
-
-	virtual void PossessedBy(AController* NewController) override;
+	
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void Die() override;
@@ -33,7 +32,4 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> WidgetComponent;
-
-	UPROPERTY(EditAnywhere, Category = AI, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UBehaviorTree> BehaviorTree;
 };

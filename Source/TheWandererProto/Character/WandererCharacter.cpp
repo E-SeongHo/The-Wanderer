@@ -34,7 +34,7 @@ AWandererCharacter::AWandererCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
-
+	
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	SpringArmComponent->SetupAttachment(RootComponent);
 	SpringArmComponent->TargetArmLength = 400.0f; 

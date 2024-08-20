@@ -6,6 +6,7 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "WandererBTService_StateManager.generated.h"
 
+enum class EWandererAIBehavior : uint8;
 /**
  * 
  */

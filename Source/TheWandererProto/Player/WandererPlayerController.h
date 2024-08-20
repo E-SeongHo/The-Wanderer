@@ -33,10 +33,9 @@ private:
 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);
 	void Input_AbilityInputTagReleased(FGameplayTag InputTag);
 	void Input_AbilityInputTagHeld(FGameplayTag InputTag);
-	
+
+	UAbilitySystemComponent* GetAbilitySystemComponent() const;
 private:
-	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-	
 	// Input
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> WandererMappingContext;

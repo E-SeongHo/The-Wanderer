@@ -10,6 +10,7 @@
 UWandererGameplayAbility::UWandererGameplayAbility()
 {
 	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Finisher);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Dead);
 }
 
 void UWandererGameplayAbility::AddLooseTagToOwner(const FGameplayTag& GameplayTag) const

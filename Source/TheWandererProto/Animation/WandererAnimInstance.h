@@ -30,7 +30,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UWandererMontagePair* GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const;
-	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Montage)
 	TObjectPtr<UWandererAnimMontageConfig> MontageConfig;	

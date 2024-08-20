@@ -20,7 +20,7 @@ void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	const AWandererCharacter* Character = Cast<AWandererCharacter>(GetOwningActor());
+	const AWandererBaseCharacter* Character = Cast<AWandererBaseCharacter>(GetOwningActor());
 	if (!Character) return;
 	const UAbilitySystemComponent* ASC = Character->GetAbilitySystemComponent();
 	if (!ASC) return;

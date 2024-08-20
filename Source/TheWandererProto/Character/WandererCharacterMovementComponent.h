@@ -13,6 +13,8 @@ enum class EWandererUprightMovement
 	Walk,
 	Sprint,
 };
+
+class USoundCue;
 /**
  * 
  */
@@ -32,6 +34,9 @@ public:
 	void StartWalking();
 	void StopWalking();
 
+	UFUNCTION(BlueprintCallable)
+	void OnFoleyMovementEvent();
+
 private:
 	void SetUprightLocomotionMode(const EWandererUprightMovement InMode);
  
@@ -40,4 +45,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Locomotion, meta = (AllowPrivateAccess = "true"))
 	EWandererUprightMovement DefaultUprightLocomotion = EWandererUprightMovement::Run;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = FoleySound, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USoundCue> FootStepSoundCue;
 };
