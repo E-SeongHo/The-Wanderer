@@ -30,50 +30,49 @@ void UWandererBTService_StateManager::TickNode(UBehaviorTreeComponent& OwnerComp
 	UWandererCombatComponent* CombatComponent = ControllingEnemy->GetCombatComponent();
 	
 	AWandererBaseCharacter* SightTarget = Cast<AWandererBaseCharacter>(Blackboard->GetValue<UBlackboardKeyType_Object>(AIController->BBSightTargetKey));
+	if(SightTarget)
+	{
+		if(SightTarget->GetDistanceTo(ControllingEnemy) <= CombatComponent->CombatAcceptanceRadius)
+		{
+			// GA_DrawWeapon activated by setting combat target if it wasn't in combat
+			CombatComponent->SetCombatTarget(SightTarget);
+
+			if(!SightTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+			{
+				SightTarget->GetCombatComponent()->StartCombat();
+			}
+		}
+	}
+	else
+	{
+		CombatComponent->SetCombatTarget(nullptr);
+	}
+	
 	EWandererAIBehavior Behavior = EWandererAIBehavior::Idle;
 	if(ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
 	{
-		if(SightTarget)
+		if(CombatComponent->GetCombatTarget())
 		{
-			check(CombatComponent->GetCombatTarget() && CombatComponent->GetCombatTarget() == SightTarget);
+			check(CombatComponent->GetCombatTarget() == SightTarget);
 			Blackboard->SetValue<UBlackboardKeyType_Vector>(AIController->BBCombatTargetLocationKey, CombatComponent->GetCombatTarget()->GetActorLocation());
 		}
-		else
-		{
-			CombatComponent->SetCombatTarget(nullptr);
-		}
 
-		if(CombatComponent->IsTargetInAttackRange()) // this also ensure target is set 
+		if(CombatComponent->IsTargetInAttackRange())
 		{
-			// maybe avoid or parry 
+			// TODO: maybe avoid or parry 
 			Behavior = EWandererAIBehavior::Attack;
 		}
 		else
 		{
+			// if lost combat target, and combat exit delaying is still activate, will approach to last seen location
+			// considering expand logic to recon somewhere?
 			Behavior = EWandererAIBehavior::Approach;
 		}
 	}
 	else
 	{
-		if(SightTarget)
-		{
-			check(!CombatComponent->GetCombatTarget());
-
-			if(SightTarget->GetDistanceTo(ControllingEnemy) <= CombatComponent->CombatAcceptanceRadius)
-			{
-				// GA_DrawWeapon activated itself by setting combat target
-				CombatComponent->SetCombatTarget(SightTarget);
-
-				if(!SightTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
-				{
-					SightTarget->GetCombatComponent()->StartCombat();
-				}
-				return;
-			}
-		}
-		
 		Behavior = EWandererAIBehavior::Patrol;
-	}
+	}	
 
 	Blackboard->SetValue<UBlackboardKeyType_Enum>(AIController->BBBehaviorTypeKey, static_cast<uint8>(Behavior));
 }
