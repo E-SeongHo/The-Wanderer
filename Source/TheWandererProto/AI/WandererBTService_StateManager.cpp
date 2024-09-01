@@ -6,6 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "WandererAIController.h"
 #include "WandererGameplayTags.h"
+#include "AbilitySystem/Abilities/WandererActiveGameplayAbility_Attack.h"
+#include "AbilitySystem/Abilities/WandererActiveGameplayAbility_Melee.h"
 #include "Character/Enemy/WandererEnemy.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
@@ -56,11 +58,30 @@ void UWandererBTService_StateManager::TickNode(UBehaviorTreeComponent& OwnerComp
 			check(CombatComponent->GetCombatTarget() == SightTarget);
 			Blackboard->SetValue<UBlackboardKeyType_Vector>(AIController->BBCombatTargetLocationKey, CombatComponent->GetCombatTarget()->GetActorLocation());
 		}
-
+		
 		if(CombatComponent->IsTargetInAttackRange())
 		{
-			// TODO: maybe avoid or parry 
-			Behavior = EWandererAIBehavior::Attack;
+			// TODO: maybe avoid or parry
+
+			const FGameplayAbilitySpec* AttackAbilitySpec = ASC->FindAbilitySpecFromClass(UWandererActiveGameplayAbility_Melee::StaticClass());
+			check(AttackAbilitySpec);
+			
+			const UWandererGameplayAbility* AttackAbility = CastChecked<UWandererGameplayAbility>(AttackAbilitySpec->GetPrimaryInstance());
+			if(!AttackAbility->IsActive())
+			{
+				Behavior = EWandererAIBehavior::Attack;
+			}
+			else
+			{
+				if(AttackAbility->CanRetrigger())
+				{
+					Behavior = EWandererAIBehavior::Attack;
+				}
+				else
+				{
+					Behavior = EWandererAIBehavior::Wait;
+				}
+			}
 		}
 		else
 		{

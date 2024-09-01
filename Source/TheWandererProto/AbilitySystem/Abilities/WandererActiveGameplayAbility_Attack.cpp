@@ -5,13 +5,10 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "MotionWarpingComponent.h"
 #include "WandererGameplayTags.h"
 #include "Character/WandererCharacter.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Character/WandererCombatComponent.h"
 #include "Tasks/WandererAbilityTask_SmoothRotate.h"
-#include "Utility/WandererUtils.h"
 
 UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 	: Super(WandererGameplayTags::InputTag_Attack)
@@ -58,7 +55,7 @@ void UWandererActiveGameplayAbility_Attack::PlayNewMontageForTag(const FGameplay
 		CurrentPlayingMontageTask->ExternalCancel();
 	}
 	
-	CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontage"), GetMatchingMontageForTag(CurrentActionTag));
+	CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontage"), GetMatchingMontageForTag(ActionTag));
 	CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
 	CurrentPlayingMontageTask->ReadyForActivation();
 }

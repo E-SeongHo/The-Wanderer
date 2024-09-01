@@ -114,15 +114,15 @@ void UWandererActiveGameplayAbility_AdvancedMelee::SoftLock()
 		if(CurrentActionTag == WandererGameplayTags::ActionTag_Attack_Counter_Left)
 		{
 			const FVector CombatTargetForwardRight = (CombatTarget->GetActorForwardVector() + CombatTarget->GetActorRightVector()).GetSafeNormal();
-			SideStepLocation = CombatTarget->GetActorLocation() + CombatTargetForwardRight * 150.0f;
+			SideStepLocation = CombatTarget->GetActorLocation() + CombatTargetForwardRight * 100.0f;
 		}
 		else
 		{
 			const FVector CombatTargetForwardLeft = (CombatTarget->GetActorForwardVector() + -CombatTarget->GetActorRightVector()).GetSafeNormal();
-			SideStepLocation = CombatTarget->GetActorLocation() + CombatTargetForwardLeft * 150.0f;
+			SideStepLocation = CombatTarget->GetActorLocation() + CombatTargetForwardLeft * 100.0f;
 		}
 
-		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocation(TEXT("SideStepTarget"), SideStepLocation);
+		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("SideStepTarget"), SideStepLocation, (-CombatTarget->GetActorForwardVector()).Rotation());
 	}
 
 	if(Instigator->GetCombatComponent()->IsTargetInDashRange() && CurrentActionTag == WandererGameplayTags::ActionTag_Attack_Dash)

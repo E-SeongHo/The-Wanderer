@@ -20,12 +20,13 @@ EBTNodeResult::Type UWandererBTTask_ActivateGameplayAbility::ExecuteTask(UBehavi
 	AWandererAIController* AIController = CastChecked<AWandererAIController>(OwnerComp.GetAIOwner());
 	UAbilitySystemComponent* ASC = AIController->GetControllingEnemy()->GetAbilitySystemComponent();
 
-	const bool bSuccess = ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(AbilityTag));
-	if(!bSuccess)
+	check(AbilityTag.IsValid());
+	if(ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(AbilityTag)))
 	{
-		AIController->GetBlackboardComponent()->SetValue<UBlackboardKeyType_Enum>(AIController->BBBehaviorTypeKey, static_cast<uint8>(EWandererAIBehavior::Wait));
-		return EBTNodeResult::Failed;
+		return EBTNodeResult::Succeeded;
 	}
-
-	return EBTNodeResult::Succeeded;
+	else
+	{
+		return EBTNodeResult::Failed;	
+	}
 }
