@@ -8,6 +8,7 @@
 #include "WandererCharacterMovementComponent.h"
 #include "WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
+#include "AbilitySystem/Cues/WandererGameplayCueSoundConfig.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
@@ -26,6 +27,11 @@
  	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
  	TrajectoryComponent = CreateDefaultSubobject<UCharacterTrajectoryComponent>(TEXT("Trajectory"));
 }
+
+ USoundBase* AWandererBaseCharacter::RequestSoundBaseForGameplayCue(const FGameplayTag& GameplayCueTag) const
+ {
+ 	return GameplayCueSoundConfig->FindSoundBaseForGameplayCueTag(GameplayCueTag);
+ }
 
 void AWandererBaseCharacter::Die()
 {

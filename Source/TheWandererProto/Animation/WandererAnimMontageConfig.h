@@ -7,7 +7,7 @@
 #include "Engine/DataAsset.h"
 #include "WandererAnimMontageConfig.generated.h"
 
-
+class UAnimMontage;
 // Struct used to centralize the retrieval of character's appropriate animation montage 
 // that is bound to a specific action
 USTRUCT(BlueprintType)
@@ -55,6 +55,9 @@ class THEWANDERERPROTO_API UWandererMontagePair : public UObject
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	FGameplayTag ActionTag;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	FWandererActionMontagePair Data;
 };

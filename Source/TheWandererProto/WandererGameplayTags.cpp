@@ -46,6 +46,9 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_Flesh, "GameplayCue.Sound.Flesh", "Flesh sound gameplay cue");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_Parry, "GameplayCue.Sound.Parry", "Parry sound gameplay cue");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_WeaponTrace, "GameplayCue.Sound.WeaponTrace", "Sword trace sound gameplay cue");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_Attack, "GameplayCue.Sound.Attack", "Attack sound gameplay cue");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_Hit, "GameplayCue.Sound.Hit", "Hit sound gameplay cue");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(GameplayCue_Sound_Die, "GameplayCue.Sound.Die", "Die sound gameplay cue");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Dead, "State.Dead", "Dead status");
 
@@ -70,13 +73,19 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Base, "Data.Damage.Base", "Base damage data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Critical, "Data.Damage.Critical", "Critical damage data");
 
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack, "ActionTag.Attack", "");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack, "ActionTag.Attack", "Attack action");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_RightLead, "ActionTag.Attack.RightLead", "Attack action from rightlead status");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_LeftLead, "ActionTag.Attack.LeftLead", "Attack action from leftlead status");
-
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_Counter, "ActionTag.Attack.Counter", "Counter attack action");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_Counter_Right, "ActionTag.Attack.Counter.Right", "Avoid to the right and counter");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_Counter_Left, "ActionTag.Attack.Counter.Left", "Avoid to the left and counter");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_Dash, "ActionTag.Attack.Dash", "Dash attack");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_AttackFailed, "ActionTag.AttackFailed", "Attack failed action");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Pair_Finisher, "ActionTag.Pair.Finisher", "Finisher pair action");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Pair_Finisher_Front, "ActionTag.Pair.Finisher.Front", "Finisher from forward direction pair action");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Pair_Finisher_Back, "ActionTag.Pair.Finisher.Back", "Finisher from backward direction(implies assasinate) pair action");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_DrawWeapon, "ActionTag.DrawWeapon", "Draw weapon action");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_SheathWeapon, "ActionTag.SheathWeapon", "Sheath weapon action");

@@ -13,8 +13,11 @@
 #include "Animation/WandererAnimMontageConfig.h"
 #include "Character/WandererCharacter.h"
 #include "Character/WandererCombatComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tasks/WandererAbilityTask_RepeatUntil.h"
+#include "Utility/WandererUtils.h"
 #include "Weapon/WandererSword.h"
 
 UWandererGameplayAbility_Finisher::UWandererGameplayAbility_Finisher()
@@ -37,14 +40,27 @@ void UWandererGameplayAbility_Finisher::ActivateAbility(const FGameplayAbilitySp
 	const AWandererBaseCharacter* Target = Instigator->GetCombatComponent()->GetCombatTarget();
 	check(Target);
 
-	const FVector WarpLocation = Target->GetActorLocation() + Target->GetActorForwardVector() * 150.0f;
-	const FVector WarpDirection = -Target->GetActorForwardVector();
+	const UWandererMontagePair* MontagePair = Cast<UWandererMontagePair>(TriggerEventData->OptionalObject);
+	if(MontagePair->ActionTag == WandererGameplayTags::ActionTag_Pair_Finisher_Back)
+	{
+		const FVector WarpLocation = Target->GetActorLocation() - Target->GetActorForwardVector() * 60.0f;
+		const FVector WarpDirection = Target->GetActorForwardVector();
 	
-	Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), WarpLocation, WarpDirection.Rotation());
-
+		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), WarpLocation, WarpDirection.Rotation());
+	}
+	else
+	{
+		const FVector WarpLocation = Target->GetActorLocation() + Target->GetActorForwardVector() * 150.0f;
+		const FVector WarpDirection = -Target->GetActorForwardVector();
+	
+		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), WarpLocation, WarpDirection.Rotation());
+	}
+	
+	Instigator->GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	
 	// Note: This task is ensured to be completed without cancellation since this ability blocks the activation of all other abilities.
 	// For a better user experience, use anim notify and allow other abilities to be activated before this ability ends. 
-	UAnimMontage* MontageToPlay = Cast<UWandererMontagePair>(TriggerEventData->OptionalObject)->Data.InstigatorMontage;
+	UAnimMontage* MontageToPlay = MontagePair->Data.InstigatorMontage;
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Finisher"), MontageToPlay);
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Finisher::CallEndAbility);
 	PlayMontageTask->ReadyForActivation();
@@ -113,6 +129,9 @@ void UWandererGameplayAbility_Finisher::CallEndAbility()
 {
 	UGameplayStatics::SetGlobalTimeDilation(this, 1.0f);
 
+	AWandererCharacter* Instigator = CastChecked<AWandererCharacter>(GetAvatarActorFromActorInfo());
+	Instigator->GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 

@@ -56,7 +56,10 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_Flesh);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_Parry);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_WeaponTrace);
-
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_Attack)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_Hit)
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(GameplayCue_Sound_Die)
+	
 	// States
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Dead);
 	
@@ -86,10 +89,16 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_RightLead);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_LeftLead);
-
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_Counter);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_Counter_Right);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_Counter_Left);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_Dash);
+	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_AttackFailed);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Pair_Finisher);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Pair_Finisher_Front);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Pair_Finisher_Back);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_DrawWeapon);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_SheathWeapon);

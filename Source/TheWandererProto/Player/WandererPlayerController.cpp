@@ -106,7 +106,10 @@ void AWandererPlayerController::Input_AbilityInputTagPressed(FGameplayTag InputT
 			}
 			else
 			{
-				if(Cast<UWandererGameplayAbility>(AbilitySpec.Ability)->CanRetrigger())
+				// Up until now, all abilities are set as instanced per actor.
+				// AbilitySpec.Ability always returns CDO!  
+				check(AbilitySpec.ActiveCount == 1);
+				if(Cast<UWandererGameplayAbility>(AbilitySpec.GetPrimaryInstance())->CanRetrigger())
 				{
 					GetAbilitySystemComponent()->TryActivateAbility(AbilitySpec.Handle);
 				}

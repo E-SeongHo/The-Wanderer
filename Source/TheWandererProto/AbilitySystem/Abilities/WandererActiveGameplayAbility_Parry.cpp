@@ -8,6 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEffectApplied.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Abilities/Tasks/AbilityTask_WaitInputPress.h"
 #include "Character/WandererCharacter.h"
 #include "Character/WandererCharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -17,7 +18,7 @@ UWandererActiveGameplayAbility_Parry::UWandererActiveGameplayAbility_Parry()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
-	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_Parry);
+	AbilityTags.AddTag(WandererGameplayTags::Ability_Parry);
 	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Parry);
 
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);

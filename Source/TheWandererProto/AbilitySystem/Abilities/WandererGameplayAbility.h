@@ -17,7 +17,7 @@ class THEWANDERERPROTO_API UWandererGameplayAbility : public UGameplayAbility
 public:
 	UWandererGameplayAbility();
 	
-	bool CanRetrigger() const { return bRetriggerInstancedAbility; }
+	virtual bool CanRetrigger() const { return bRetriggerInstancedAbility; }
 	
 protected:
 	void AddLooseTagToOwner(const FGameplayTag& GameplayTag) const;

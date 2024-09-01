@@ -19,6 +19,6 @@ public:
 	UWandererActiveGameplayAbility(FGameplayTag Tag) : InputTag(Tag) {}
 	
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Categories = "InputTag")) // Only shows tags under the "InputTag" category in the editor
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Categories = "InputTag"))
 	FGameplayTag InputTag;
 };

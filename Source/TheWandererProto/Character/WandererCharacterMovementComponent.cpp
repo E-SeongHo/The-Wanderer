@@ -69,7 +69,7 @@ void UWandererCharacterMovementComponent::OnFoleyMovementEvent()
 {
 	if(MovementMode != MOVE_Walking) return;
 
-	float Multiplier;
+	float Multiplier = 1.0f;
 	if(IsCrouching())
 	{
 		Multiplier = 0.3f;

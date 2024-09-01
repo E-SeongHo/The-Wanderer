@@ -29,8 +29,22 @@ void UWandererCombatComponent::AssignAbilitySystemComponent(UAbilitySystemCompon
 bool UWandererCombatComponent::IsTargetInAttackRange() const
 {
 	if(!CombatTarget) return false;
+	if(CombatTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Dead)) return false;
 	
 	return Owner->GetDistanceTo(CombatTarget) < AttackAvailableDistance;
+}
+
+bool UWandererCombatComponent::IsTargetInDashRange() const
+{
+	if(!CombatTarget) return false;
+	if(CombatTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Dead)) return false;
+	
+	return Owner->GetDistanceTo(CombatTarget) < DashAvailableDistance;
+}
+
+bool UWandererCombatComponent::CanDashTo(const AWandererBaseCharacter* DashTarget) const 
+{
+	return DashTarget ? Owner->GetDistanceTo(DashTarget) < DashAvailableDistance : false; 
 }
 
 void UWandererCombatComponent::AttachWeaponToDrawSocket() const
@@ -49,11 +63,12 @@ bool UWandererCombatComponent::CanFinishTarget() const
 {
 	if(!IsTargetInAttackRange()) return false;
 
-	if(WandererUtils::EvaluateDirectionRelativeToActor(Owner.Get(), -CombatTarget->GetActorForwardVector()) != EDirection::Forward) return false;
+	if(WandererUtils::EvaluateDirectionRelativeToActor(Owner.Get(), CombatTarget.Get()) == EDirection::Backward)
+	{
+		if(!CombatTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat)) return true;
+	}
 	
 	UE_LOG(LogTemp, Display, TEXT("%f left percentage"), (CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()));
-	//return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());
-	
 	if((CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()) < 0.2f)
 	{
 		return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());

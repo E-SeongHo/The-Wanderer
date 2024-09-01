@@ -11,19 +11,19 @@ enum class EWandererAttackResult : uint8
 {
 	Success,
 	Miss,
-	Block,
+	Blocked,
 };
 
 class AWandererBaseCharacter;
 class UAbilityTask_PlayMontageAndWait;
-class UNiagaraSystem;
 /**
  * 
  */
-UCLASS(Blueprintable)
+UCLASS(Abstract)
 class THEWANDERERPROTO_API UWandererActiveGameplayAbility_Attack : public UWandererActiveGameplayAbility
 {
 	GENERATED_BODY()
+	
 public:
 	UWandererActiveGameplayAbility_Attack();
 
@@ -31,34 +31,19 @@ public:
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
-
-private:
-	void SoftLock();
-	
+protected:
 	UFUNCTION()
 	void OnMontageCompleted();
 
-	UFUNCTION()
-	void OnComboAvailable(FGameplayEventData Payload);
+	virtual void DetermineAttackAction() PURE_VIRTUAL(UWandererActiveGameplayAbility_Attack::DetermineAttackAction);
 
-	UFUNCTION()
-	void OnWeaponTraceStart(FGameplayEventData Payload);
-
-	UFUNCTION()
-	void OnWeaponTrace();
-
-	UFUNCTION()
-	bool ShouldStopWeaponTrace();
+	virtual void SoftLock();
+	
+	void PlayNewMontageForTag(const FGameplayTag& ActionTag);
 
 	EWandererAttackResult EvaluateAttackResult(AWandererBaseCharacter* Target);
 	
-	void PlayNewMontageForTag(const FGameplayTag& GameplayTag);
-
-	void SetComboAvailable(bool bIsAvailable);
-	bool IsComboAvailable() const;
-	
-private:
-	TObjectPtr<UAbilityTask_PlayMontageAndWait> CurrentPlayingMontageTask;
-	int32 ComboCount = 0;
+protected:
+	TWeakObjectPtr<UAbilityTask_PlayMontageAndWait> CurrentPlayingMontageTask;
+	FGameplayTag CurrentActionTag;
 };

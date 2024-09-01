@@ -44,10 +44,12 @@ public:
 	AWandererWeapon* GetWeapon() const { return Weapon.Get(); }
 	AWandererBaseCharacter* GetCombatTarget() const { return CombatTarget.Get(); }
 	bool IsTargetInAttackRange() const;
-
+	bool IsTargetInDashRange() const;
+	
 	void AttachWeaponToDrawSocket() const;
 	void AttachWeaponToSheathSocket() const;
 
+	bool CanDashTo(const AWandererBaseCharacter* DashTarget) const;
 	bool CanFinishTarget() const;
 	
 	void SetCombatTarget(AWandererBaseCharacter* InTarget);
@@ -73,10 +75,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
 	float CombatAcceptanceRadius = 700.0f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))
-	float CombatExitDelay = 3.0f;
-	
+
 private:
 	// Set in BluePrint, it can be expanded to array ( can have multiple weapons )
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -89,8 +88,14 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true")) 
 	TObjectPtr<AWandererBaseCharacter> CombatTarget;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true")) 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true")) 
 	float AttackAvailableDistance = 300.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true")) 
+	float DashAvailableDistance = 500.0f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true"))
+	float CombatExitDelay = 3.0f;
 	
 	bool bIsInCombat = false;
 };

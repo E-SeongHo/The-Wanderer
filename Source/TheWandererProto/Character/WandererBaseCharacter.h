@@ -7,6 +7,7 @@
 #include "AbilitySystemInterface.h"
 #include "WandererBaseCharacter.generated.h"
 
+struct FGameplayTag;
 class UWandererCombatComponent;
 class UWandererGameplayAbility;
 class UWandererActiveGameplayAbility;
@@ -17,6 +18,7 @@ class UWandererCombatAttributeSet;
 class UAIPerceptionStimuliSourceComponent;
 class UMotionWarpingComponent;
 class UCharacterTrajectoryComponent;
+class UWandererGameplayCueSoundConfig;
 
 UCLASS()
 class THEWANDERERPROTO_API AWandererBaseCharacter : public ACharacter, public IAbilitySystemInterface
@@ -35,6 +37,7 @@ public:
 	UMotionWarpingComponent* GetMotionWarpComponent() const { return MotionWarpComponent.Get(); }
 	UCharacterTrajectoryComponent* GetTrajectoryComponent() const { return TrajectoryComponent.Get(); }
 
+	USoundBase* RequestSoundBaseForGameplayCue(const FGameplayTag& GameplayCueTag) const;
 	virtual void Die();
 	
 protected:
@@ -70,6 +73,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UWandererGameplayAbility>> StartupTriggeredAbilities;
 
+	// Sound
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UWandererGameplayCueSoundConfig> GameplayCueSoundConfig;
+	
 	// AI
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = AI, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UAIPerceptionStimuliSourceComponent> StimuliComponent;

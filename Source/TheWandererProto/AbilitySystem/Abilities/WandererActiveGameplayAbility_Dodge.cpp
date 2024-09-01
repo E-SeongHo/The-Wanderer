@@ -43,7 +43,6 @@ void UWandererActiveGameplayAbility_Dodge::ActivateAbility(const FGameplayAbilit
 
 	const FVector MovementInput = Cast<APawn>(ActorInfo->AvatarActor)->GetLastMovementInputVector();
 
-	// Use actor's velocity as desired direction
 	UAnimMontage* MontageToPlay = nullptr;
 	switch(WandererUtils::EvaluateDirectionRelativeToActor(ActorInfo->AvatarActor.Get(), MovementInput))
 	{

@@ -30,6 +30,7 @@ UWandererMontagePair* UWandererAnimMontageConfig::FindAnimMontagePairForTag(cons
 			// once the Data (AnimMontage) is referenced elsewhere, as the anim montage itself will remain alive.
 			UWandererMontagePair* MontagePairWrapper = NewObject<UWandererMontagePair>();
 			MontagePairWrapper->Data = MontagePairGroup.MontagePairs[FMath::RandRange(0, MontagePairGroup.MontagePairs.Num()-1)];
+			MontagePairWrapper->ActionTag = ActionTag;
 
 			return MontagePairWrapper;
 		}
