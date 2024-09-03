@@ -17,9 +17,9 @@ namespace WandererUtils
 	
 		const FColor TraceColor = bHit ? FColor::Green : FColor::Red;
 	
-		DrawDebugSphere(SrcActor->GetWorld(), Start, TraceRadius, 12, TraceColor, false, 1.0f);
+		/*DrawDebugSphere(SrcActor->GetWorld(), Start, TraceRadius, 12, TraceColor, false, 1.0f);
 		DrawDebugSphere(SrcActor->GetWorld(), End, TraceRadius, 12, TraceColor, false, 1.0f);
-		DrawDebugLine(SrcActor->GetWorld(), Start, End, TraceColor, false, 1.0f);
+		DrawDebugLine(SrcActor->GetWorld(), Start, End, TraceColor, false, 1.0f);*/
 
 		return bHit;
 	}
@@ -58,7 +58,7 @@ namespace WandererUtils
 		}
 
 		FColor Color = ActorsInViewRange.IsEmpty() ? FColor::Red : FColor::Green;
-		DrawDebugViewRange(SrcCharacter->GetWorld(), Location, Forward, HalfHeight*2.0f, ViewAngle, ViewDistance, Color);
+		//DrawDebugViewRange(SrcCharacter->GetWorld(), Location, Forward, HalfHeight*2.0f, ViewAngle, ViewDistance, Color);
 
 		return ActorsInViewRange;
 	}

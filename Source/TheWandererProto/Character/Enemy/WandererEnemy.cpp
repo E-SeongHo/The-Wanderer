@@ -11,6 +11,7 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/WandererEnemyInfoWidget.h"
 
 AWandererEnemy::AWandererEnemy()
 {
@@ -50,6 +51,11 @@ void AWandererEnemy::SetUIRender(bool bIsTargeted)
 	WidgetComponent->SetVisibility(bIsTargeted);
 }
 
+FName AWandererEnemy::GetName() const
+{
+	return Name;
+}
+
 void AWandererEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -64,4 +70,5 @@ void AWandererEnemy::BeginPlay()
 	AbilitySystemComponent->ApplyGameplayEffectToSelf(InitterGE, 1.0f, AbilitySystemComponent->MakeEffectContext());
 
 	CombatComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
+	CastChecked<UWandererEnemyInfoWidget>(WidgetComponent->GetUserWidgetObject())->AssignAbilitySystemComponent(AbilitySystemComponent);
 }

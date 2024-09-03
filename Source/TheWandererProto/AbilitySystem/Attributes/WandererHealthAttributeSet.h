@@ -49,7 +49,4 @@ private:
 	// Incoming damage amount
 	UPROPERTY(BlueprintReadOnly, Category = "Health", Meta = (AllowPrivateAccess = true))
 	FGameplayAttributeData Damage;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Effect", meta = (AllowPrivateAccess = true))
-	TSubclassOf<AActor> BloodNiagaraEffectGenerator;
 };

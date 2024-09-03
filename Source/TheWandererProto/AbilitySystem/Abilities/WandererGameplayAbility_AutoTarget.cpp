@@ -57,7 +57,7 @@ void UWandererGameplayAbility_AutoTarget::SearchTargetAvailable()
 	Params.AddIgnoredActor(Instigator);
 	TArray<FOverlapResult> OutResults;
 	GetWorld()->OverlapMultiByChannel(OutResults, Instigator->GetActorLocation(), FQuat::Identity, ECC_GameTraceChannel1, FCollisionShape::MakeSphere(Instigator->GetCombatComponent()->CombatAcceptanceRadius), Params);
-	DrawDebugSphere(GetWorld(), Instigator->GetActorLocation(), Instigator->GetCombatComponent()->CombatAcceptanceRadius, 30, FColor::Magenta, false, 5.0f);
+	//DrawDebugSphere(GetWorld(), Instigator->GetActorLocation(), Instigator->GetCombatComponent()->CombatAcceptanceRadius, 30, FColor::Magenta, false, 5.0f);
 	
 	// find nearest
 	AWandererBaseCharacter* NearestTarget = nullptr;

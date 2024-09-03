@@ -19,17 +19,22 @@ class THEWANDERERPROTO_API AWandererEnemy : public AWandererBaseCharacter
 
 public:
 	AWandererEnemy();
+
+	FName GetName() const;
 	
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void Die() override;
-	//virtual void OnDectectionLevelUpdated(const float DetectionLevel);
+
 	void SetUIRender(bool bIsTargeted);
 	
 protected:
 	virtual void BeginPlay() override;
 	
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
+	FName Name;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = UI, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UWidgetComponent> WidgetComponent;
 };

@@ -23,7 +23,7 @@ void UWandererHealthAttributeSet::PostGameplayEffectExecute(const FGameplayEffec
 		ProcessDamageEffect(Data);
 		SetDamage(0.0f);
 	}
-
+	
 	if (GetHealth() <= 0.0f && !bOutOfHealth)
 	{
 		// TODO : DIE 
