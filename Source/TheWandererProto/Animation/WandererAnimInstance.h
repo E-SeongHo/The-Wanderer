@@ -7,6 +7,7 @@
 #include "Animation/AnimInstance.h"
 #include "WandererAnimInstance.generated.h"
 
+class UPoseSearchDatabase;
 struct FGameplayTag;
 class UWandererMontagePair;
 class UWandererAnimMontageConfig;
@@ -30,6 +31,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UWandererMontagePair* GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const;
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Montage)
 	TObjectPtr<UWandererAnimMontageConfig> MontageConfig;	
@@ -39,6 +41,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCharacterTrajectoryComponent> TrajectoryComp;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
+	TObjectPtr<UPoseSearchDatabase> CombatPoseSearchDatabase;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
+	TObjectPtr<UPoseSearchDatabase> DefensedPoseSearchDatabase;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 	FVector Velocity;

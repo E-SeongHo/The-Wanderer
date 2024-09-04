@@ -12,7 +12,7 @@ public class TheWandererProto : ModuleRules
 			"Core", "CoreUObject", "Engine", "InputCore", "UMG", 
 			"HeadMountedDisplay", "EnhancedInput", "MotionWarping",
 			"GameplayAbilities", "GameplayTags", "GameplayTasks",
-			"MotionTrajectory", "Niagara", "AIModule"
+			"MotionTrajectory", "Niagara", "AIModule", "PoseSearch"
 		});
         
         PublicIncludePaths.AddRange(new string[] {

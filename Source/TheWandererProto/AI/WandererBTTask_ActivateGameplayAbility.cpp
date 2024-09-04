@@ -27,6 +27,6 @@ EBTNodeResult::Type UWandererBTTask_ActivateGameplayAbility::ExecuteTask(UBehavi
 	}
 	else
 	{
-		return EBTNodeResult::Failed;	
+		return EBTNodeResult::Failed;
 	}
 }

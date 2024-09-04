@@ -40,7 +40,6 @@ void UWandererHealthAttributeSet::ProcessDamageEffect(const FGameplayEffectModCa
 	if (bOutOfHealth) return;
 	
 	AActor* Instigator = CastChecked<IAbilitySystemInterface>(Data.EffectSpec.GetEffectContext().GetOriginalInstigator())->GetAbilitySystemComponent()->GetAvatarActor();
-	DrawDebugCircle(GetWorld(), Data.EffectSpec.GetEffectContext().GetHitResult()->Location, 10.0f, 30, FColor::Blue, true);
 
 	SetHealth(FMath::Clamp(GetHealth() - GetDamage(), 0.0f, GetMaxHealth()));
 	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Get Damaged %f, Current Health : %f"), GetDamage(), GetHealth()));

@@ -30,7 +30,8 @@ bool UWandererCombatComponent::IsTargetInAttackRange() const
 {
 	if(!CombatTarget) return false;
 	if(CombatTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Dead)) return false;
-	
+
+	UE_LOG(LogTemp, Display, TEXT("%f distanceo to attack"), Owner->GetDistanceTo(CombatTarget));
 	return Owner->GetDistanceTo(CombatTarget) < AttackAvailableDistance;
 }
 
@@ -68,7 +69,6 @@ bool UWandererCombatComponent::CanFinishTarget() const
 		if(!CombatTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat)) return true;
 	}
 	
-	UE_LOG(LogTemp, Display, TEXT("%f left percentage"), (CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()));
 	if((CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()) < 0.2f)
 	{
 		return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());
