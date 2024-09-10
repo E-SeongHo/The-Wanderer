@@ -11,11 +11,10 @@
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
 #include "AbilitySystem/Effects/WandererGameplayEffect_Damage.h"
 #include "Character/WandererBaseCharacter.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
+#include "Character/Component/WandererEquipmentComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tasks/WandererAbilityTask_RepeatUntil.h"
-#include "Tasks/WandererAbilityTask_SmoothRotate.h"
-#include "Utility/WandererUtils.h"
 #include "Weapon/WandererWeapon.h"
 
 UWandererActiveGameplayAbility_Melee::UWandererActiveGameplayAbility_Melee()
@@ -25,11 +24,15 @@ UWandererActiveGameplayAbility_Melee::UWandererActiveGameplayAbility_Melee()
 
 void UWandererActiveGameplayAbility_Melee::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	SetupComboData();
+	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Combo index : %d"), ComboIndex));
+	
 	UAbilityTask_WaitGameplayTagAdded* WaitWeaponTrace = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, WandererGameplayTags::State_Weapon_Trace);
 	WaitWeaponTrace->Added.AddDynamic(this, &UWandererActiveGameplayAbility_Melee::OnWeaponTraceStart);
 	WaitWeaponTrace->ReadyForActivation();
 
 	SetComboAvailable(false);
+	bHasComboSaved = false;
 	
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
@@ -48,7 +51,14 @@ void UWandererActiveGameplayAbility_Melee::EndAbility(const FGameplayAbilitySpec
 
 bool UWandererActiveGameplayAbility_Melee::CanRetrigger() const
 {
+	check(bRetriggerInstancedAbility);
 	return GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
+}
+
+void UWandererActiveGameplayAbility_Melee::SaveCurrentContext()
+{
+	IRetriggerable::SaveCurrentContext();
+	bHasComboSaved = true;
 }
 
 void UWandererActiveGameplayAbility_Melee::DetermineAttackAction()
@@ -85,9 +95,27 @@ void UWandererActiveGameplayAbility_Melee::SoftLock()
 	}
 }
 
+void UWandererActiveGameplayAbility_Melee::ProcessAttack()
+{
+	// if pre-designed combo data exist, follow combo sequence
+	if(ComboSequence.Num())
+	{
+		SoftLock();
+		
+		check(ComboIndex < ComboSequence.Num());
+		PlayNewMontageTask(ComboSequence[ComboIndex++]);
+	}
+	// else choose random motion based on the CurrentActionTag
+	else
+	{
+		Super::ProcessAttack();
+	}
+}
+
+
 void UWandererActiveGameplayAbility_Melee::OnWeaponTraceStart()
 {
-	const AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor)->GetCombatComponent()->GetWeapon();
+	const AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor)->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon();
 	
 	// since I didn't expand ASC to the weapon, just play the sound from the weapon
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Weapon->GetTraceSound(), Weapon->GetActorLocation());
@@ -107,7 +135,7 @@ void UWandererActiveGameplayAbility_Melee::OnWeaponTrace()
 	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
 	
 	FHitResult HitResult;
-	const bool bHit = Instigator->GetCombatComponent()->GetWeapon()->Trace(HitResult);
+	const bool bHit = Instigator->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon()->Trace(HitResult);
 	if(bHit)
 	{
 		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
@@ -136,7 +164,7 @@ void UWandererActiveGameplayAbility_Melee::OnWeaponTrace()
 				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Target, WandererGameplayTags::Event_Combat_ParryAttack, EventData);
 
 				// To myself
-				PlayNewMontageForTag(WandererGameplayTags::ActionTag_AttackFailed);
+				PlayNewMontageTask(GetMatchingMontageForTag(WandererGameplayTags::ActionTag_AttackFailed));
 				SetComboAvailable(false);
 				break;
 			}
@@ -164,5 +192,15 @@ void UWandererActiveGameplayAbility_Melee::SetComboAvailable(bool bIsAvailable)
 	else
 	{
 		GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
+	}
+}
+
+void UWandererActiveGameplayAbility_Melee::SetupComboData()
+{
+	// Get new pre-designed ComboSequence data if it exists
+	if(!bHasComboSaved || bHasComboSaved && ComboSequence.Num() == ComboIndex)
+	{
+		ComboSequence = GetMatchingComboMontageForTag(WandererGameplayTags::ActionTag_Attack);
+		ComboIndex = 0;
 	}
 }

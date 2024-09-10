@@ -5,7 +5,7 @@
 
 #include "WandererGameplayTags.h"
 #include "Character/WandererCharacter.h"
-#include "Character/WandererCharacterMovementComponent.h"
+#include "Character/Component/WandererCharacterMovementComponent.h"
 
 UWandererActiveGameplayAbility_Walk::UWandererActiveGameplayAbility_Walk()
 	:Super(WandererGameplayTags::InputTag_Walk)

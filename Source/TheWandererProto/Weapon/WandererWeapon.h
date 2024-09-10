@@ -4,42 +4,35 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "WandererEquipment.h"
 #include "GameFramework/Actor.h"
 #include "WandererWeapon.generated.h"
 
-class AWandererBaseCharacter;
+UENUM()
+enum class EWandererWeaponHandType
+{
+	OneHand,
+	TwoHand,
+};
 
-UCLASS()
-class THEWANDERERPROTO_API AWandererWeapon : public AActor
+UCLASS(Abstract)
+class THEWANDERERPROTO_API AWandererWeapon : public AWandererEquipment
 {
 	GENERATED_BODY()
 	
 public:	
 	AWandererWeapon();
-	UStaticMeshComponent* GetWeaponMesh() const { return WeaponMesh.Get(); }
 
-	void InitializeWithOwner(AWandererBaseCharacter* InWeaponOwner);
-	
-	// TODO : Think about another options...
-	// 1) define class RangedWeapon
-	// 2) define interface Traceable
-	// 3) Grant Ability to weapon  
-	virtual bool Trace(FHitResult& OutHit) { check(false); return false; }
+	virtual bool Trace(FHitResult& OutHit) PURE_VIRTUAL(AWandererWeapon::Trace, return false;);
 	USoundBase* GetTraceSound() const { return TraceSound.Get(); }
 
-public:
-	FGameplayTag EquippedTag;
-	FGameplayTag DrawnTag;
+	virtual void OnDraw() override;
+	virtual void OnSheath() override;
 	
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<AWandererBaseCharacter> WeaponOwner;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<USceneComponent> Root;
-	
-	TObjectPtr<UStaticMeshComponent> WeaponMesh;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Sound, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USoundBase> TraceSound;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
+	EWandererWeaponHandType HandType; 
 };

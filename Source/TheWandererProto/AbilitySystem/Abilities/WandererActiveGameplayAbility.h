@@ -16,7 +16,7 @@ class THEWANDERERPROTO_API UWandererActiveGameplayAbility : public UWandererGame
 	
 public:
 	UWandererActiveGameplayAbility() = default;
-	UWandererActiveGameplayAbility(FGameplayTag Tag) : InputTag(Tag) {}
+	UWandererActiveGameplayAbility(const FGameplayTag& Tag) : InputTag(Tag) {}
 	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Categories = "InputTag"))

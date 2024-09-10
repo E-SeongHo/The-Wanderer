@@ -81,6 +81,12 @@ void UWandererActiveGameplayAbility_Dodge::EndAbility(const FGameplayAbilitySpec
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
+bool UWandererActiveGameplayAbility_Dodge::CanRetrigger() const
+{
+	check(bRetriggerInstancedAbility);
+	return bRetriggerInstancedAbility;
+}
+
 void UWandererActiveGameplayAbility_Dodge::CallEndAbility()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);

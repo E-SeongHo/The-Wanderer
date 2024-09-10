@@ -4,10 +4,11 @@
 #include "WandererEnemy.h"
 
 #include "AbilitySystemComponent.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
 #include "AbilitySystem/Attributes/WandererHealthAttributeSet.h"
+#include "Character/Component/WandererEquipmentComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -74,5 +75,6 @@ void AWandererEnemy::BeginPlay()
 	AbilitySystemComponent->ApplyGameplayEffectToSelf(InitterGE, 1.0f, AbilitySystemComponent->MakeEffectContext());
 
 	CombatComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
+	EquipmentComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
 	CastChecked<UWandererEnemyInfoWidget>(WidgetComponent->GetUserWidgetObject())->AssignAbilitySystemComponent(AbilitySystemComponent);
 }

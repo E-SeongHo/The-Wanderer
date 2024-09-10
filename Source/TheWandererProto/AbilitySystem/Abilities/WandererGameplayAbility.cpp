@@ -33,6 +33,11 @@ UAnimMontage* UWandererGameplayAbility::GetMatchingMontageForTag(const FGameplay
 	return CastChecked<UWandererAnimInstance>(GetActorInfo().GetAnimInstance())->GetMatchingMontageForTag(GameplayTag);
 }
 
+TArray<UAnimMontage*> UWandererGameplayAbility::GetMatchingComboMontageForTag(const FGameplayTag& GameplayTag, const FGameplayTag& SpecificTag) const
+{
+	return CastChecked<UWandererAnimInstance>(GetActorInfo().GetAnimInstance())->GetMatchingComboMontageForTag(GameplayTag, SpecificTag);
+}
+
 UWandererMontagePair* UWandererGameplayAbility::GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const
 {
 	return CastChecked<UWandererAnimInstance>(GetActorInfo().GetAnimInstance())->GetMatchingMontagePairForTag(GameplayTag);

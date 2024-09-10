@@ -6,10 +6,8 @@
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
 #include "Character/WandererCharacter.h"
-#include "Character/WandererCharacterMovementComponent.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
 #include "Engine/OverlapResult.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Tasks/WandererAbilityTask_RepeatUntil.h"
 #include "Tasks/WandererAbilityTask_SmoothRotate.h"
 

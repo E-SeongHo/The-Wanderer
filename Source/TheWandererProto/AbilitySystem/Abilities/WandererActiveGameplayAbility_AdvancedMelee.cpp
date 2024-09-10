@@ -8,7 +8,7 @@
 #include "MotionWarpingComponent.h"
 #include "WandererGameplayTags.h"
 #include "Character/WandererCharacter.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
 #include "Utility/WandererUtils.h"
 #include "Animation/WandererAnimMontageConfig.h"
 

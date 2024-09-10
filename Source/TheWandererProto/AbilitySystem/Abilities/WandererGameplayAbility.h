@@ -17,14 +17,14 @@ class THEWANDERERPROTO_API UWandererGameplayAbility : public UGameplayAbility
 public:
 	UWandererGameplayAbility();
 	
-	virtual bool CanRetrigger() const { return bRetriggerInstancedAbility; }
-	
 protected:
 	void AddLooseTagToOwner(const FGameplayTag& GameplayTag) const;
 	void RemoveLooseTagFromOwner(const FGameplayTag& GameplayTag) const;
 	bool DoesOwnerHaveTag(const FGameplayTag& GameplayTag) const;
 	
 	UAnimMontage* GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const;
+
+	TArray<UAnimMontage*> GetMatchingComboMontageForTag(const FGameplayTag& GameplayTag, const FGameplayTag& SpecificTag = FGameplayTag()) const;
 
 	UWandererMontagePair* GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const;
 };

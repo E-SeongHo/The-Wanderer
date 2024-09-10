@@ -9,10 +9,8 @@ public class TheWandererProto : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { 
-			"Core", "CoreUObject", "Engine", "InputCore", "UMG", 
-			"HeadMountedDisplay", "EnhancedInput", "MotionWarping",
-			"GameplayAbilities", "GameplayTags", "GameplayTasks",
-			"MotionTrajectory", "Niagara", "AIModule", "PoseSearch"
+			"Core", "CoreUObject", "Engine", "InputCore", "UMG", "HeadMountedDisplay", "EnhancedInput", "MotionWarping",  "GameplayAbilities", "GameplayTags", "GameplayTasks",
+			"MotionTrajectory", "Niagara", "AIModule", "PoseSearch", "AnimGraphRuntime"
 		});
         
         PublicIncludePaths.AddRange(new string[] {

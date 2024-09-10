@@ -30,6 +30,9 @@ public:
 	UAnimMontage* GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const;
 
 	UFUNCTION(BlueprintCallable)
+	TArray<UAnimMontage*> GetMatchingComboMontageForTag(const FGameplayTag& GameplayTag, const FGameplayTag& SpecificTag = FGameplayTag()) const;
+	
+	UFUNCTION(BlueprintCallable)
 	UWandererMontagePair* GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const;
 	
 protected:
@@ -47,12 +50,21 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UPoseSearchDatabase> DefensedPoseSearchDatabase;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
+	bool bIsCombatPSDSet;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
+	bool bIsDefensedPSDSet;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 	FVector Velocity;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 	float GroundSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
+	float GroundDirection;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 	bool bShouldMove;

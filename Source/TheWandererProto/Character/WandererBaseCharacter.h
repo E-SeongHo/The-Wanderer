@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
+#include "Weapon/WandererEquipment.h"
 #include "WandererBaseCharacter.generated.h"
 
+class UWandererEquipmentComponent;
 struct FGameplayTag;
 class UWandererCombatComponent;
 class UWandererGameplayAbility;
@@ -19,6 +21,28 @@ class UAIPerceptionStimuliSourceComponent;
 class UMotionWarpingComponent;
 class UCharacterTrajectoryComponent;
 class UWandererGameplayCueSoundConfig;
+
+USTRUCT(BlueprintType)
+struct FWandererEquipmentSpawnConfig
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "AWandererEquipment"))
+	TSubclassOf<AWandererEquipment> EquipmentType;
+
+	// some can have DrawSocket, if it can be sheathed and drawn.
+	// probably r_hand
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName DrawSocket;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName EquipSocket;
+};
+
+struct FWandererEquipmentSocketMap
+{
+	
+};
 
 UCLASS()
 class THEWANDERERPROTO_API AWandererBaseCharacter : public ACharacter, public IAbilitySystemInterface
@@ -61,6 +85,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Trajectory, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCharacterTrajectoryComponent> TrajectoryComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UWandererEquipmentComponent> EquipmentComponent;
 	
 	// Attribute Set
 	UPROPERTY(EditAnywhere, Category = "Attributes")

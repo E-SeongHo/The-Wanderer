@@ -6,11 +6,9 @@
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Abilities/Tasks/AbilityTask_WaitGameplayEffectApplied.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
-#include "Abilities/Tasks/AbilityTask_WaitInputPress.h"
 #include "Character/WandererCharacter.h"
-#include "Character/WandererCharacterMovementComponent.h"
+#include "Character/Component/WandererCharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 UWandererActiveGameplayAbility_Parry::UWandererActiveGameplayAbility_Parry()
@@ -22,7 +20,7 @@ UWandererActiveGameplayAbility_Parry::UWandererActiveGameplayAbility_Parry()
 	ActivationOwnedTags.AddTag(WandererGameplayTags::State_Parry);
 
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
-	//ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
+	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
 
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Avoid);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
@@ -46,7 +44,7 @@ void UWandererActiveGameplayAbility_Parry::ActivateAbility(const FGameplayAbilit
 
 	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Parry Activate")));
 
-	UWandererCharacterMovementComponent* CharacterMovement = CastChecked<UWandererCharacterMovementComponent>(CastChecked<AWandererCharacter>(ActorInfo->AvatarActor)->GetCharacterMovement()); 
+	UWandererCharacterMovementComponent* CharacterMovement = CastChecked<UWandererCharacterMovementComponent>(CastChecked<AWandererBaseCharacter>(ActorInfo->AvatarActor)->GetCharacterMovement()); 
 	CharacterMovement->StartWalking();
 	
 	UAbilityTask_WaitGameplayEvent* WaitSomeoneAttack = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Combat_ParryAttack);
@@ -56,7 +54,7 @@ void UWandererActiveGameplayAbility_Parry::ActivateAbility(const FGameplayAbilit
 
 void UWandererActiveGameplayAbility_Parry::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	UWandererCharacterMovementComponent* CharacterMovement = CastChecked<UWandererCharacterMovementComponent>(CastChecked<AWandererCharacter>(ActorInfo->AvatarActor)->GetCharacterMovement()); 
+	UWandererCharacterMovementComponent* CharacterMovement = CastChecked<UWandererCharacterMovementComponent>(CastChecked<AWandererBaseCharacter>(ActorInfo->AvatarActor)->GetCharacterMovement()); 
 	CharacterMovement->StopWalking();
 	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

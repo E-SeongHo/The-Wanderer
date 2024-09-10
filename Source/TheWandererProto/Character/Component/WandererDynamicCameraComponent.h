@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/WandererActorComponent.h"
+#include "WandererActorComponent.h"
 #include "WandererDynamicCameraComponent.generated.h"
 
 class UWandererCombatComponent;

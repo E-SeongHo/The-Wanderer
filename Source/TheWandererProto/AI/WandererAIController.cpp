@@ -13,7 +13,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "Character/WandererCharacter.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
 #include "Character/Enemy/WandererEnemy.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Hearing.h"

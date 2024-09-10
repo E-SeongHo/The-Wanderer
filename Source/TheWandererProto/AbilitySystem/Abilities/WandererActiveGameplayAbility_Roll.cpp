@@ -78,6 +78,12 @@ void UWandererActiveGameplayAbility_Roll::EndAbility(const FGameplayAbilitySpecH
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
+bool UWandererActiveGameplayAbility_Roll::CanRetrigger() const
+{
+	check(bRetriggerInstancedAbility);
+	return bRetriggerInstancedAbility;
+}
+
 void UWandererActiveGameplayAbility_Roll::CallEndAbility()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);

@@ -9,19 +9,15 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 #include "Character/WandererBaseCharacter.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
 
 UWandererActiveGameplayAbility_DrawWeapon::UWandererActiveGameplayAbility_DrawWeapon()
-	: Super(WandererGameplayTags::InputTag_ToggleWeapon_Sword)
+	: Super(WandererGameplayTags::InputTag_ToggleWeapon_Primary)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
 	AbilityTags.AddTag(WandererGameplayTags::Ability_DrawWeapon);
-	// TODO: it temporarily indicates sword. would be an abstract base class for other weapons
-	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Equip_Sword);
-
-	// ActivationOwnedTags.AddTag(WandererGameplayTags::State_Draw_Sword);
-
+	
 	FAbilityTriggerData TriggerData;
 	TriggerData.TriggerTag = WandererGameplayTags::State_Combat;
 	TriggerData.TriggerSource = EGameplayAbilityTriggerSource::OwnedTagAdded; // Ending Ability needs sheathing
@@ -30,12 +26,22 @@ UWandererActiveGameplayAbility_DrawWeapon::UWandererActiveGameplayAbility_DrawWe
 
 void UWandererActiveGameplayAbility_DrawWeapon::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	// only primary weapon will be drawn when this ability is activated by starting combat 
+	if(TriggerEventData && TriggerEventData->EventTag == WandererGameplayTags::State_Combat)
+	{
+		if(InputTag != WandererGameplayTags::InputTag_ToggleWeapon_Primary)
+		{
+			EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+			return;
+		}
+	}
+	
 	// This ability is ended with sheath animation
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
 	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
 	
-	UAbilityTask_PlayMontageAndWait* DrawSwordAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DrawSword"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_DrawWeapon));
-	DrawSwordAnimTask->ReadyForActivation();
+	UAbilityTask_PlayMontageAndWait* DrawWeaponAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DrawWeapon"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_DrawWeapon));
+	DrawWeaponAnimTask->ReadyForActivation();
 
 	UAbilityTask_WaitGameplayEvent* WaitGrabInHand = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_DrawSword);
 	WaitGrabInHand->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::OnDraw);
@@ -89,9 +95,7 @@ void UWandererActiveGameplayAbility_DrawWeapon::CreateWaitCombatEndTask()
 void UWandererActiveGameplayAbility_DrawWeapon::OnDraw(FGameplayEventData Payload)
 {
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(GetActorInfo().AvatarActor);
-	Instigator->GetCombatComponent()->AttachWeaponToDrawSocket();
-	Instigator->GetAbilitySystemComponent()->AddLooseGameplayTag(WandererGameplayTags::State_Draw_Sword);
-	// TODO: infinite GE for Weapon's attributes
+	Instigator->FindComponentByClass<UWandererEquipmentComponent>()->GetEquipmentOnSlot(WeaponSlot)->OnDraw();
 }
 
 void UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility()
@@ -108,6 +112,5 @@ void UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility()
 void UWandererActiveGameplayAbility_DrawWeapon::OnSheath(FGameplayEventData Payload)
 {
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(GetActorInfo().AvatarActor);
-	Instigator->GetCombatComponent()->AttachWeaponToSheathSocket();
-	Instigator->GetAbilitySystemComponent()->RemoveLooseGameplayTag(WandererGameplayTags::State_Draw_Sword);
+	Instigator->FindComponentByClass<UWandererEquipmentComponent>()->GetEquipmentOnSlot(WeaponSlot)->OnSheath();
 }

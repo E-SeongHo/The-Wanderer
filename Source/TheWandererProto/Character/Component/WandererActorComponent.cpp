@@ -1,10 +1,10 @@
 //  
 
 
-#include "Character/WandererActorComponent.h"
+#include "WandererActorComponent.h"
 
 #include "AbilitySystemComponent.h"
-#include "WandererBaseCharacter.h"
+#include "Character/WandererBaseCharacter.h"
 
 UWandererActorComponent::UWandererActorComponent()
 {

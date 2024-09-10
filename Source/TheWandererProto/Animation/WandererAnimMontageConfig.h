@@ -23,6 +23,20 @@ struct FWandererActionMontageGroup
 };
 
 USTRUCT(BlueprintType)
+struct FWandererActionMontageSequenceGroup
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (Categories = "ActionTag")) 
+	FGameplayTag ActionTag;
+
+	// Can also have specific tag
+	// e.g) boss phase1, 2, ... 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<FWandererActionMontageGroup> MontageSequences;
+};
+
+USTRUCT(BlueprintType)
 struct FWandererActionMontagePair
 {
 	GENERATED_BODY()
@@ -75,8 +89,15 @@ public:
 	UWandererMontagePair* FindAnimMontagePairForTag(const FGameplayTag& ActionTag) const;
 	
 	bool HasExactMatchingActionMontage(const FGameplayTag& ActionTag) const;
+
+	bool HasComboDataSetForTag(const FGameplayTag& ActionTag) const;
+
+	TArray<UAnimMontage*> FindComboMontageForTag(const FGameplayTag& ActionTag, const FGameplayTag& SpecificActionTag = FGameplayTag()) const;
 	
 public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "ActionTag", Categories = "ActionTag"))
+	TArray<FWandererActionMontageSequenceGroup> ComboMontageGroups;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Meta = (TitleProperty = "ActionTag", Categories = "ActionTag"))
 	TArray<FWandererActionMontageGroup> MontageGroups;
 

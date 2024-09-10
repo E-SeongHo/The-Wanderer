@@ -4,7 +4,7 @@
 #include "WandererCharacterMovementComponent.h"
 
 #include "AbilitySystemComponent.h"
-#include "WandererBaseCharacter.h"
+#include "Character/WandererBaseCharacter.h"
 #include "WandererGameplayTags.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"

@@ -10,6 +10,9 @@ class AWandererSword;
 /**
  * 
  */
+
+
+
 UCLASS()
 class THEWANDERERPROTO_API AWandererEnemy_Melee : public AWandererEnemy
 {
@@ -17,9 +20,4 @@ class THEWANDERERPROTO_API AWandererEnemy_Melee : public AWandererEnemy
 
 public:
 	AWandererEnemy_Melee();
-
-private:
-	// Set in BluePrint
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<AWandererSword> SwordType;
 };

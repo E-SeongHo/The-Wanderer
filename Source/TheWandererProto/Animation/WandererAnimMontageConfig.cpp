@@ -51,3 +51,42 @@ bool UWandererAnimMontageConfig::HasExactMatchingActionMontage(const FGameplayTa
 
 	return false;
 }
+
+bool UWandererAnimMontageConfig::HasComboDataSetForTag(const FGameplayTag& ActionTag) const
+{
+	for(const FWandererActionMontageSequenceGroup& MontageSequenceGroup : ComboMontageGroups)
+	{
+		if(!MontageSequenceGroup.MontageSequences.IsEmpty() && MontageSequenceGroup.ActionTag.MatchesTagExact(ActionTag))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+TArray<UAnimMontage*> UWandererAnimMontageConfig::FindComboMontageForTag(const FGameplayTag& ActionTag, const FGameplayTag& SpecificActionTag) const
+{
+	for(const FWandererActionMontageSequenceGroup& MontageSequenceGroup : ComboMontageGroups)
+	{
+		if(!MontageSequenceGroup.MontageSequences.IsEmpty() && ActionTag.MatchesTag(MontageSequenceGroup.ActionTag)) 
+		{
+			if(SpecificActionTag.IsValid())
+			{
+				for(const FWandererActionMontageGroup& MontageSequence : MontageSequenceGroup.MontageSequences)
+				{
+					if(!MontageSequence.Montages.IsEmpty() && ActionTag.MatchesTag(MontageSequence.ActionTag))
+					{
+						return MontageSequence.Montages;
+					}
+				}
+			}
+			else
+			{
+				return MontageSequenceGroup.MontageSequences[FMath::RandRange(0, MontageSequenceGroup.MontageSequences.Num()-1)].Montages;
+			}
+		}
+	}
+
+	return TArray<UAnimMontage*>();
+}

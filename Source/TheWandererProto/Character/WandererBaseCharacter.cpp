@@ -5,20 +5,21 @@
 #include "AbilitySystemComponent.h"
 #include "CharacterTrajectoryComponent.h"
 #include "MotionWarpingComponent.h"
-#include "WandererCharacterMovementComponent.h"
-#include "WandererCombatComponent.h"
+#include "Component/WandererCharacterMovementComponent.h"
+#include "Component/WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "AbilitySystem/Cues/WandererGameplayCueSoundConfig.h"
+#include "Component/WandererEquipmentComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
-#include "Weapon/WandererWeapon.h"
 
  AWandererBaseCharacter::AWandererBaseCharacter(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer.SetDefaultSubobjectClass<UWandererCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	CombatComponent = CreateDefaultSubobject<UWandererCombatComponent>(TEXT("Combat Component"));
+ 	EquipmentComponent = CreateDefaultSubobject<UWandererEquipmentComponent>(TEXT("Equipment Component"));
 	
 	StimuliComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>("StimuliSource Component");
 	StimuliComponent->RegisterForSense(TSubclassOf<UAISense_Sight>());

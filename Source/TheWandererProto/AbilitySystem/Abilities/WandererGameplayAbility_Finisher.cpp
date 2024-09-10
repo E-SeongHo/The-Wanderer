@@ -12,12 +12,11 @@
 #include "AbilitySystem/Effects/WandererGameplayEffect_Damage.h"
 #include "Animation/WandererAnimMontageConfig.h"
 #include "Character/WandererCharacter.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
+#include "Character/Component/WandererEquipmentComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tasks/WandererAbilityTask_RepeatUntil.h"
-#include "Utility/WandererUtils.h"
 #include "Weapon/WandererSword.h"
 
 UWandererGameplayAbility_Finisher::UWandererGameplayAbility_Finisher()
@@ -83,9 +82,9 @@ void UWandererGameplayAbility_Finisher::ActivateAbility(const FGameplayAbilitySp
 
 void UWandererGameplayAbility_Finisher::StartSlowMotion()
 {
-	AWandererBaseCharacter* Instigator = CastChecked<AWandererBaseCharacter>(GetAvatarActorFromActorInfo());
+	AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon();
 	UGameplayStatics::SetGlobalTimeDilation(this, 0.3f);
-	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Instigator->GetCombatComponent()->GetWeapon()->GetTraceSound(), Instigator->GetCombatComponent()->GetWeapon()->GetActorLocation());
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Weapon->GetTraceSound(), Weapon->GetActorLocation());
 	
 	if(WeaponTraceRepeatTask) check(!WeaponTraceRepeatTask->IsActive());
 	
@@ -96,7 +95,7 @@ void UWandererGameplayAbility_Finisher::StartSlowMotion()
 
 void UWandererGameplayAbility_Finisher::OnWeaponTrace()
 {
-	AWandererWeapon* Weapon = (Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->GetCombatComponent()->GetWeapon());
+	AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon();
 	FHitResult HitResult;
 	const bool bHit = Weapon->Trace(HitResult);
 	if(bHit)

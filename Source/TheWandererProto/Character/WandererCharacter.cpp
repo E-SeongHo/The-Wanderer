@@ -7,10 +7,11 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "WandererCombatComponent.h"
+#include "Component/WandererCombatComponent.h"
 #include "AbilitySystem/Abilities/WandererGameplayAbility.h"
 #include "Player/WandererPlayerState.h"
-#include "WandererDynamicCameraComponent.h"
+#include "Component/WandererDynamicCameraComponent.h"
+#include "Component/WandererEquipmentComponent.h"
 
 
 AWandererCharacter::AWandererCharacter()
@@ -60,7 +61,9 @@ void AWandererCharacter::PossessedBy(AController* NewController)
 	AbilitySystemComponent = WandererPS->GetAbilitySystemComponent();
 	HealthAttributeSet = WandererPS->GetHealthAttributeSet();
 	CombatAttributeSet = WandererPS->GetCombatAttributeSet();
+	
 	CombatComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
+	EquipmentComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
 	
 	GrantStartupAbilities();
 

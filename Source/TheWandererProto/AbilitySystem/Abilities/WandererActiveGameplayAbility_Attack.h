@@ -37,9 +37,11 @@ protected:
 
 	virtual void DetermineAttackAction() PURE_VIRTUAL(UWandererActiveGameplayAbility_Attack::DetermineAttackAction);
 
+	virtual void ProcessAttack();
+	
 	virtual void SoftLock();
 	
-	void PlayNewMontageForTag(const FGameplayTag& ActionTag);
+	void PlayNewMontageTask(UAnimMontage* MontageToPlay);
 
 	EWandererAttackResult EvaluateAttackResult(AWandererBaseCharacter* Target);
 	

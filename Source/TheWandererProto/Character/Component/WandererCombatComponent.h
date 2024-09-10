@@ -3,27 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Character/WandererActorComponent.h"
+#include "WandererActorComponent.h"
 #include "WandererCombatComponent.generated.h"
 
 class AWandererBaseCharacter;
 class AWandererWeapon;
-
-USTRUCT(BlueprintType)
-struct FWandererWeaponConfig
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (Categories = "AWandererWeapon"))
-	TSubclassOf<AWandererWeapon> WeaponType;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName DrawSocket;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FName SheathSocket;
-};
-
 
 DECLARE_MULTICAST_DELEGATE(FWandererCombat_Combat);
 DECLARE_MULTICAST_DELEGATE_OneParam(FWandererCombat_Target, AWandererBaseCharacter*);
@@ -39,15 +23,10 @@ class THEWANDERERPROTO_API UWandererCombatComponent : public UWandererActorCompo
 public:
 	UWandererCombatComponent();
 
-	virtual void AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC) override;
-	
-	AWandererWeapon* GetWeapon() const { return Weapon.Get(); }
+	//AWandererWeapon* GetWeapon() const { return Weapon.Get(); }
 	AWandererBaseCharacter* GetCombatTarget() const { return CombatTarget.Get(); }
 	bool IsTargetInAttackRange() const;
 	bool IsTargetInDashRange() const;
-	
-	void AttachWeaponToDrawSocket() const;
-	void AttachWeaponToSheathSocket() const;
 
 	bool CanDashTo(const AWandererBaseCharacter* DashTarget) const;
 	bool CanFinishTarget() const;
@@ -58,9 +37,6 @@ public:
 	void Runaway();
 	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-protected:
-	void EquipWeapon();
 	
 public:
 	FWandererCombat_Combat OnCombatStarted;
@@ -77,14 +53,6 @@ public:
 	float CombatAcceptanceRadius = 700.0f;
 
 private:
-	// Set in BluePrint, it can be expanded to array ( can have multiple weapons )
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	FWandererWeaponConfig WeaponConfig;
-	
-	// Combat component owns weapon
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Weapon, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<AWandererWeapon> Weapon; 
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = (AllowPrivateAccess = "true")) 
 	TObjectPtr<AWandererBaseCharacter> CombatTarget;
 

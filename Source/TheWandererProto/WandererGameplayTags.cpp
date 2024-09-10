@@ -13,7 +13,8 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Attack, "InputTag.Attack", "Attack input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Parry, "InputTag.Parry", "Parry input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_TargetLock, "InputTag.TargetLock", "Target lock input");
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_ToggleWeapon_Sword, "InputTag.ToggleWeapon.Sword", "Toggle weapon : Sword.");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_ToggleWeapon_Primary, "InputTag.ToggleWeapon.Primary", "Toggle primary weapon");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_ToggleWeapon_Secondary, "InputTag.ToggleWeapon.Secondary", "Toggle secondary weapon");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Sprint, "InputTag.Sprint", "Sprint input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Walk, "InputTag.Walk", "Walk input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Dodge, "InputTag.Dodge", "Dodge input");
@@ -54,9 +55,12 @@ namespace WandererGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Equip, "State.Equip", "Tags for equip statements, it exists for making query");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Equip_Sword, "State.Equip.Sword", "Armed sword");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Equip_Shield, "State.Equip.Shield", "Armed Shield");
+
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Draw, "State.Draw", "Tags for drawn statements, it exists for making query");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Draw_Sword, "State.Draw.Sword", "Drawn sword");
-
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Draw_Shield, "State.Draw.Shield", "Drawn shield");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Trace, "State.Weapon.Trace", "Weapon tracing");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Stance_RightLead, "State.Stance.RightLead", "Right lead stance");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Parry, "State.Parry", "On parry");

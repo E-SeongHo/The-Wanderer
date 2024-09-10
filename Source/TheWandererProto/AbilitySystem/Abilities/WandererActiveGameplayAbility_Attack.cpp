@@ -29,8 +29,7 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 void UWandererActiveGameplayAbility_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	DetermineAttackAction();
-	
-	PlayNewMontageForTag(CurrentActionTag);
+	ProcessAttack();
 }
 
 void UWandererActiveGameplayAbility_Attack::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -38,24 +37,28 @@ void UWandererActiveGameplayAbility_Attack::EndAbility(const FGameplayAbilitySpe
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
+void UWandererActiveGameplayAbility_Attack::ProcessAttack()
+{
+	SoftLock();
+	PlayNewMontageTask(GetMatchingMontageForTag(CurrentActionTag));
+}
+
 void UWandererActiveGameplayAbility_Attack::SoftLock()
 {
 	// Attack orientation
 	const AWandererBaseCharacter* Instigator = CastChecked<AWandererBaseCharacter>(GetAvatarActorFromActorInfo());
 	UWandererAbilityTask_SmoothRotate* SmoothRotator = UWandererAbilityTask_SmoothRotate::SmoothRotate(this, Instigator->GetActorRotation(), Instigator->GetControlRotation());
-	SmoothRotator->ReadyForActivation();	
+	SmoothRotator->ReadyForActivation();
 }
 
-void UWandererActiveGameplayAbility_Attack::PlayNewMontageForTag(const FGameplayTag& ActionTag)
+void UWandererActiveGameplayAbility_Attack::PlayNewMontageTask(UAnimMontage* MontageToPlay)
 {
-	SoftLock();
-	
 	if(CurrentPlayingMontageTask.Get() && CurrentPlayingMontageTask->IsActive())
 	{
 		CurrentPlayingMontageTask->ExternalCancel();
 	}
 	
-	CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontage"), GetMatchingMontageForTag(ActionTag));
+	CurrentPlayingMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontage"), MontageToPlay);
 	CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Attack::OnMontageCompleted);
 	CurrentPlayingMontageTask->ReadyForActivation();
 }

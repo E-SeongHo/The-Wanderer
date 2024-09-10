@@ -1,29 +1,21 @@
 //  
 
 
-#include "Character/WandererCombatComponent.h"
+#include "WandererCombatComponent.h"
 
 #include "AbilitySystemComponent.h"
-#include "WandererBaseCharacter.h"
-#include "Enemy/WandererEnemy.h"
+#include "Character/WandererBaseCharacter.h"
+#include "Character/Enemy/WandererEnemy.h"
 #include "WandererGameplayTags.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
 #include "AbilitySystem/Attributes/WandererHealthAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Utility/WandererUtils.h"
-#include "Weapon/WandererWeapon.h"
 
 UWandererCombatComponent::UWandererCombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-}
-
-void UWandererCombatComponent::AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC)
-{
-	Super::AssignAbilitySystemComponent(OwnerASC);
-
-	EquipWeapon();
 }
 
 bool UWandererCombatComponent::IsTargetInAttackRange() const
@@ -31,7 +23,6 @@ bool UWandererCombatComponent::IsTargetInAttackRange() const
 	if(!CombatTarget) return false;
 	if(CombatTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Dead)) return false;
 
-	UE_LOG(LogTemp, Display, TEXT("%f distanceo to attack"), Owner->GetDistanceTo(CombatTarget));
 	return Owner->GetDistanceTo(CombatTarget) < AttackAvailableDistance;
 }
 
@@ -46,18 +37,6 @@ bool UWandererCombatComponent::IsTargetInDashRange() const
 bool UWandererCombatComponent::CanDashTo(const AWandererBaseCharacter* DashTarget) const 
 {
 	return DashTarget ? Owner->GetDistanceTo(DashTarget) < DashAvailableDistance : false; 
-}
-
-void UWandererCombatComponent::AttachWeaponToDrawSocket() const
-{
-	check(Weapon);
-	Weapon->GetWeaponMesh()->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponConfig.DrawSocket);
-}
-
-void UWandererCombatComponent::AttachWeaponToSheathSocket() const
-{
-	check(Weapon);
-	Weapon->GetWeaponMesh()->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponConfig.SheathSocket);
 }
 
 bool UWandererCombatComponent::CanFinishTarget() const
@@ -175,15 +154,3 @@ void UWandererCombatComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		Owner->GetController()->SetControlRotation(FMath::RInterpTo(Owner->GetControlRotation(), ToTarget.Rotation(), DeltaTime, 5.0f));
 	}
 }
-
-void UWandererCombatComponent::EquipWeapon()
-{
-	if(WeaponConfig.WeaponType)
-	{
-		Weapon = GetWorld()->SpawnActor<AWandererWeapon>(WeaponConfig.WeaponType, FVector::ZeroVector, FRotator::ZeroRotator);
-		Weapon->AttachToComponent(Owner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponConfig.SheathSocket);
-		Weapon->InitializeWithOwner(Owner.Get());
-	}
-}
-
-

@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
+#include "Character/Component/WandererEquipmentComponent.h"
 #include "WandererActiveGameplayAbility_DrawWeapon.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class THEWANDERERPROTO_API UWandererActiveGameplayAbility_DrawWeapon : public UWandererActiveGameplayAbility
 {
 	GENERATED_BODY()
@@ -37,5 +38,9 @@ private:
 	void OnSheathCompleted();
 
 	UFUNCTION()
-	void CreateWaitCombatEndTask();	
+	void CreateWaitCombatEndTask();
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	EWandererEquipmentSlot WeaponSlot = EWandererEquipmentSlot::PrimaryWeapon;
 };

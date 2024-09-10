@@ -13,7 +13,7 @@
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Object.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
 
 UWandererBTService_StateManager::UWandererBTService_StateManager()
 {
@@ -66,15 +66,17 @@ void UWandererBTService_StateManager::TickNode(UBehaviorTreeComponent& OwnerComp
 			const FGameplayAbilitySpec* AttackAbilitySpec = ASC->FindAbilitySpecFromClass(UWandererActiveGameplayAbility_Melee::StaticClass());
 			check(AttackAbilitySpec);
 			
-			const UWandererGameplayAbility* AttackAbility = CastChecked<UWandererGameplayAbility>(AttackAbilitySpec->GetPrimaryInstance());
+			UWandererGameplayAbility* AttackAbility = CastChecked<UWandererGameplayAbility>(AttackAbilitySpec->GetPrimaryInstance());
 			if(!AttackAbility->IsActive())
 			{
 				Behavior = EWandererAIBehavior::Attack;
 			}
 			else
 			{
-				if(AttackAbility->CanRetrigger())
+				IRetriggerable* RetriggerInterface = CastChecked<IRetriggerable>(AttackAbility);
+				if(RetriggerInterface->CanRetrigger())
 				{
+					RetriggerInterface->SaveCurrentContext();
 					Behavior = EWandererAIBehavior::Attack;
 				}
 				else

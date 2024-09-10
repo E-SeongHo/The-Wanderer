@@ -1,9 +1,9 @@
 //  
 
 
-#include "Character/WandererDynamicCameraComponent.h"
+#include "WandererDynamicCameraComponent.h"
 
-#include "WandererBaseCharacter.h"
+#include "Character/WandererBaseCharacter.h"
 #include "WandererCombatComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"

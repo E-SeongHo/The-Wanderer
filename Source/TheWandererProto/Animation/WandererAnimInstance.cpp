@@ -3,6 +3,7 @@
 #include "WandererAnimInstance.h"
 
 #include "AbilitySystemComponent.h"
+#include "KismetAnimationLibrary.h"
 #include "WandererAnimMontageConfig.h"
 #include "WandererGameplayTags.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -14,6 +15,9 @@
 void UWandererAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
+
+	bIsCombatPSDSet = CombatPoseSearchDatabase != nullptr;
+	bIsDefensedPSDSet = DefensedPoseSearchDatabase != nullptr;
 }
 
 void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -26,9 +30,9 @@ void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (!ASC) return;
 	
 	MovementComp = Character->GetCharacterMovement();
-		
 	Velocity = MovementComp->Velocity;
 	GroundSpeed = Velocity.Size2D();
+	GroundDirection = UKismetAnimationLibrary::CalculateDirection(Velocity, Character->GetActorRotation());
 
 	bShouldMove = GroundSpeed >= 3.0f && MovementComp->GetCurrentAcceleration().Length();
 	bIsFalling = MovementComp->IsFalling();
@@ -44,6 +48,12 @@ UAnimMontage* UWandererAnimInstance::GetMatchingMontageForTag(const FGameplayTag
 	check(MontageConfig);
 	// check(MontageConfig->HasExactMatchingActionMontage(GameplayTag));	
 	return MontageConfig->FindAnimMontageForTag(GameplayTag);
+}
+
+TArray<UAnimMontage*> UWandererAnimInstance::GetMatchingComboMontageForTag(const FGameplayTag& GameplayTag, const FGameplayTag& SpecificTag) const
+{
+	check(MontageConfig);
+	return MontageConfig->FindComboMontageForTag(GameplayTag, SpecificTag);	
 }
 
 UWandererMontagePair* UWandererAnimInstance::GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const

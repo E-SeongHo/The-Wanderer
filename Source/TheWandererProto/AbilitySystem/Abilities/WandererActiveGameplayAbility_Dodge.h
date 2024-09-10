@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "IRetriggerable.h"
 #include "AbilitySystem/Abilities/WandererActiveGameplayAbility.h"
 #include "WandererActiveGameplayAbility_Dodge.generated.h"
 
@@ -10,7 +11,7 @@
  * 
  */
 UCLASS()
-class THEWANDERERPROTO_API UWandererActiveGameplayAbility_Dodge : public UWandererActiveGameplayAbility
+class THEWANDERERPROTO_API UWandererActiveGameplayAbility_Dodge : public UWandererActiveGameplayAbility, public IRetriggerable
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,8 @@ public:
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
+	virtual bool CanRetrigger() const override;
+	
 private:
 	UFUNCTION()
 	void CallEndAbility();	

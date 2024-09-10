@@ -3,30 +3,35 @@
 
 #include "Weapon/WandererWeapon.h"
 
-#include "AbilitySystemComponent.h"
 #include "Character/WandererBaseCharacter.h"
+#include "Character/Component/WandererEquipmentComponent.h"
 
-// Sets default values
 AWandererWeapon::AWandererWeapon()
 {
-	PrimaryActorTick.bCanEverTick = true;
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = Root;
-	
-	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
-	WeaponMesh->SetupAttachment(RootComponent);
-
-	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void AWandererWeapon::InitializeWithOwner(AWandererBaseCharacter* InWeaponOwner)
+void AWandererWeapon::OnDraw()
 {
-	check(!WeaponOwner);
-    
-	WeaponOwner = InWeaponOwner;
-	WeaponOwner->GetAbilitySystemComponent()->AddLooseGameplayTag(EquippedTag);
+	Super::OnDraw();
+	if(HandType == EWandererWeaponHandType::OneHand)
+	{
+		AWandererEquipment* MergableShield = EquipmentOwner->FindComponentByClass<UWandererEquipmentComponent>()->GetEquipmentOnSlot(EWandererEquipmentSlot::Shield);
+		if(MergableShield)
+		{
+			MergableShield->OnDraw();
+		}
+	}
 }
 
-
-
-
+void AWandererWeapon::OnSheath()
+{
+	Super::OnSheath();
+	if(HandType == EWandererWeaponHandType::OneHand)
+	{
+		AWandererEquipment* MergableShield = EquipmentOwner->FindComponentByClass<UWandererEquipmentComponent>()->GetEquipmentOnSlot(EWandererEquipmentSlot::Shield);
+		if(MergableShield)
+		{
+			MergableShield->OnSheath();
+		}
+	}
+}

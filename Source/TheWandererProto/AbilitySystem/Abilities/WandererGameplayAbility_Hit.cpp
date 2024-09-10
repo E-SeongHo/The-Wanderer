@@ -8,7 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Character/WandererBaseCharacter.h"
-#include "Character/WandererCombatComponent.h"
+#include "Character/Component/WandererCombatComponent.h"
 
 UWandererGameplayAbility_Hit::UWandererGameplayAbility_Hit()
 {
@@ -46,6 +46,12 @@ void UWandererGameplayAbility_Hit::EndAbility(const FGameplayAbilitySpecHandle H
 	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(WandererGameplayTags::State_CanRecovery);
 	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
+bool UWandererGameplayAbility_Hit::CanRetrigger() const
+{
+	check(bRetriggerInstancedAbility);
+	return bRetriggerInstancedAbility;
 }
 
 void UWandererGameplayAbility_Hit::OnMontageCompleted()
