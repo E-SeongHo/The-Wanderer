@@ -32,9 +32,6 @@ public:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 protected:
-	UFUNCTION()
-	void OnMontageCompleted();
-
 	virtual void DetermineAttackAction() PURE_VIRTUAL(UWandererActiveGameplayAbility_Attack::DetermineAttackAction);
 
 	virtual void ProcessAttack();
@@ -42,6 +39,9 @@ protected:
 	virtual void SoftLock();
 	
 	void PlayNewMontageTask(UAnimMontage* MontageToPlay);
+
+	UFUNCTION()
+	void OnMontageCompleted();
 
 	EWandererAttackResult EvaluateAttackResult(AWandererBaseCharacter* Target);
 	

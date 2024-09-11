@@ -3,7 +3,9 @@
 
 #include "AI/WandererBTDecorator_CanAttack.h"
 
+#include "AbilitySystemComponent.h"
 #include "AIController.h"
+#include "AbilitySystem/Abilities/WandererActiveGameplayAbility_Melee.h"
 #include "Character/Component/WandererCombatComponent.h"
 #include "Character/Enemy/WandererEnemy.h"
 
@@ -11,9 +13,13 @@ bool UWandererBTDecorator_CanAttack::CalculateRawConditionValue(UBehaviorTreeCom
 {
 	check(OwnerComp.GetAIOwner());
 	
-	AWandererEnemy* ControllingEnemy = Cast<AWandererEnemy>(OwnerComp.GetAIOwner()->GetPawn());
-	
+	const AWandererEnemy* ControllingEnemy = Cast<AWandererEnemy>(OwnerComp.GetAIOwner()->GetPawn());
 	check(ControllingEnemy);
-
-	return ControllingEnemy->GetCombatComponent()->IsTargetInAttackRange();
+	
+	if(ControllingEnemy->GetCombatComponent()->IsTargetInAttackRange())
+	{
+		return true;
+	}
+	
+	return true;
 }

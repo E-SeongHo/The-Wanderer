@@ -6,8 +6,6 @@
 #include "AbilitySystemComponent.h"
 #include "WandererAIController.h"
 #include "WandererGameplayTags.h"
-#include "AbilitySystem/Abilities/WandererActiveGameplayAbility_Attack.h"
-#include "AbilitySystem/Abilities/WandererActiveGameplayAbility_Melee.h"
 #include "Character/Enemy/WandererEnemy.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Enum.h"
@@ -24,6 +22,8 @@ UWandererBTService_StateManager::UWandererBTService_StateManager()
 void UWandererBTService_StateManager::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("State AI")));
 
 	AWandererAIController* AIController = Cast<AWandererAIController>(OwnerComp.GetAIOwner());
 	UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent();
@@ -62,32 +62,11 @@ void UWandererBTService_StateManager::TickNode(UBehaviorTreeComponent& OwnerComp
 		if(CombatComponent->IsTargetInAttackRange())
 		{
 			// TODO: maybe avoid or parry
-
-			const FGameplayAbilitySpec* AttackAbilitySpec = ASC->FindAbilitySpecFromClass(UWandererActiveGameplayAbility_Melee::StaticClass());
-			check(AttackAbilitySpec);
-			
-			UWandererGameplayAbility* AttackAbility = CastChecked<UWandererGameplayAbility>(AttackAbilitySpec->GetPrimaryInstance());
-			if(!AttackAbility->IsActive())
-			{
-				Behavior = EWandererAIBehavior::Attack;
-			}
-			else
-			{
-				IRetriggerable* RetriggerInterface = CastChecked<IRetriggerable>(AttackAbility);
-				if(RetriggerInterface->CanRetrigger())
-				{
-					RetriggerInterface->SaveCurrentContext();
-					Behavior = EWandererAIBehavior::Attack;
-				}
-				else
-				{
-					Behavior = EWandererAIBehavior::Wait;
-				}
-			}
+			Behavior = EWandererAIBehavior::Attack;
 		}
 		else
 		{
-			// if lost combat target, and combat exit delaying is still activate, will approach to last seen location
+			// if get lost combat target, and combat exit delaying is still on activate, approach to last seen location
 			// considering expand logic to recon somewhere?
 			Behavior = EWandererAIBehavior::Approach;
 		}

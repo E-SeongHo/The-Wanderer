@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
 #include "WandererGameplayTags.h"
+#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
 #include "AbilitySystem/Effects/WandererGameplayEffect_Damage.h"
@@ -40,7 +41,6 @@ void UWandererActiveGameplayAbility_Melee::ActivateAbility(const FGameplayAbilit
 void UWandererActiveGameplayAbility_Melee::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	SetComboAvailable(false);
-	
 	if(bWasCancelled)
 	{
 		RemoveLooseTagFromOwner(WandererGameplayTags::State_Weapon_Trace);
@@ -52,6 +52,8 @@ void UWandererActiveGameplayAbility_Melee::EndAbility(const FGameplayAbilitySpec
 bool UWandererActiveGameplayAbility_Melee::CanRetrigger() const
 {
 	check(bRetriggerInstancedAbility);
+	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Can retrigger")));
+
 	return GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
 }
 
@@ -104,6 +106,7 @@ void UWandererActiveGameplayAbility_Melee::ProcessAttack()
 		
 		check(ComboIndex < ComboSequence.Num());
 		PlayNewMontageTask(ComboSequence[ComboIndex++]);
+		//CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Melee::ResetCombo);
 	}
 	// else choose random motion based on the CurrentActionTag
 	else
@@ -203,4 +206,9 @@ void UWandererActiveGameplayAbility_Melee::SetupComboData()
 		ComboSequence = GetMatchingComboMontageForTag(WandererGameplayTags::ActionTag_Attack);
 		ComboIndex = 0;
 	}
+}
+
+void UWandererActiveGameplayAbility_Melee::ResetCombo()
+{
+	bHasComboSaved = false;
 }

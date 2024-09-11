@@ -43,6 +43,9 @@ protected:
 
 	void SetupComboData();
 
+	UFUNCTION()
+	void ResetCombo();
+
 protected:
 	TArray<UAnimMontage*> ComboSequence;
 	uint8 ComboIndex;
