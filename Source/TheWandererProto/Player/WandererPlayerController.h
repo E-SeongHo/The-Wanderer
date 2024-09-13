@@ -28,6 +28,7 @@ private:
 	void Input_Look(const FInputActionValue& Value);
 	void Input_Crouch(const FInputActionValue& Value);
 	void Input_UnCrouch(const FInputActionValue& Value);
+	void Input_ModifyAttack(const FInputActionValue& Value);
 
 	// Ability Input Actions
 	void Input_AbilityInputTagPressed(FGameplayTag InputTag);

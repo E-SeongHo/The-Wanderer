@@ -77,6 +77,8 @@ void UWandererActiveGameplayAbility_Parry::OnParrySucceeded(FGameplayEventData P
 	const float Cos = FVector::DotProduct(Forward, AttackFrom);
 	const bool bIsClockWise = FVector::CrossProduct(Forward, AttackFrom).Z > 0.0f;
 
+	// TODO: Commit stamina if not drawing shield
+	// TODO: Loads attack type to Payload and rebound logic or OnParryFailed 
 	UAnimMontage* MontageToPlay;
 	if(Cos < -0.7f) // forward (-45 < angle < 45)
 	{

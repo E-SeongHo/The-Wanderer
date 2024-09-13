@@ -14,6 +14,7 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Move);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Look);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Crouch);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_ModifyAttack);
 
 	// Abilities
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(InputTag_Jump);
@@ -44,6 +45,7 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_DrawSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_SheathSword);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_ComboAvailable);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_Charge);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_WeaponTrace);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_Land);
 
@@ -73,6 +75,7 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Draw_Shield);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Weapon_Trace);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Charge);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Stance_RightLead);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Combat);
@@ -97,6 +100,7 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_Counter_Right);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_Counter_Left);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_Dash);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Attack_StrongAttack);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_AttackFailed);
 

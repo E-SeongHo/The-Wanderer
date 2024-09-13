@@ -39,6 +39,8 @@ void AWandererPlayerController::SetupInputComponent()
 		WandererIC->BindNativeAction(InputConfig, WandererGameplayTags::InputTag_Look, ETriggerEvent::Triggered, this, &ThisClass::Input_Look);
 		WandererIC->BindNativeAction(InputConfig, WandererGameplayTags::InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch);
 		WandererIC->BindNativeAction(InputConfig, WandererGameplayTags::InputTag_Crouch, ETriggerEvent::Completed, this, &ThisClass::Input_UnCrouch);
+		WandererIC->BindNativeAction(InputConfig, WandererGameplayTags::InputTag_ModifyAttack, ETriggerEvent::Started, this, &ThisClass::Input_ModifyAttack);
+		WandererIC->BindNativeAction(InputConfig, WandererGameplayTags::InputTag_ModifyAttack, ETriggerEvent::Completed, this, &ThisClass::Input_ModifyAttack);
 		
 		// Bind Ability Actions
 		WandererIC->BindAbilityActions(InputConfig, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, &ThisClass::Input_AbilityInputTagHeld);
@@ -89,13 +91,27 @@ void AWandererPlayerController::Input_UnCrouch(const FInputActionValue& Value)
 	}
 }
 
+void AWandererPlayerController::Input_ModifyAttack(const FInputActionValue& Value)
+{
+	// TODO: If AI needs to use the modify attack mechanism, consider having the combat component hold this information and check it instead.
+	if(!GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::InputTag_ModifyAttack))
+	{
+		GetAbilitySystemComponent()->AddLooseGameplayTag(WandererGameplayTags::InputTag_ModifyAttack);
+	}
+	else
+	{
+		GetAbilitySystemComponent()->RemoveLooseGameplayTag(WandererGameplayTags::InputTag_ModifyAttack);
+	}
+}
+
 void AWandererPlayerController::Input_AbilityInputTagPressed(FGameplayTag InputTag)
 {
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Input Tag Pressed: %s"), *InputTag.ToString()));	
 
 	if (!InputTag.IsValid()) return;
 	check(GetAbilitySystemComponent());
-	
+
+	GetAbilitySystemComponent()->AddLooseGameplayTag(InputTag);
 	for (FGameplayAbilitySpec& AbilitySpec : GetAbilitySystemComponent()->GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
@@ -133,6 +149,7 @@ void AWandererPlayerController::Input_AbilityInputTagReleased(FGameplayTag Input
 	if (!InputTag.IsValid()) return;
 	check(GetAbilitySystemComponent());
 
+	GetAbilitySystemComponent()->RemoveLooseGameplayTag(InputTag);
 	for (FGameplayAbilitySpec& AbilitySpec : GetAbilitySystemComponent()->GetActivatableAbilities())
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
@@ -151,7 +168,7 @@ void AWandererPlayerController::Input_AbilityInputTagHeld(FGameplayTag InputTag)
 	{
 		if (AbilitySpec.DynamicAbilityTags.HasTagExact(InputTag))
 		{
-			//AbilitySystemComponent->AbilitySpecInputPressed(AbilitySpec);
+			//GetAbilitySystemComponent()->AbilitySpecInputPressed(AbilitySpec);
 		}
 	}
 }

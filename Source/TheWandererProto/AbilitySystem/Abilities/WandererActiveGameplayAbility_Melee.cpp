@@ -106,7 +106,6 @@ void UWandererActiveGameplayAbility_Melee::ProcessAttack()
 		
 		check(ComboIndex < ComboSequence.Num());
 		PlayNewMontageTask(ComboSequence[ComboIndex++]);
-		//CurrentPlayingMontageTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Melee::ResetCombo);
 	}
 	// else choose random motion based on the CurrentActionTag
 	else
@@ -141,7 +140,7 @@ void UWandererActiveGameplayAbility_Melee::OnWeaponTrace()
 	const bool bHit = Instigator->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon()->Trace(HitResult);
 	if(bHit)
 	{
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
 		AWandererBaseCharacter* Target = CastChecked<AWandererBaseCharacter>(HitResult.GetActor());
 
 		// Can Actually Hit?

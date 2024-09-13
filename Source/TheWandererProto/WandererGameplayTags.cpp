@@ -7,10 +7,13 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Move, "InputTag.Move", "Move input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Look, "InputTag.Look", "Look input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Crouch, "InputTag.Crouch", "Crouch input");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_ModifyAttack, "InputTag.ModifyAttack", "Modify attack input");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Jump, "InputTag.Jump", "Jump input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Vault, "InputTag.Vault", "Vault input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Attack, "InputTag.Attack", "Attack input");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_StrongAttack, "InputTag.StrongAttack", "Attack input");
+
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_Parry, "InputTag.Parry", "Parry input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_TargetLock, "InputTag.TargetLock", "Target lock input");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(InputTag_ToggleWeapon_Primary, "InputTag.ToggleWeapon.Primary", "Toggle primary weapon");
@@ -37,6 +40,7 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_ComboAvailable, "Event.Montage.ComboAvailable", "ComboAvailable animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_WeaponTrace, "Event.Montage.WeaponTrace", "WeaponTrace animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_Land, "Event.Montage.Land", "Landed again to the ground animation event");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_Charge, "Event.Montage.Charge", "Strong attack charge entry point event");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParryAttack, "Event.Combat.ParryAttack", "Succeeded to parry attack event");
 
@@ -62,6 +66,8 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Draw_Shield, "State.Draw.Shield", "Drawn shield");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Weapon_Trace, "State.Weapon.Trace", "Weapon tracing");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Charge, "State.Charge", "Charging attack");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Stance_RightLead, "State.Stance.RightLead", "Right lead stance");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Parry, "State.Parry", "On parry");
 	
@@ -84,6 +90,7 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_Counter_Right, "ActionTag.Attack.Counter.Right", "Avoid to the right and counter");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_Counter_Left, "ActionTag.Attack.Counter.Left", "Avoid to the left and counter");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_Dash, "ActionTag.Attack.Dash", "Dash attack");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Attack_StrongAttack, "ActionTag.Attack.StrongAttack", "Strong attack");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_AttackFailed, "ActionTag.AttackFailed", "Attack failed action");
 

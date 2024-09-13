@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
 #include "WandererGameplayTags.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 #include "Character/WandererCharacter.h"
 #include "Character/Component/WandererCombatComponent.h"
 #include "Utility/WandererUtils.h"
@@ -50,13 +51,34 @@ void UWandererActiveGameplayAbility_AdvancedMelee::ActivateAbility(const FGamepl
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
 	}
+
+	if(DoesOwnerHaveTag(WandererGameplayTags::InputTag_ModifyAttack))
+	{
+		ChargedTime = 0.0f;
+		UAbilityTask_WaitGameplayTagAdded* WaitBeginCharging = UAbilityTask_WaitGameplayTagAdded::WaitGameplayTagAdd(this, WandererGameplayTags::State_Charge);
+		WaitBeginCharging->Added.AddDynamic(this, &UWandererActiveGameplayAbility_AdvancedMelee::StartCharging);
+		WaitBeginCharging->ReadyForActivation();
+	}
 	
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 }
 
 void UWandererActiveGameplayAbility_AdvancedMelee::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if(DoesOwnerHaveTag(WandererGameplayTags::State_Charge))
+	{
+		ReleaseCharging();
+	}
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
+void UWandererActiveGameplayAbility_AdvancedMelee::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Resetting Charge")));
+	if(CurrentActionTag == WandererGameplayTags::ActionTag_Attack_StrongAttack)
+	{
+		ReleaseCharging();
+	}
 }
 
 void UWandererActiveGameplayAbility_AdvancedMelee::DetermineAttackAction()
@@ -81,14 +103,10 @@ void UWandererActiveGameplayAbility_AdvancedMelee::DetermineAttackAction()
 		return;
 	}
 
-	if(!DoesOwnerHaveTag(WandererGameplayTags::State_Combat_TargetLock))
+	if(DoesOwnerHaveTag(WandererGameplayTags::InputTag_ModifyAttack))
 	{
-		// Check if the target can be changed to the desired movement input direction
-		AWandererBaseCharacter* InputDirectionTarget = FindNearestOverlapTargetInDirection(InputDirection, 120.0f, Instigator->GetCombatComponent()->CombatAcceptanceRadius);
-		if(Instigator->GetCombatComponent()->CanDashTo(InputDirectionTarget))
-		{
-			Instigator->GetCombatComponent()->SetCombatTarget(InputDirectionTarget);
-		}
+		CurrentActionTag = WandererGameplayTags::ActionTag_Attack_StrongAttack;
+		return;
 	}
 	
 	if(!Instigator->GetCombatComponent()->IsTargetInAttackRange() && Instigator->GetCombatComponent()->IsTargetInDashRange())
@@ -125,12 +143,22 @@ void UWandererActiveGameplayAbility_AdvancedMelee::SoftLock()
 		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("SideStepTarget"), SideStepLocation, (-CombatTarget->GetActorForwardVector()).Rotation());
 	}
 
+	if(!DoesOwnerHaveTag(WandererGameplayTags::State_Combat_TargetLock))
+	{
+		// Check if the target can be changed to the desired movement input direction
+		AWandererBaseCharacter* InputDirectionTarget = FindNearestOverlapTargetInDirection(Instigator->GetLastMovementInputVector(), 120.0f, Instigator->GetCombatComponent()->CombatAcceptanceRadius);
+		if(Instigator->GetCombatComponent()->CanDashTo(InputDirectionTarget))
+		{
+			Instigator->GetCombatComponent()->SetCombatTarget(InputDirectionTarget);
+		}
+	}
+	
 	if(Instigator->GetCombatComponent()->IsTargetInDashRange() && CurrentActionTag == WandererGameplayTags::ActionTag_Attack_Dash)
 	{
 		const FVector WarpDirection = (CombatTarget->GetActorLocation() - Instigator->GetActorLocation()).GetSafeNormal2D();
 		const FVector WarpLocation = Instigator->GetDistanceTo(CombatTarget) > 150.0f ? CombatTarget->GetActorLocation() - WarpDirection * 150.0f : Instigator->GetActorLocation();
 
-		DrawDebugCircle(GetWorld(), WarpLocation, 30.0f, 10, FColor::Red, false, 3.0f);
+		//DrawDebugCircle(GetWorld(), WarpLocation, 30.0f, 10, FColor::Red, false, 3.0f);
 		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), WarpLocation, WarpDirection.Rotation());
 	}
 	else
@@ -159,6 +187,30 @@ void UWandererActiveGameplayAbility_AdvancedMelee::TriggerFinisher() const
 
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Instigator, WandererGameplayTags::Event_Combat_Finisher, EventData);
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(CombatTarget, WandererGameplayTags::Event_Combat_Victim, EventData);
+}
+
+void UWandererActiveGameplayAbility_AdvancedMelee::StartCharging()
+{
+	check(DoesOwnerHaveTag(WandererGameplayTags::State_Charge));
+
+	if(DoesOwnerHaveTag(InputTag))
+	{
+		GetWorld()->GetTimerManager().SetTimer(ChargeTimer, this, &UWandererActiveGameplayAbility_AdvancedMelee::ReleaseCharging, ChargeLimit, false, -1);
+		CastChecked<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->GetMesh()->GlobalAnimRateScale = 0.01f;
+	}
+}
+
+void UWandererActiveGameplayAbility_AdvancedMelee::ReleaseCharging()
+{
+	if(DoesOwnerHaveTag(WandererGameplayTags::State_Charge))
+	{
+		ChargedTime = GetWorld()->GetTimerManager().GetTimerElapsed(ChargeTimer);
+		GetWorld()->GetTimerManager().ClearTimer(ChargeTimer);
+	
+		RemoveLooseTagFromOwner(WandererGameplayTags::State_Charge);
+		CastChecked<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->GetMesh()->GlobalAnimRateScale = 1.0f;
+		SoftLock();
+	}
 }
 
 AWandererBaseCharacter* UWandererActiveGameplayAbility_AdvancedMelee::FindNearestOverlapTargetInDirection(const FVector& Direction, const float Angle, const float Distance) const
