@@ -148,26 +148,12 @@ void UWandererActiveGameplayAbility_Melee::OnWeaponTrace()
 		{
 		case EWandererAttackResult::Success:
 			{
-				const FGameplayAbilityTargetDataHandle TargetHandle(new FGameplayAbilityTargetData_SingleTargetHit(HitResult));
-				const FGameplayEffectSpecHandle SpecHandle = InstigatorASC->MakeOutgoingSpec(UWandererGameplayEffect_Damage::StaticClass(), GetAbilityLevel(), InstigatorASC->MakeEffectContext());
-
-				const AWandererBaseCharacter* CauserWandererCharacter = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
-				SpecHandle.Data->SetSetByCallerMagnitude(WandererGameplayTags::Data_Damage_Base, CauserWandererCharacter->GetCombatAttributeSet()->GetBaseDamage() * 0.25f);
-		
-				ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SpecHandle, TargetHandle);
-
-				break;	
+				ProcessHitSuccess(HitResult);
+				break;
 			}
 		case EWandererAttackResult::Blocked:
 			{
-				// To Target
-				FGameplayEventData EventData;
-				EventData.Instigator = Instigator;
-				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Target, WandererGameplayTags::Event_Combat_ParryAttack, EventData);
-
-				// To myself
-				PlayNewMontageTask(GetMatchingMontageForTag(WandererGameplayTags::ActionTag_AttackFailed));
-				SetComboAvailable(false);
+				ProcessHitBlocked(HitResult);
 				break;
 			}
 		case EWandererAttackResult::Miss:
@@ -183,6 +169,36 @@ void UWandererActiveGameplayAbility_Melee::OnWeaponTrace()
 			Instigator->GetCombatComponent()->StartCombat();
 		}
 	}
+}
+
+void UWandererActiveGameplayAbility_Melee::ProcessHitSuccess(FHitResult& HitResult)
+{
+	const UAbilitySystemComponent* InstigatorASC = GetAbilitySystemComponentFromActorInfo();
+	
+	const FGameplayAbilityTargetDataHandle TargetHandle(new FGameplayAbilityTargetData_SingleTargetHit(HitResult));
+	const FGameplayEffectSpecHandle SpecHandle = InstigatorASC->MakeOutgoingSpec(UWandererGameplayEffect_Damage::StaticClass(), GetAbilityLevel(), InstigatorASC->MakeEffectContext());
+
+	const AWandererBaseCharacter* CauserWandererCharacter = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+	SpecHandle.Data->SetSetByCallerMagnitude(WandererGameplayTags::Data_Damage_Base, CauserWandererCharacter->GetCombatAttributeSet()->GetBaseDamage() * 0.25f);
+		
+	ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SpecHandle, TargetHandle);
+}
+
+void UWandererActiveGameplayAbility_Melee::ProcessHitBlocked(FHitResult& HitResult)
+{
+	// To Target
+	FGameplayEventData EventData;
+	EventData.Instigator = GetAvatarActorFromActorInfo();
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitResult.GetActor(), WandererGameplayTags::Event_Combat_ParrySucceeded, EventData);
+
+	// To myself
+	PlayNewMontageTask(GetMatchingMontageForTag(WandererGameplayTags::ActionTag_AttackFailed));
+	SetComboAvailable(false);
+}
+
+void UWandererActiveGameplayAbility_Melee::ProcessHitMiss(FHitResult& HitResult)
+{
+	
 }
 
 void UWandererActiveGameplayAbility_Melee::SetComboAvailable(bool bIsAvailable)

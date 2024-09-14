@@ -10,10 +10,12 @@ void UWandererAbilityTask_RepeatUntil::PerformAction()
 	if(OnCycleEndConditionCheck.IsBound() && OnCycleEndConditionCheck.Execute())
 	{
 		EndTask();
+		return;
 	}
 	if(RequiredTag.IsValid() && !AbilitySystemComponent->HasMatchingGameplayTag(RequiredTag))
 	{
 		EndTask();
+		return;
 	}
 	
 	OnPerformAction.Broadcast();

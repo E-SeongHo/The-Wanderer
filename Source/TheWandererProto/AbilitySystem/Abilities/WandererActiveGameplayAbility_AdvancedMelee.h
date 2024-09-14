@@ -29,6 +29,10 @@ protected:
 	virtual void DetermineAttackAction() override;
 	
 	virtual void SoftLock() override;
+
+	virtual void ProcessHitSuccess(FHitResult& HitResult) override;
+	virtual void ProcessHitBlocked(FHitResult& HitResult) override;
+	virtual void ProcessHitMiss(FHitResult& HitResult) override;
 	
 private:
 	void TriggerFinisher() const;

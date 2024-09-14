@@ -35,6 +35,8 @@ namespace WandererGameplayTags
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_AutoTarget, "Ability.AutoTarget", "Auto Lock Target (this is not same with target lock(hard lock)");
 
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cooldown_Parry, "Cooldown.Parry", "Parry cooldown effect tag");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_DrawSword, "Event.Montage.DrawSword", "Draw sword animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_SheathSword, "Event.Montage.SheathSword", "Sheath sword animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_ComboAvailable, "Event.Montage.ComboAvailable", "ComboAvailable animation event");
@@ -42,8 +44,9 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_Land, "Event.Montage.Land", "Landed again to the ground animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_Charge, "Event.Montage.Charge", "Strong attack charge entry point event");
 	
-	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParryAttack, "Event.Combat.ParryAttack", "Succeeded to parry attack event");
-
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParrySucceeded, "Event.Combat.ParrySucceeded", "Succeeded to parry attack event");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParryFailed, "Event.Combat.ParryFailed", "Failed to parry attack event");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_Finisher, "Event.Combat.Finisher", "Finisher event to activate finisher ability with event data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_Victim, "Event.Combat.Victim", "Victim event to activate die ability with event data");
 
@@ -106,7 +109,8 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry_Back, "ActionTag.Parry.Back", "ActionTag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry_Right, "ActionTag.Parry.Right", "ActionTag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry_Left, "ActionTag.Parry.Left", "ActionTag");
-
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Parry_Rebound, "ActionTag.Parry.Rebound", "Rebound when parry failed");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Hit, "ActionTag.Hit", "ActionTag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Hit_Front, "ActionTag.Hit.Front", "ActionTag");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(ActionTag_Hit_Back, "ActionTag.Hit.Back", "ActionTag");

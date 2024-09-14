@@ -40,6 +40,9 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Parry);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_AutoTarget);
+
+	// Cooldowns
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cooldown_Parry);
 	
 	// AnimNotifies (including notify state)
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_DrawSword);
@@ -49,7 +52,8 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_WeaponTrace);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_Land);
 
-	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParryAttack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParrySucceeded);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParryFailed);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_Finisher);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_Victim);
@@ -116,6 +120,7 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Parry_Back);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Parry_Right);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Parry_Left);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Parry_Rebound);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Hit);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(ActionTag_Hit_Front);

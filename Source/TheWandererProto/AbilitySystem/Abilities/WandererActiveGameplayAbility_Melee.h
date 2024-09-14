@@ -38,6 +38,10 @@ protected:
 
 	UFUNCTION()
 	void OnWeaponTrace();
+
+	virtual void ProcessHitSuccess(FHitResult& HitResult);
+	virtual void ProcessHitBlocked(FHitResult& HitResult);
+	virtual void ProcessHitMiss(FHitResult& HitResult);
 	
 	void SetComboAvailable(bool bIsAvailable);
 

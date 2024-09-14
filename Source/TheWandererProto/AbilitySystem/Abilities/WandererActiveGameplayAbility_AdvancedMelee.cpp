@@ -8,6 +8,8 @@
 #include "MotionWarpingComponent.h"
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
+#include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
+#include "AbilitySystem/Effects/WandererGameplayEffect_Damage.h"
 #include "Character/WandererCharacter.h"
 #include "Character/Component/WandererCombatComponent.h"
 #include "Utility/WandererUtils.h"
@@ -165,6 +167,47 @@ void UWandererActiveGameplayAbility_AdvancedMelee::SoftLock()
 	{
 		Super::SoftLock();
 	}
+}
+
+void UWandererActiveGameplayAbility_AdvancedMelee::ProcessHitSuccess(FHitResult& HitResult)
+{
+	if(CurrentActionTag == WandererGameplayTags::ActionTag_Attack_StrongAttack)
+	{
+		const UAbilitySystemComponent* InstigatorASC = GetAbilitySystemComponentFromActorInfo();
+	
+		const FGameplayAbilityTargetDataHandle TargetHandle(new FGameplayAbilityTargetData_SingleTargetHit(HitResult));
+		const FGameplayEffectSpecHandle SpecHandle = InstigatorASC->MakeOutgoingSpec(UWandererGameplayEffect_Damage::StaticClass(), GetAbilityLevel(), InstigatorASC->MakeEffectContext());
+
+		const AWandererBaseCharacter* CauserWandererCharacter = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor);
+		const float Damage = CauserWandererCharacter->GetCombatAttributeSet()->GetBaseDamage() * 0.5f * FMath::Lerp(1.0f, 2.0f, ChargedTime / ChargeLimit); 
+		SpecHandle.Data->SetSetByCallerMagnitude(WandererGameplayTags::Data_Damage_Base, Damage);
+		
+		ApplyGameplayEffectSpecToTarget(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, SpecHandle, TargetHandle);
+	}
+	else
+	{
+		Super::ProcessHitSuccess(HitResult);
+	}
+}
+
+void UWandererActiveGameplayAbility_AdvancedMelee::ProcessHitBlocked(FHitResult& HitResult)
+{
+	if(CurrentActionTag == WandererGameplayTags::ActionTag_Attack_StrongAttack)
+	{
+		// To Target
+		FGameplayEventData EventData;
+		EventData.Instigator = GetAvatarActorFromActorInfo();
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitResult.GetActor(), WandererGameplayTags::Event_Combat_ParryFailed, EventData);
+	}
+	else
+	{
+		Super::ProcessHitBlocked(HitResult);
+	}
+}
+
+void UWandererActiveGameplayAbility_AdvancedMelee::ProcessHitMiss(FHitResult& HitResult)
+{
+	Super::ProcessHitMiss(HitResult);
 }
 
 void UWandererActiveGameplayAbility_AdvancedMelee::TriggerFinisher() const

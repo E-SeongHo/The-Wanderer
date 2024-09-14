@@ -29,6 +29,12 @@ private:
 	UFUNCTION()
 	void OnParrySucceeded(FGameplayEventData Payload);
 
+	UFUNCTION()
+	void OnParryFailed(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void ReleaseParry();
+	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, meta = (AllowPrivateAccess = "true"))
 	TArray<TObjectPtr<USoundBase>> ParrySounds;
