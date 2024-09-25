@@ -39,7 +39,11 @@ bool UWandererActiveGameplayAbility_Dodge::CanActivateAbility(const FGameplayAbi
 
 void UWandererActiveGameplayAbility_Dodge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("dodge")));	
+	if(!CommitAbilityCost(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}	
 
 	const FVector MovementInput = Cast<APawn>(ActorInfo->AvatarActor)->GetLastMovementInputVector();
 

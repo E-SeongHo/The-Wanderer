@@ -67,14 +67,17 @@ void AWandererEnemy::BeginPlay()
 
 	// Init ASC
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
-	
-	GrantStartupAbilities();
 
 	// Init Default Attributes By GE
 	const UGameplayEffect* InitterGE = DefaultAttributesInitter->GetDefaultObject<UGameplayEffect>();
 	AbilitySystemComponent->ApplyGameplayEffectToSelf(InitterGE, 1.0f, AbilitySystemComponent->MakeEffectContext());
+	
+	const UGameplayEffect* RegeneratorGE = Regenerator->GetDefaultObject<UGameplayEffect>();
+	AbilitySystemComponent->ApplyGameplayEffectToSelf(RegeneratorGE, 1.0f, AbilitySystemComponent->MakeEffectContext());
 
 	CombatComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
 	EquipmentComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
 	CastChecked<UWandererEnemyInfoWidget>(WidgetComponent->GetUserWidgetObject())->AssignAbilitySystemComponent(AbilitySystemComponent);
+
+	GrantStartupAbilities();
 }

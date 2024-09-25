@@ -90,14 +90,18 @@ protected:
 	TObjectPtr<UWandererEquipmentComponent> EquipmentComponent;
 	
 	// Attribute Set
-	UPROPERTY(EditAnywhere, Category = "Attributes")
+	UPROPERTY(EditAnywhere, Category = Attributes)
 	TSubclassOf<UGameplayEffect> DefaultAttributesInitter;
+
+	// Auto Regen Health & Stamina Infinite GE
+	UPROPERTY(EditAnywhere, Category = Attributes)
+	TSubclassOf<UGameplayEffect> Regenerator;
 	
 	// Active Ability has Input Tag
-	UPROPERTY(EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UWandererActiveGameplayAbility>> StartupActiveAbilities;
 
-	UPROPERTY(EditAnywhere, Category = "Abilities", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Category = Abilities, meta = (AllowPrivateAccess = "true"))
 	TArray<TSubclassOf<UWandererGameplayAbility>> StartupTriggeredAbilities;
 
 	// Sound

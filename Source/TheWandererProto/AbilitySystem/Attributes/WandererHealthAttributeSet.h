@@ -19,7 +19,10 @@ public:
 	
 	ATTRIBUTE_ACCESSORS(UWandererHealthAttributeSet, Health);
 	ATTRIBUTE_ACCESSORS(UWandererHealthAttributeSet, MaxHealth);
-
+	ATTRIBUTE_ACCESSORS(UWandererHealthAttributeSet, Stamina);
+	ATTRIBUTE_ACCESSORS(UWandererHealthAttributeSet, MaxStamina);
+	ATTRIBUTE_ACCESSORS(UWandererHealthAttributeSet, Resilience);
+	
 	// Meta Attributes
 	ATTRIBUTE_ACCESSORS(UWandererHealthAttributeSet, Healing);
 	ATTRIBUTE_ACCESSORS(UWandererHealthAttributeSet, Damage);
@@ -39,6 +42,15 @@ private:
 	FGameplayAttributeData MaxHealth;
 
 	bool bOutOfHealth;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Stamina", Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Stamina;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Stamina", Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData MaxStamina;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Stamina", Meta = (AllowPrivateAccess = true))
+	FGameplayAttributeData Resilience;
 	
 private:
 	// Meta Attributes

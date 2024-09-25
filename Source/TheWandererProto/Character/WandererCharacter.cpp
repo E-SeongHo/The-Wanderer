@@ -65,10 +65,13 @@ void AWandererCharacter::PossessedBy(AController* NewController)
 	CombatComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
 	EquipmentComponent->AssignAbilitySystemComponent(AbilitySystemComponent);
 	
-	GrantStartupAbilities();
-
 	// Init Default Attributes By GE
 	const UGameplayEffect* InitterGE = DefaultAttributesInitter->GetDefaultObject<UGameplayEffect>();
 	AbilitySystemComponent->ApplyGameplayEffectToSelf(InitterGE, 1.0f, AbilitySystemComponent->MakeEffectContext());
+	
+	const UGameplayEffect* RegeneratorGE = Regenerator->GetDefaultObject<UGameplayEffect>();
+	AbilitySystemComponent->ApplyGameplayEffectToSelf(RegeneratorGE, 1.0f, AbilitySystemComponent->MakeEffectContext());
+
+	GrantStartupAbilities();
 }
 

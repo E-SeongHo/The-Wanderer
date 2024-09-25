@@ -12,6 +12,7 @@
 #include "WandererPlayerState.h"
 #include "AbilitySystem/Abilities/IRetriggerable.h"
 #include "AbilitySystem/Abilities/WandererGameplayAbility.h"
+#include "UI/WandererWidget.h"
 
 void AWandererPlayerController::BeginPlay()
 {
@@ -23,6 +24,13 @@ void AWandererPlayerController::BeginPlay()
 	if (Subsystem)
 	{
 		Subsystem->AddMappingContext(WandererMappingContext, 0);
+	}
+
+	if(PlayerWidgetClass)
+	{
+		UWandererWidget* PlayerWidget = CreateWidget<UWandererWidget>(this, PlayerWidgetClass);
+		PlayerWidget->AssignAbilitySystemComponent(GetAbilitySystemComponent());
+		PlayerWidget->AddToViewport();
 	}
 }
 

@@ -7,6 +7,7 @@
 #include "GameplayTags.h"
 #include "WandererPlayerController.generated.h"
 
+class UWandererWidget;
 class UAbilitySystemComponent;
 class UWandererInputConfig;
 struct FInputActionValue;
@@ -36,12 +37,15 @@ private:
 	void Input_AbilityInputTagHeld(FGameplayTag InputTag);
 
 	UAbilitySystemComponent* GetAbilitySystemComponent() const;
+	
 private:
 	// Input
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> WandererMappingContext;
 
-	UPROPERTY(EditDefaultsOnly, Category="Input")
+	UPROPERTY(EditDefaultsOnly, Category = Input)
 	TObjectPtr<UWandererInputConfig> InputConfig;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category = UI)
+	TSubclassOf<UWandererWidget> PlayerWidgetClass;
 };

@@ -78,32 +78,36 @@ void UWandererActiveGameplayAbility_Parry::InputReleased(const FGameplayAbilityS
 
 void UWandererActiveGameplayAbility_Parry::OnParrySucceeded(FGameplayEventData Payload)
 {
-	// TODO: if stamina not enough to parry failed parry
+	// Fail to parry if the stamina is not enough
 	if(!CommitAbilityCost(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
 	{
+		ApplyCost(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
 		OnParryFailed(Payload);
 		return;
 	}
 	
 	// Get direction of the instigator and play corresponding parry animation
-	const FVector AttackFrom = Payload.Instigator->GetActorForwardVector();
-	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
-
-	const float Cos = FVector::DotProduct(Forward, AttackFrom);
-	const bool bIsClockWise = FVector::CrossProduct(Forward, AttackFrom).Z > 0.0f;
-
-	UAnimMontage* MontageToPlay;
-	if(Cos < -0.7f) // forward (-45 < angle < 45)
+	if(!DoesOwnerHaveTag(WandererGameplayTags::State_Draw_Shield))
 	{
-		MontageToPlay = GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Front);
+		const FVector AttackFrom = Payload.Instigator->GetActorForwardVector();
+		const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+
+		const float Cos = FVector::DotProduct(Forward, AttackFrom);
+		const bool bIsClockWise = FVector::CrossProduct(Forward, AttackFrom).Z > 0.0f;
+
+		UAnimMontage* MontageToPlay;
+		if(Cos < -0.7f) // forward (-45 < angle < 45)
+		{
+			MontageToPlay = GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Front);
+		}
+		else // left or right
+		{
+			MontageToPlay = bIsClockWise ? GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Left) : GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Right);
+		}
+
+ 		UAbilityTask_PlayMontageAndWait* PlayMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Parry"), MontageToPlay);
+		PlayMontage->ReadyForActivation();
 	}
-	else // left or right
-	{
-		MontageToPlay = bIsClockWise ? GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Left) : GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Right);
-	}
-	
- 	UAbilityTask_PlayMontageAndWait* PlayMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Parry"), MontageToPlay);
-	PlayMontage->ReadyForActivation();
 
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParrySounds[FMath::RandRange(0, ParrySounds.Num()-1)], GetAvatarActorFromActorInfo()->GetActorLocation());
 }
@@ -111,10 +115,11 @@ void UWandererActiveGameplayAbility_Parry::OnParrySucceeded(FGameplayEventData P
 void UWandererActiveGameplayAbility_Parry::OnParryFailed(FGameplayEventData Payload)
 {
 	UAbilityTask_PlayMontageAndWait* PlayMontage = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Parry Failed"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Parry_Rebound));
-	PlayMontage->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Parry::ReleaseParry);
+	//PlayMontage->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_Parry::ReleaseParry);
 	PlayMontage->ReadyForActivation();
 	
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), ParrySounds[FMath::RandRange(0, ParrySounds.Num()-1)], GetAvatarActorFromActorInfo()->GetActorLocation());
+	ReleaseParry();
 }
 
 void UWandererActiveGameplayAbility_Parry::ReleaseParry()

@@ -38,6 +38,12 @@ bool UWandererActiveGameplayAbility_Roll::CanActivateAbility(const FGameplayAbil
 
 void UWandererActiveGameplayAbility_Roll::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
+	if(!CommitAbilityCost(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
 	const FVector MovementInput = Cast<APawn>(ActorInfo->AvatarActor)->GetLastMovementInputVector();
 
 	UAnimMontage* MontageToPlay = nullptr;
