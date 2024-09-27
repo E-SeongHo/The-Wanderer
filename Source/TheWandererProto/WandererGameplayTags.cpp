@@ -43,6 +43,7 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_WeaponTrace, "Event.Montage.WeaponTrace", "WeaponTrace animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_Land, "Event.Montage.Land", "Landed again to the ground animation event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_Charge, "Event.Montage.Charge", "Strong attack charge entry point event");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Montage_VictimDown, "Event.Montage.VictimDown", "The end point of the victim animation");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParrySucceeded, "Event.Combat.ParrySucceeded", "Succeeded to parry attack event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParryFailed, "Event.Combat.ParryFailed", "Failed to parry attack event");

@@ -61,8 +61,7 @@ void UWandererBTService_StateManager::TickNode(UBehaviorTreeComponent& OwnerComp
 		
 		if(CombatComponent->IsTargetInAttackRange())
 		{
-			// TODO: maybe avoid or parry
-			Behavior = EWandererAIBehavior::Attack;
+			Behavior = EWandererAIBehavior::Action;
 		}
 		else
 		{

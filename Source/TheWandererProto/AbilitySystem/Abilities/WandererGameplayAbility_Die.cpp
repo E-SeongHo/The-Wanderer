@@ -7,6 +7,7 @@
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Animation/WandererAnimMontageConfig.h"
 #include "Character/WandererBaseCharacter.h"
 
@@ -37,9 +38,13 @@ void UWandererGameplayAbility_Die::ActivateAbility(const FGameplayAbilitySpecHan
 	{
 		MontageToPlay = GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Die);
 	}
+
+	UAbilityTask_WaitGameplayEvent* WaitVictimDown = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_VictimDown);
+	WaitVictimDown->EventReceived.AddDynamic(this, &UWandererGameplayAbility_Die::OnVictimDown);
+	WaitVictimDown->ReadyForActivation();
 	
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Die"), MontageToPlay);
-	PlayMontageTask->OnBlendOut.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
+	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
 	PlayMontageTask->ReadyForActivation(); 
 	
 	/*AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
@@ -56,11 +61,14 @@ void UWandererGameplayAbility_Die::EndAbility(const FGameplayAbilitySpecHandle H
 
 void UWandererGameplayAbility_Die::OnMontageCompleted()
 {
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+}
+
+void UWandererGameplayAbility_Die::OnVictimDown(FGameplayEventData Payload)
+{
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo());
 	if(Instigator)
 	{
 		Instigator->Die();
 	}
-	
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

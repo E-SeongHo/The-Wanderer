@@ -75,6 +75,7 @@ bool AWandererAIController::InitializeBlackboard(UBlackboardComponent& Blackboar
 	BBSoundLocationKey = BlackboardAsset.GetKeyID(TEXT("SoundLocation"));
 	BBCombatTargetLocationKey = BlackboardAsset.GetKeyID(TEXT("CombatTargetLocation"));
 	BBBehaviorTypeKey = BlackboardAsset.GetKeyID(TEXT("BehaviorType"));
+	BBActionTypeKey = BlackboardAsset.GetKeyID(TEXT("ActionType"));
 	
 	return Super::InitializeBlackboard(BlackboardComp, BlackboardAsset);
 }

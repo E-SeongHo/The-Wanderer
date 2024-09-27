@@ -15,10 +15,16 @@ enum class EWandererAIBehavior : uint8
 	Idle,
 	Wait,
 	Patrol,
-	Avoid,
-	Parry,
 	Approach,
+	Action,
+};
+
+UENUM(BlueprintType)
+enum class EWandererAIAction : uint8
+{
 	Attack,
+	Defense,
+	Avoid,
 };
 
 class AWandererEnemy;
@@ -46,6 +52,7 @@ public:
 	FBlackboard::FKey BBSoundLocationKey;
 	FBlackboard::FKey BBCombatTargetLocationKey;
 	FBlackboard::FKey BBBehaviorTypeKey;
+	FBlackboard::FKey BBActionTypeKey;
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = Asset, meta = (AllowPrivateAccess = "true"))

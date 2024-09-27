@@ -24,4 +24,7 @@ public:
 private:
 	UFUNCTION()
 	void OnMontageCompleted();
+
+	UFUNCTION()
+	void OnVictimDown(FGameplayEventData Payload);
 };

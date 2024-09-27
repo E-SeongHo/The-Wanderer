@@ -51,6 +51,7 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_Charge);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_WeaponTrace);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_Land);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Montage_VictimDown);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParrySucceeded);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParryFailed);
