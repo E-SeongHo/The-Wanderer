@@ -3,10 +3,10 @@
 
 #include "AbilitySystem/Abilities/WandererGameplayAbility_Hit.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
-#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
 #include "Character/WandererBaseCharacter.h"
 #include "Character/Component/WandererCombatComponent.h"
 
@@ -25,15 +25,19 @@ UWandererGameplayAbility_Hit::UWandererGameplayAbility_Hit()
 void UWandererGameplayAbility_Hit::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
+	
+	// hit can cause knockback or not. logic can be added here
+	UActionTagWrapper* ActionTagWrapper = NewObject<UActionTagWrapper>();
+	ActionTagWrapper->ActionTag = WandererGameplayTags::ActionTag_Hit;
+	
+	FGameplayEventData EventData;
+	EventData.OptionalObject = ActionTagWrapper;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActorFromActorInfo(), WandererGameplayTags::Event_Combat_KnockBack, EventData);
 
-	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Hit React"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_Hit));
-	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Hit::OnMontageCompleted);
-	PlayMontageTask->OnCancelled.AddDynamic(this, &UWandererGameplayAbility_Hit::OnMontageCompleted);
-	PlayMontageTask->ReadyForActivation();
-
-	UAbilityTask_WaitGameplayEvent* WaitRecoveryAvailable = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_Land);
-	WaitRecoveryAvailable->EventReceived.AddDynamic(this, &UWandererGameplayAbility_Hit::OnRecoveryAvailable);
-	WaitRecoveryAvailable->ReadyForActivation();
+	check(DoesOwnerHaveTag(WandererGameplayTags::State_KnockBack));
+	UAbilityTask_WaitGameplayTagRemoved* WaitKnockBackEnd = UAbilityTask_WaitGameplayTagRemoved::WaitGameplayTagRemove(this, WandererGameplayTags::State_KnockBack);
+	WaitKnockBackEnd->Removed.AddDynamic(this, &UWandererGameplayAbility_Hit::OnKnockBackEnded);
+	WaitKnockBackEnd->ReadyForActivation();
 }
 
 void UWandererGameplayAbility_Hit::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -42,8 +46,6 @@ void UWandererGameplayAbility_Hit::EndAbility(const FGameplayAbilitySpecHandle H
 	{
 		CastChecked<AWandererBaseCharacter>(ActorInfo->AvatarActor)->GetCombatComponent()->StartCombat();
 	}
-
-	GetAbilitySystemComponentFromActorInfo()->RemoveLooseGameplayTag(WandererGameplayTags::State_CanRecovery);
 	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
@@ -54,7 +56,7 @@ bool UWandererGameplayAbility_Hit::CanRetrigger() const
 	return bRetriggerInstancedAbility;
 }
 
-void UWandererGameplayAbility_Hit::OnMontageCompleted()
+void UWandererGameplayAbility_Hit::OnKnockBackEnded()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

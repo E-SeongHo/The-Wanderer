@@ -32,7 +32,8 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Die, "Ability.Die", "Die");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Hit, "Ability.Hit", "Hit reaction when get hit");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_Parry, "Ability.Parry", "Parry attack when get hit");
-
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_KnockBack, "Ability.KnockBack", "Knockback reaction");
+	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Ability_AutoTarget, "Ability.AutoTarget", "Auto Lock Target (this is not same with target lock(hard lock)");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cooldown_Parry, "Cooldown.Parry", "Parry cooldown effect tag");
@@ -47,6 +48,7 @@ namespace WandererGameplayTags
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParrySucceeded, "Event.Combat.ParrySucceeded", "Succeeded to parry attack event");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_ParryFailed, "Event.Combat.ParryFailed", "Failed to parry attack event");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_KnockBack, "Event.Combat.KnockBack", "Knockback event, this can be occured by various situations");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_Finisher, "Event.Combat.Finisher", "Finisher event to activate finisher ability with event data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Event_Combat_Victim, "Event.Combat.Victim", "Victim event to activate die ability with event data");
@@ -83,6 +85,7 @@ namespace WandererGameplayTags
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_Avoid, "State.Avoid", "Avoiding. not get damage");
 
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_CanRecovery, "State.CanRecovery", "Can recovery while hitting");
+	UE_DEFINE_GAMEPLAY_TAG_COMMENT(State_KnockBack, "State.KnockBack", "Knockbacking while after parry succeeded");
 	
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Base, "Data.Damage.Base", "Base damage data");
 	UE_DEFINE_GAMEPLAY_TAG_COMMENT(Data_Damage_Critical, "Data.Damage.Critical", "Critical damage data");

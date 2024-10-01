@@ -22,13 +22,13 @@ UWandererActiveGameplayAbility_Roll::UWandererActiveGameplayAbility_Roll()
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Avoid);
 
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Attack);
-	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Hit);
+	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_KnockBack);
 }
 
 bool UWandererActiveGameplayAbility_Roll::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
 	const UAbilitySystemComponent* OwnerASC = ActorInfo->AbilitySystemComponent.Get();
-	if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::Ability_Hit))
+	if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::State_KnockBack))
 	{
 		return OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::State_CanRecovery);
 	}

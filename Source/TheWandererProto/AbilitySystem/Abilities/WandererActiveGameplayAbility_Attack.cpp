@@ -21,6 +21,7 @@ UWandererActiveGameplayAbility_Attack::UWandererActiveGameplayAbility_Attack()
 	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Hit);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::Ability_Finisher);
 	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Avoid);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_KnockBack);
 	
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Parry);

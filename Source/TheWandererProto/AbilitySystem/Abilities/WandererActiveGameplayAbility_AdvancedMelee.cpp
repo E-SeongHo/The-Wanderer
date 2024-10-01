@@ -26,7 +26,7 @@ void UWandererActiveGameplayAbility_AdvancedMelee::PreActivate(const FGameplayAb
 	const AWandererBaseCharacter* CombatTarget = Instigator->GetCombatComponent()->GetCombatTarget(); 
 
 	const bool bIsParrying = DoesOwnerHaveTag(WandererGameplayTags::State_Parry);
-	const bool bIsTargetAttacking = CombatTarget && CombatTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::Ability_Attack);  
+	const bool bIsTargetAttacking = CombatTarget && CombatTarget->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::Ability_Attack);
 
 	bCanCounter = bIsParrying && bIsTargetAttacking;
 	
@@ -160,7 +160,7 @@ void UWandererActiveGameplayAbility_AdvancedMelee::SoftLock()
 		const FVector WarpDirection = (CombatTarget->GetActorLocation() - Instigator->GetActorLocation()).GetSafeNormal2D();
 		const FVector WarpLocation = Instigator->GetDistanceTo(CombatTarget) > 150.0f ? CombatTarget->GetActorLocation() - WarpDirection * 150.0f : Instigator->GetActorLocation();
 
-		//DrawDebugCircle(GetWorld(), WarpLocation, 30.0f, 10, FColor::Red, false, 3.0f);
+		DrawDebugCircle(GetWorld(), WarpLocation, 30.0f, 10, FColor::Red, false, 3.0f);
 		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), WarpLocation, WarpDirection.Rotation());
 	}
 	else

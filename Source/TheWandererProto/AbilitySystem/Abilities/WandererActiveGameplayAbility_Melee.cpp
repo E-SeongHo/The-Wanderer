@@ -12,6 +12,7 @@
 #include "AbilitySystem/Attributes/WandererCombatAttributeSet.h"
 #include "AbilitySystem/Effects/WandererGameplayEffect_Damage.h"
 #include "Character/WandererBaseCharacter.h"
+#include "Character/WandererCharacter.h"
 #include "Character/Component/WandererCombatComponent.h"
 #include "Character/Component/WandererEquipmentComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -52,7 +53,7 @@ void UWandererActiveGameplayAbility_Melee::EndAbility(const FGameplayAbilitySpec
 bool UWandererActiveGameplayAbility_Melee::CanRetrigger() const
 {
 	check(bRetriggerInstancedAbility);
-	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Can retrigger")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Can retrigger")));
 
 	return GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
 }

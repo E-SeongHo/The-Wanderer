@@ -9,6 +9,16 @@
 class UWandererMontagePair;
 class UAbilityTask_PlayMontageAndWait;
 
+// Wrapper class for passing ActionTag to FGameplayEventData
+UCLASS()
+class UActionTagWrapper : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	FGameplayTag ActionTag;
+};
+
 UCLASS()
 class THEWANDERERPROTO_API UWandererGameplayAbility : public UGameplayAbility
 {

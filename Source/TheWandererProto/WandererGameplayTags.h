@@ -38,6 +38,7 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Die);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Hit);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_Parry);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_KnockBack);
 	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Ability_AutoTarget);
 
@@ -55,7 +56,9 @@ namespace WandererGameplayTags
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParrySucceeded);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_ParryFailed);
-
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_KnockBack);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_KnockBack);
+	
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_Finisher);
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Event_Combat_Victim);
 
@@ -92,6 +95,7 @@ namespace WandererGameplayTags
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_Avoid);
 
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_CanRecovery);
+	UE_DECLARE_GAMEPLAY_TAG_EXTERN(State_KnockBack);
 	
 	// Damages
 	UE_DECLARE_GAMEPLAY_TAG_EXTERN(Data_Damage_Base);

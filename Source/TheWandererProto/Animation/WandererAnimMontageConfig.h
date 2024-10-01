@@ -82,7 +82,7 @@ class THEWANDERERPROTO_API UWandererAnimMontageConfig : public UDataAsset
 	GENERATED_BODY()
 
 public:
-	void MakeMontagePairCache();
+	//void MakeMontagePairCache();
 
 	UAnimMontage* FindAnimMontageForTag(const FGameplayTag& ActionTag) const;
 

@@ -23,13 +23,13 @@ UWandererActiveGameplayAbility_Dodge::UWandererActiveGameplayAbility_Dodge()
 	
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Attack);
 	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Parry);
-	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_Hit);
+	CancelAbilitiesWithTag.AddTag(WandererGameplayTags::Ability_KnockBack);
 }
 
 bool UWandererActiveGameplayAbility_Dodge::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
 {
 	const UAbilitySystemComponent* OwnerASC = ActorInfo->AbilitySystemComponent.Get();
-	if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::Ability_Hit))
+	if(OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::State_KnockBack))
 	{
 		return OwnerASC->HasMatchingGameplayTag(WandererGameplayTags::State_CanRecovery);
 	}

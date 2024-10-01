@@ -6,7 +6,6 @@
 #include "AbilitySystemComponent.h"
 #include "WandererGameplayTags.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Animation/WandererAnimMontageConfig.h"
 #include "Character/WandererBaseCharacter.h"
@@ -46,12 +45,6 @@ void UWandererGameplayAbility_Die::ActivateAbility(const FGameplayAbilitySpecHan
 	UAbilityTask_PlayMontageAndWait* PlayMontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Die"), MontageToPlay);
 	PlayMontageTask->OnCompleted.AddDynamic(this, &UWandererGameplayAbility_Die::OnMontageCompleted);
 	PlayMontageTask->ReadyForActivation(); 
-	
-	/*AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
-	if(Instigator)
-	{
-		Instigator->Die();
-	}*/
 }
 
 void UWandererGameplayAbility_Die::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

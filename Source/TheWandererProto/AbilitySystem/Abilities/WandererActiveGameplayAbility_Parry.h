@@ -34,6 +34,8 @@ private:
 
 	UFUNCTION()
 	void ReleaseParry();
+
+	void TriggerKnockBack(const FGameplayTag& ActionTag) const;
 	
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sound, meta = (AllowPrivateAccess = "true"))
