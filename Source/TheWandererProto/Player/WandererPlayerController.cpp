@@ -140,6 +140,7 @@ void AWandererPlayerController::Input_AbilityInputTagPressed(FGameplayTag InputT
 					if(RetriggerableAbility->CanRetrigger())
 					{
 						RetriggerableAbility->SaveCurrentContext();
+						UE_LOG(LogTemp, Log, TEXT("RETRIGGER"));	
 						GetAbilitySystemComponent()->TryActivateAbility(AbilitySpec.Handle);
 					}
 				}

@@ -48,14 +48,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UPoseSearchDatabase> CombatPoseSearchDatabase;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
-	TObjectPtr<UPoseSearchDatabase> DefensedPoseSearchDatabase;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
 	bool bIsCombatPSDSet;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
-	bool bIsDefensedPSDSet;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 	FVector Velocity;

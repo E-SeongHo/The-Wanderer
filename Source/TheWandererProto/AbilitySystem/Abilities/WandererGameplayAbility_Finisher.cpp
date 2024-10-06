@@ -38,7 +38,7 @@ void UWandererGameplayAbility_Finisher::ActivateAbility(const FGameplayAbilitySp
 	AWandererCharacter* Instigator = Cast<AWandererCharacter>(GetAvatarActorFromActorInfo());
 	const AWandererBaseCharacter* Target = Instigator->GetCombatComponent()->GetCombatTarget();
 	check(Target);
-
+	
 	const UWandererMontagePair* MontagePair = Cast<UWandererMontagePair>(TriggerEventData->OptionalObject);
 	if(MontagePair->ActionTag == WandererGameplayTags::ActionTag_Pair_Finisher_Back)
 	{

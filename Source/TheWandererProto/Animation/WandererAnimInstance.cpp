@@ -17,7 +17,6 @@ void UWandererAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	bIsCombatPSDSet = CombatPoseSearchDatabase != nullptr;
-	bIsDefensedPSDSet = DefensedPoseSearchDatabase != nullptr;
 }
 
 void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)

@@ -45,7 +45,7 @@ protected:
 	
 	void SetComboAvailable(bool bIsAvailable);
 
-	void SetupComboData();
+	virtual void SetupComboData();
 
 	UFUNCTION()
 	void ResetCombo();

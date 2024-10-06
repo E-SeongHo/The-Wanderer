@@ -44,6 +44,8 @@ void AWandererBaseCharacter::Die()
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
  	GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);
 	GetMesh()->SetSimulatePhysics(true);
+
+ 	EquipmentComponent->DropAllDrawnEquipments();
 }
 
 void AWandererBaseCharacter::GrantStartupAbilities()

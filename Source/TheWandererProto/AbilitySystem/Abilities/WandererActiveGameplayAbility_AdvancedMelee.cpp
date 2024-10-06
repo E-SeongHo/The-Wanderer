@@ -76,7 +76,6 @@ void UWandererActiveGameplayAbility_AdvancedMelee::EndAbility(const FGameplayAbi
 
 void UWandererActiveGameplayAbility_AdvancedMelee::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Resetting Charge")));
 	if(CurrentActionTag == WandererGameplayTags::ActionTag_Attack_StrongAttack)
 	{
 		ReleaseCharging();
@@ -93,7 +92,6 @@ void UWandererActiveGameplayAbility_AdvancedMelee::DetermineAttackAction()
 	if(bCanCounter)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Counter")));
-
 		if(EvaluatedInputDirection == EDirection::Right)
 		{
 			CurrentActionTag= WandererGameplayTags::ActionTag_Attack_Counter_Right;
@@ -134,15 +132,17 @@ void UWandererActiveGameplayAbility_AdvancedMelee::SoftLock()
 		if(CurrentActionTag == WandererGameplayTags::ActionTag_Attack_Counter_Left)
 		{
 			const FVector CombatTargetForwardRight = (CombatTarget->GetActorForwardVector() + CombatTarget->GetActorRightVector()).GetSafeNormal();
-			SideStepLocation = CombatTarget->GetActorLocation() + CombatTargetForwardRight * 100.0f;
+			SideStepLocation = CombatTarget->GetActorLocation() + CombatTargetForwardRight * 130.0f;
 		}
 		else
 		{
 			const FVector CombatTargetForwardLeft = (CombatTarget->GetActorForwardVector() + -CombatTarget->GetActorRightVector()).GetSafeNormal();
-			SideStepLocation = CombatTarget->GetActorLocation() + CombatTargetForwardLeft * 100.0f;
+			SideStepLocation = CombatTarget->GetActorLocation() + CombatTargetForwardLeft * 130.0f;
 		}
+		//DrawDebugCircle(GetWorld(), SideStepLocation, 10, 10, FColor::Purple, false, 1.5f);
 
-		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("SideStepTarget"), SideStepLocation, (-CombatTarget->GetActorForwardVector()).Rotation());
+		FRotator SideStepRotation = (CombatTarget->GetActorLocation() - SideStepLocation).Rotation();
+		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("SideStepTarget"), SideStepLocation, SideStepRotation);
 	}
 
 	if(!DoesOwnerHaveTag(WandererGameplayTags::State_Combat_TargetLock))
