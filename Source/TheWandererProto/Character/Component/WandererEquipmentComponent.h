@@ -39,6 +39,8 @@ public:
 	AWandererWeapon* GetCurrentWeapon() const;
 	AWandererEquipment* GetEquipmentOnSlot(EWandererEquipmentSlot Slot) const;
 
+	void DropAllDrawnEquipments();
+	
 	virtual void AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC) override;
 
 private:

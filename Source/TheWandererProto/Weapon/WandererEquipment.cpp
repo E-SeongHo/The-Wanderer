@@ -45,3 +45,12 @@ void AWandererEquipment::OnSheath()
 	EquipmentOwner->GetAbilitySystemComponent()->RemoveLooseGameplayTag(DrawnTag);
 	EquipmentMesh->AttachToComponent(EquipmentOwner->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, EquipSocket);
 }
+
+void AWandererEquipment::OnDropDown()
+{
+	EquipmentOwner->GetAbilitySystemComponent()->RemoveLooseGameplayTag(EquippedTag);
+	EquipmentOwner->GetAbilitySystemComponent()->RemoveLooseGameplayTag(DrawnTag);
+
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	EquipmentMesh->SetSimulatePhysics(true);
+}

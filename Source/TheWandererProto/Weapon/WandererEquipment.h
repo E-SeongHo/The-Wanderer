@@ -22,6 +22,8 @@ public:
 
 	virtual void OnDraw();
 	virtual void OnSheath();
+
+	void OnDropDown();
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Owner, meta = (AllowPrivateAccess = "true"))

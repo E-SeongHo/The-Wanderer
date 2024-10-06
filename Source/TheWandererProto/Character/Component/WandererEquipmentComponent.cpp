@@ -28,6 +28,17 @@ AWandererEquipment* UWandererEquipmentComponent::GetEquipmentOnSlot(EWandererEqu
 	return Equipments[Slot];	
 }
 
+void UWandererEquipmentComponent::DropAllDrawnEquipments()
+{
+	for(const auto [Slot, Equipment] : Equipments)
+	{
+		if(Equipment->IsDrawn())
+		{
+			Equipment->OnDropDown();
+		}
+	}
+}
+
 void UWandererEquipmentComponent::AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC)
 {
 	Super::AssignAbilitySystemComponent(OwnerASC);
