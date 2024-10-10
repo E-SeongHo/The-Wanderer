@@ -15,6 +15,7 @@ UWandererActiveGameplayAbility_Roll::UWandererActiveGameplayAbility_Roll()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	bRetriggerInstancedAbility = true;
 
+	AbilityTags.AddTag(WandererGameplayTags::Ability_Roll);
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
 	

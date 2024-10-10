@@ -33,13 +33,53 @@ void UWandererBTService_DetermineAction_Melee::TickNode(UBehaviorTreeComponent& 
 	UWandererCombatComponent* CombatComponent = ControllingEnemy->GetCombatComponent();
 	
 	// Since Enemy_Melee and Enemy_SwordShield share similar logic, the action is determined within the same task.
-	// TODO: determining action can be affected by some Attributes
 	EWandererAIAction Action = EWandererAIAction::Attack;
+	
+	// TODO: determining action can be affected by some Attributes
 	if(CombatComponent->GetCombatTarget() && WandererUtils::EvaluateDirectionRelativeToActor(ControllingEnemy, CombatComponent->GetCombatTarget()) == EDirection::Forward)
 	{
-		if(ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Draw_Shield))
+		const UAbilitySystemComponent* TargetASC = CombatComponent->GetCombatTarget()->GetAbilitySystemComponent();
+		if(ASC->HasMatchingGameplayTag(WandererGameplayTags::State_KnockBack))
 		{
-			Action = EWandererAIAction::Defense;
+			// hack : 80% choose to avoid when state knockback myself 
+			constexpr float ChanceToAvoid = 0.8f;
+			const bool bShouldAvoid = FMath::RandRange(0.0f, 1.0f) <= ChanceToAvoid;
+			if(bShouldAvoid)
+			{
+				Action = EWandererAIAction::Avoid;
+			}
+			else
+			{
+				Action = EWandererAIAction::Attack;
+			}
+		}
+		else
+		{
+			if(ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Draw_Shield))
+			{
+				if(TargetASC->HasMatchingGameplayTag(WandererGameplayTags::State_KnockBack))
+				{
+					Action = EWandererAIAction::Attack;
+				}
+				else
+				{
+					Action = EWandererAIAction::Defense;	
+				}
+			}
+			else
+			{
+				// hack
+				constexpr float ChanceToAvoid = 0.3f;
+				const bool bShouldAvoid = FMath::RandRange(0.0f, 1.0f) <= ChanceToAvoid;
+				if(bShouldAvoid && TargetASC->HasMatchingGameplayTag(WandererGameplayTags::Ability_Attack))
+				{
+					Action = EWandererAIAction::Avoid;
+				}
+				else
+				{
+					Action = EWandererAIAction::Attack;
+				}
+			}
 		}
 	}
 	else

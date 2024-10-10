@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Animation/AnimInstance.h"
+#include "Character/Component/WandererEquipmentComponent.h"
 #include "WandererAnimInstance.generated.h"
 
 class UPoseSearchDatabase;
@@ -34,10 +35,15 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	UWandererMontagePair* GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const;
+
+	void OnActiveWeaponSlotChanged(const EWandererEquipmentSlot ActiveSlot);
+	
+protected:
+	UWandererAnimMontageConfig* GetCurrentWeaponActionMontageConfig() const;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = Montage)
-	TObjectPtr<UWandererAnimMontageConfig> MontageConfig;	
+	TMap<EWandererEquipmentSlot, UWandererAnimMontageConfig*> MontageConfigs;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCharacterMovementComponent> MovementComp;
@@ -46,8 +52,14 @@ protected:
 	TObjectPtr<UCharacterTrajectoryComponent> TrajectoryComp;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
-	TObjectPtr<UPoseSearchDatabase> CombatPoseSearchDatabase;
+	TMap<EWandererEquipmentSlot, UPoseSearchDatabase*> CombatPoseSearchDatabases;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
+	TObjectPtr<UPoseSearchDatabase> CurrentCombatPoseSearchDatabase;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character, Meta = (AllowPrivateAccess = true))
+	EWandererEquipmentSlot CurrentActiveWeaponSlot;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = MotionMatching, Meta = (AllowPrivateAccess = true))
 	bool bIsCombatPSDSet;
 	

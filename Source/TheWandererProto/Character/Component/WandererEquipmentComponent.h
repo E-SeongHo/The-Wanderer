@@ -13,8 +13,10 @@
 UENUM()
 enum class EWandererEquipmentSlot
 {
-	PrimaryWeapon,
-	SecondaryWeapon,
+	Weapon1,
+	Weapon2,
+	Weapon3,
+	Weapon4,
 	Shield,
 	// Armors, etc...
 };
@@ -36,9 +38,11 @@ class THEWANDERERPROTO_API UWandererEquipmentComponent : public UWandererActorCo
 public:	
 	UWandererEquipmentComponent();
 
-	AWandererWeapon* GetCurrentWeapon() const;
-	AWandererEquipment* GetEquipmentOnSlot(EWandererEquipmentSlot Slot) const;
+	TTuple<EWandererEquipmentSlot, AWandererWeapon*> GetCurrentWeaponInfo() const;
+	AWandererEquipment* GetEquipmentOnSlot(const EWandererEquipmentSlot Slot) const;
 
+	void DrawEquipmentOnSlot(const EWandererEquipmentSlot Slot) const;
+	void SheathEquipmentOnSlot(const EWandererEquipmentSlot Slot) const;
 	void DropAllDrawnEquipments();
 	
 	virtual void AssignAbilitySystemComponent(UAbilitySystemComponent* OwnerASC) override;

@@ -8,7 +8,9 @@
 #include "WandererActiveGameplayAbility_DrawWeapon.generated.h"
 
 /**
- * 
+ * This class should be inherited in BP to enable weapon functionality.
+ * Set up WeaponSlot to manage equipped weapons (extend slots as needed for more weapons).
+ * Bind input actions to trigger the corresponding weapon abilities.
  */
 UCLASS(Abstract)
 class THEWANDERERPROTO_API UWandererActiveGameplayAbility_DrawWeapon : public UWandererActiveGameplayAbility
@@ -42,5 +44,7 @@ private:
 
 private:
 	UPROPERTY(EditDefaultsOnly)
-	EWandererEquipmentSlot WeaponSlot = EWandererEquipmentSlot::PrimaryWeapon;
+	EWandererEquipmentSlot WeaponSlot = EWandererEquipmentSlot::Weapon1;
+
+	bool bIsSheathing = false;
 };

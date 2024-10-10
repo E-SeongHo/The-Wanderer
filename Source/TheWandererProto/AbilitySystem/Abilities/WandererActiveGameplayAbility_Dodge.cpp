@@ -15,6 +15,7 @@ UWandererActiveGameplayAbility_Dodge::UWandererActiveGameplayAbility_Dodge()
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	bRetriggerInstancedAbility = true;
 
+	AbilityTags.AddTag(WandererGameplayTags::Ability_Dodge);
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Draw);
 	ActivationRequiredTags.AddTag(WandererGameplayTags::State_Combat);
 	

@@ -152,6 +152,17 @@ void UWandererActiveGameplayAbility_AdvancedMelee::SoftLock()
 		if(Instigator->GetCombatComponent()->CanDashTo(InputDirectionTarget))
 		{
 			Instigator->GetCombatComponent()->SetCombatTarget(InputDirectionTarget);
+			CombatTarget = Instigator->GetCombatComponent()->GetCombatTarget();
+
+			// Determine attack action again as target should be changed immediately. 
+			if(Instigator->GetCombatComponent()->IsTargetInAttackRange())
+			{
+				Super::DetermineAttackAction();
+			}
+			else
+			{
+				CurrentActionTag= WandererGameplayTags::ActionTag_Attack_Dash;
+			}
 		}
 	}
 	
@@ -160,7 +171,9 @@ void UWandererActiveGameplayAbility_AdvancedMelee::SoftLock()
 		const FVector WarpDirection = (CombatTarget->GetActorLocation() - Instigator->GetActorLocation()).GetSafeNormal2D();
 		const FVector WarpLocation = Instigator->GetDistanceTo(CombatTarget) > 150.0f ? CombatTarget->GetActorLocation() - WarpDirection * 150.0f : Instigator->GetActorLocation();
 
-		DrawDebugCircle(GetWorld(), WarpLocation, 30.0f, 10, FColor::Red, false, 3.0f);
+		//DrawDebugCircle(GetWorld(), WarpLocation, 30.0f, 10, FColor::Red, false, 3.0f);
+		//DrawDebugCircle(GetWorld(), CombatTarget->GetActorLocation(), 30.0f, 10, FColor::Purple, false, 3.0f);
+		
 		Instigator->GetMotionWarpComponent()->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("AttackTarget"), WarpLocation, WarpDirection.Rotation());
 	}
 	else

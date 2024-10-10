@@ -82,7 +82,7 @@ void UWandererGameplayAbility_Finisher::ActivateAbility(const FGameplayAbilitySp
 
 void UWandererGameplayAbility_Finisher::StartSlowMotion()
 {
-	AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon();
+	AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeaponInfo().Value;
 	UGameplayStatics::SetGlobalTimeDilation(this, 0.3f);
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Weapon->GetTraceSound(), Weapon->GetActorLocation());
 	
@@ -95,12 +95,12 @@ void UWandererGameplayAbility_Finisher::StartSlowMotion()
 
 void UWandererGameplayAbility_Finisher::OnWeaponTrace()
 {
-	AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon();
+	AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(GetAvatarActorFromActorInfo())->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeaponInfo().Value;
 	FHitResult HitResult;
 	const bool bHit = Weapon->Trace(HitResult);
 	if(bHit)
 	{
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
 		AWandererBaseCharacter* Target = CastChecked<AWandererBaseCharacter>(HitResult.GetActor());
 		const UAbilitySystemComponent* InstigatorASC = GetAbilitySystemComponentFromActorInfo();
 		

@@ -118,7 +118,7 @@ void UWandererActiveGameplayAbility_Melee::ProcessAttack()
 
 void UWandererActiveGameplayAbility_Melee::OnWeaponTraceStart()
 {
-	const AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor)->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon();
+	const AWandererWeapon* Weapon = Cast<AWandererBaseCharacter>(this->GetActorInfo().AvatarActor)->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeaponInfo().Value;
 	
 	// since I didn't expand ASC to the weapon, just play the sound from the weapon
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), Weapon->GetTraceSound(), Weapon->GetActorLocation());
@@ -138,12 +138,19 @@ void UWandererActiveGameplayAbility_Melee::OnWeaponTrace()
 	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
 	
 	FHitResult HitResult;
-	const bool bHit = Instigator->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeapon()->Trace(HitResult);
+	const bool bHit = Instigator->FindComponentByClass<UWandererEquipmentComponent>()->GetCurrentWeaponInfo().Value->Trace(HitResult);
 	if(bHit)
 	{
 		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
 		AWandererBaseCharacter* Target = CastChecked<AWandererBaseCharacter>(HitResult.GetActor());
 
+		InstigatorASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
+		
+		if(!InstigatorASC->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+		{
+			Instigator->GetCombatComponent()->StartCombat();
+		}
+		
 		// Can Actually Hit?
 		switch(EvaluateAttackResult(Target))
 		{
@@ -161,13 +168,6 @@ void UWandererActiveGameplayAbility_Melee::OnWeaponTrace()
 			{
 				break;
 			}
-		}
-
-		InstigatorASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
-		
-		if(!InstigatorASC->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
-		{
-			Instigator->GetCombatComponent()->StartCombat();
 		}
 	}
 }
@@ -188,13 +188,18 @@ void UWandererActiveGameplayAbility_Melee::ProcessHitSuccess(FHitResult& HitResu
 void UWandererActiveGameplayAbility_Melee::ProcessHitBlocked(FHitResult& HitResult)
 {
 	// To Target
-	FGameplayEventData EventData;
-	EventData.Instigator = GetAvatarActorFromActorInfo();
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitResult.GetActor(), WandererGameplayTags::Event_Combat_ParrySucceeded, EventData);
+	FGameplayEventData ToTargetEventData;
+	ToTargetEventData.Instigator = GetAvatarActorFromActorInfo();
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(HitResult.GetActor(), WandererGameplayTags::Event_Combat_ParrySucceeded, ToTargetEventData);
 
 	// To myself
-	PlayNewMontageTask(GetMatchingMontageForTag(WandererGameplayTags::ActionTag_AttackFailed));
-	SetComboAvailable(false);
+	UActionTagWrapper* ActionTagWrapper = NewObject<UActionTagWrapper>();
+	ActionTagWrapper->ActionTag = WandererGameplayTags::ActionTag_AttackFailed;
+	
+	FGameplayEventData ToMyselfEventData;
+	ToMyselfEventData.OptionalObject = ActionTagWrapper;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetAvatarActorFromActorInfo(), WandererGameplayTags::Event_Combat_KnockBack, ToMyselfEventData);
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UWandererActiveGameplayAbility_Melee::ProcessHitMiss(FHitResult& HitResult)

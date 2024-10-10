@@ -3,6 +3,7 @@
 
 #include "AbilitySystem/Effects/WandererMMC_RegenStamina.h"
 
+#include "WandererGameplayTags.h"
 #include "AbilitySystem/Attributes/WandererHealthAttributeSet.h"
 
 UWandererMMC_RegenStamina::UWandererMMC_RegenStamina()
@@ -20,6 +21,8 @@ float UWandererMMC_RegenStamina::CalculateBaseMagnitude_Implementation(const FGa
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
+	if(TargetTags->HasTag(WandererGameplayTags::State_Dead)) return 0.0f;
+	
 	FAggregatorEvaluateParameters EvaluationParameters;
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;

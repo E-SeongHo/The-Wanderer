@@ -3,6 +3,7 @@
 #include "WandererAnimInstance.h"
 
 #include "AbilitySystemComponent.h"
+#include "CharacterTrajectoryComponent.h"
 #include "KismetAnimationLibrary.h"
 #include "WandererAnimMontageConfig.h"
 #include "WandererGameplayTags.h"
@@ -15,8 +16,6 @@
 void UWandererAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
-
-	bIsCombatPSDSet = CombatPoseSearchDatabase != nullptr;
 }
 
 void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -38,25 +37,41 @@ void UWandererAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsCrouched = MovementComp->IsCrouching();
 	bIsDefensing = ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Parry);
 	bIsInCombat = ASC->HasMatchingGameplayTag(WandererGameplayTags::State_Combat);
+
+	CurrentCombatPoseSearchDatabase = CombatPoseSearchDatabases.Find(CurrentActiveWeaponSlot) ? CombatPoseSearchDatabases[CurrentActiveWeaponSlot] : nullptr; 
+	bIsCombatPSDSet = CurrentCombatPoseSearchDatabase != nullptr;
 	
-	TrajectoryComp = Character->GetTrajectoryComponent();
+	TrajectoryComp = Character->FindComponentByClass<UCharacterTrajectoryComponent>();
 }
 
 UAnimMontage* UWandererAnimInstance::GetMatchingMontageForTag(const FGameplayTag& GameplayTag) const
 {
-	check(MontageConfig);
-	// check(MontageConfig->HasExactMatchingActionMontage(GameplayTag));	
-	return MontageConfig->FindAnimMontageForTag(GameplayTag);
+	// check(MontageConfig->HasExactMatchingActionMontage(GameplayTag));
+	return GetCurrentWeaponActionMontageConfig()->FindAnimMontageForTag(GameplayTag);
 }
 
 TArray<UAnimMontage*> UWandererAnimInstance::GetMatchingComboMontageForTag(const FGameplayTag& GameplayTag, const FGameplayTag& SpecificTag) const
 {
-	check(MontageConfig);
-	return MontageConfig->FindComboMontageForTag(GameplayTag, SpecificTag);	
+	return GetCurrentWeaponActionMontageConfig()->FindComboMontageForTag(GameplayTag, SpecificTag);	
 }
 
 UWandererMontagePair* UWandererAnimInstance::GetMatchingMontagePairForTag(const FGameplayTag& GameplayTag) const
 {
+	return GetCurrentWeaponActionMontageConfig()->FindAnimMontagePairForTag(GameplayTag);
+}
+
+void UWandererAnimInstance::OnActiveWeaponSlotChanged(const EWandererEquipmentSlot ActiveSlot)
+{
+	CurrentActiveWeaponSlot = ActiveSlot;
+}
+
+UWandererAnimMontageConfig* UWandererAnimInstance::GetCurrentWeaponActionMontageConfig() const
+{
+	check(!MontageConfigs.IsEmpty());
+	check(MontageConfigs.Find(EWandererEquipmentSlot::Weapon1)); // needs at least one MontageSet
+	
+	UWandererAnimMontageConfig* MontageConfig = MontageConfigs.Find(CurrentActiveWeaponSlot) ? MontageConfigs[CurrentActiveWeaponSlot] : MontageConfigs[EWandererEquipmentSlot::Weapon1]; 
 	check(MontageConfig);
-	return MontageConfig->FindAnimMontagePairForTag(GameplayTag);
+
+	return MontageConfig;
 }

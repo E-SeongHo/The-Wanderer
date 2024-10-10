@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "WandererGameplayTags.h"
 #include "GameFramework/Actor.h"
 #include "WandererEquipment.generated.h"
 
@@ -32,10 +33,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Equipment, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<USceneComponent> Root;
 
-	TWeakObjectPtr<UStaticMeshComponent> EquipmentMesh;
-
 	FGameplayTag EquippedTag;
 	FGameplayTag DrawnTag;
+	
+	TWeakObjectPtr<UStaticMeshComponent> EquipmentMesh;
+	
+	bool bIsEquipped;
+	bool bIsDrawn;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Socket, meta = (AllowPrivateAccess = "true"))
 	FName EquipSocket;

@@ -8,24 +8,51 @@ UWandererEquipmentComponent::UWandererEquipmentComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-AWandererWeapon* UWandererEquipmentComponent::GetCurrentWeapon() const
+TTuple<EWandererEquipmentSlot, AWandererWeapon*> UWandererEquipmentComponent::GetCurrentWeaponInfo() const
 {
-	if(Equipments[EWandererEquipmentSlot::PrimaryWeapon]->IsDrawn())
+	if(Equipments.IsEmpty()) return TTuple<EWandererEquipmentSlot, AWandererWeapon*>();
+	
+	if(Equipments.Find(EWandererEquipmentSlot::Weapon1) && Equipments[EWandererEquipmentSlot::Weapon1]->IsDrawn())
 	{
-		return CastChecked<AWandererWeapon>(Equipments[EWandererEquipmentSlot::PrimaryWeapon]);
+		return {EWandererEquipmentSlot::Weapon1, CastChecked<AWandererWeapon>(Equipments[EWandererEquipmentSlot::Weapon1])};
 	}
-	if(Equipments[EWandererEquipmentSlot::SecondaryWeapon]->IsDrawn())
+	if(Equipments.Find(EWandererEquipmentSlot::Weapon2) && Equipments[EWandererEquipmentSlot::Weapon2]->IsDrawn())
 	{
-		return CastChecked<AWandererWeapon>(Equipments[EWandererEquipmentSlot::SecondaryWeapon]);
-	}	
-	return nullptr;
+		return {EWandererEquipmentSlot::Weapon2, CastChecked<AWandererWeapon>(Equipments[EWandererEquipmentSlot::Weapon2])};
+	}
+	if(Equipments.Find(EWandererEquipmentSlot::Weapon3) && Equipments[EWandererEquipmentSlot::Weapon3]->IsDrawn())
+	{
+		return {EWandererEquipmentSlot::Weapon3, CastChecked<AWandererWeapon>(Equipments[EWandererEquipmentSlot::Weapon3])};
+	}
+	if(Equipments.Find(EWandererEquipmentSlot::Weapon4) && Equipments[EWandererEquipmentSlot::Weapon4]->IsDrawn())
+    {
+    	return {EWandererEquipmentSlot::Weapon4, CastChecked<AWandererWeapon>(Equipments[EWandererEquipmentSlot::Weapon4])};
+    }
+	
+	return TTuple<EWandererEquipmentSlot, AWandererWeapon*>();
 }
 
-AWandererEquipment* UWandererEquipmentComponent::GetEquipmentOnSlot(EWandererEquipmentSlot Slot) const
+AWandererEquipment* UWandererEquipmentComponent::GetEquipmentOnSlot(const EWandererEquipmentSlot Slot) const
 {
 	if(!Equipments.Find(Slot)) return nullptr;
 
-	return Equipments[Slot];	
+	return Equipments[Slot];
+}
+
+void UWandererEquipmentComponent::DrawEquipmentOnSlot(const EWandererEquipmentSlot Slot) const
+{
+	AWandererEquipment* Equipment = GetEquipmentOnSlot(Slot);
+	check(Equipment);
+
+	Equipment->OnDraw();
+}
+
+void UWandererEquipmentComponent::SheathEquipmentOnSlot(const EWandererEquipmentSlot Slot) const
+{
+	AWandererEquipment* Equipment = GetEquipmentOnSlot(Slot);
+	check(Equipment);
+
+	Equipment->OnSheath();
 }
 
 void UWandererEquipmentComponent::DropAllDrawnEquipments()

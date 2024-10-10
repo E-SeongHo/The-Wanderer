@@ -8,15 +8,18 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
+#include "Animation/WandererAnimInstance.h"
 #include "Character/WandererBaseCharacter.h"
 #include "Character/Component/WandererCombatComponent.h"
 
 UWandererActiveGameplayAbility_DrawWeapon::UWandererActiveGameplayAbility_DrawWeapon()
-	: Super(WandererGameplayTags::InputTag_ToggleWeapon_Primary)
+	: Super(WandererGameplayTags::InputTag_ToggleWeapon1)
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 
 	AbilityTags.AddTag(WandererGameplayTags::Ability_DrawWeapon);
+	ActivationOwnedTags.AddTag(WandererGameplayTags::Ability_DrawWeapon);
+	ActivationBlockedTags.AddTag(WandererGameplayTags::State_Draw);
 	
 	FAbilityTriggerData TriggerData;
 	TriggerData.TriggerTag = WandererGameplayTags::State_Combat;
@@ -29,16 +32,19 @@ void UWandererActiveGameplayAbility_DrawWeapon::ActivateAbility(const FGameplayA
 	// only primary weapon will be drawn when this ability is activated by starting combat 
 	if(TriggerEventData && TriggerEventData->EventTag == WandererGameplayTags::State_Combat)
 	{
-		if(InputTag != WandererGameplayTags::InputTag_ToggleWeapon_Primary)
+		if(WeaponSlot != EWandererEquipmentSlot::Weapon1)
 		{
 			EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 			return;
 		}
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Draw from combat starting")));
 	}
 	
 	// This ability is ended with sheath animation
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
 	UAbilitySystemComponent* InstigatorASC = Instigator->GetAbilitySystemComponent();
+	
+	CastChecked<UWandererAnimInstance>(ActorInfo->GetAnimInstance())->OnActiveWeaponSlotChanged(WeaponSlot);
 	
 	UAbilityTask_PlayMontageAndWait* DrawWeaponAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("DrawWeapon"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_DrawWeapon));
 	DrawWeaponAnimTask->ReadyForActivation();
@@ -57,6 +63,8 @@ void UWandererActiveGameplayAbility_DrawWeapon::ActivateAbility(const FGameplayA
 		WaitCombatStart->Added.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::CreateWaitCombatEndTask);
 		WaitCombatStart->ReadyForActivation();
 	}
+	
+	bIsSheathing = false;
 }
 
 void UWandererActiveGameplayAbility_DrawWeapon::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
@@ -64,19 +72,23 @@ void UWandererActiveGameplayAbility_DrawWeapon::InputPressed(const FGameplayAbil
 	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
 
 	check(IsActive());
-	SheathAndEndAbility();
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("DrawWeapon Input")));
+
+	if(DoesOwnerHaveTag(WandererGameplayTags::State_Draw) && !bIsSheathing)
+	{
+		SheathAndEndAbility();
+	}
 }
 
 void UWandererActiveGameplayAbility_DrawWeapon::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(ActorInfo->AvatarActor);
-
+	
 	// If still in combat, sheathing the sword implies an intent to runaway
-	if(Instigator->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
+	if(!bWasCancelled && Instigator->GetAbilitySystemComponent()->HasMatchingGameplayTag(WandererGameplayTags::State_Combat))
 	{
 		Instigator->GetCombatComponent()->Runaway();
 	}
-	
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -87,6 +99,7 @@ void UWandererActiveGameplayAbility_DrawWeapon::OnSheathCompleted()
 
 void UWandererActiveGameplayAbility_DrawWeapon::CreateWaitCombatEndTask()
 {
+	check(DoesOwnerHaveTag(WandererGameplayTags::State_Combat));
 	UAbilityTask_WaitGameplayTagRemoved* WaitCombatEnd = UAbilityTask_WaitGameplayTagRemoved::WaitGameplayTagRemove(this, WandererGameplayTags::State_Combat);
 	WaitCombatEnd->Removed.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility);
 	WaitCombatEnd->ReadyForActivation();
@@ -95,15 +108,20 @@ void UWandererActiveGameplayAbility_DrawWeapon::CreateWaitCombatEndTask()
 void UWandererActiveGameplayAbility_DrawWeapon::OnDraw(FGameplayEventData Payload)
 {
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(GetActorInfo().AvatarActor);
-	Instigator->FindComponentByClass<UWandererEquipmentComponent>()->GetEquipmentOnSlot(WeaponSlot)->OnDraw();
+	Instigator->FindComponentByClass<UWandererEquipmentComponent>()->DrawEquipmentOnSlot(WeaponSlot);
 }
 
 void UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility()
 {
+	if(bIsSheathing) return;
+	bIsSheathing = true;
+	
 	UAbilityTask_PlayMontageAndWait* SheathSwordAnimTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SheathSword"), GetMatchingMontageForTag(WandererGameplayTags::ActionTag_SheathWeapon));
 	SheathSwordAnimTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::OnSheathCompleted);
 	SheathSwordAnimTask->ReadyForActivation();
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Sheath and End")));
+	
 	UAbilityTask_WaitGameplayEvent* WaitReleaseInHand = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_SheathSword);
 	WaitReleaseInHand->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::OnSheath);
 	WaitReleaseInHand->ReadyForActivation();
@@ -112,5 +130,5 @@ void UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility()
 void UWandererActiveGameplayAbility_DrawWeapon::OnSheath(FGameplayEventData Payload)
 {
 	AWandererBaseCharacter* Instigator = Cast<AWandererBaseCharacter>(GetActorInfo().AvatarActor);
-	Instigator->FindComponentByClass<UWandererEquipmentComponent>()->GetEquipmentOnSlot(WeaponSlot)->OnSheath();
+	Instigator->FindComponentByClass<UWandererEquipmentComponent>()->SheathEquipmentOnSlot(WeaponSlot);
 }

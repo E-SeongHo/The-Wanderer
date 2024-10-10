@@ -10,6 +10,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Character/WandererCharacter.h"
 #include "Character/Component/WandererCharacterMovementComponent.h"
+#include "Character/Component/WandererEquipmentComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Utility/WandererUtils.h"
 

@@ -8,6 +8,8 @@ public class TheWandererProtoTarget : TargetRules
 	public TheWandererProtoTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
+
+		bOverrideBuildEnvironment = true;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
 		ExtraModuleNames.Add("TheWandererProto");
