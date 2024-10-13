@@ -37,7 +37,7 @@ void UWandererActiveGameplayAbility_DrawWeapon::ActivateAbility(const FGameplayA
 			EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 			return;
 		}
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Draw from combat starting")));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Draw from combat starting")));
 	}
 	
 	// This ability is ended with sheath animation
@@ -72,7 +72,7 @@ void UWandererActiveGameplayAbility_DrawWeapon::InputPressed(const FGameplayAbil
 	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
 
 	check(IsActive());
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("DrawWeapon Input")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("DrawWeapon Input")));
 
 	if(DoesOwnerHaveTag(WandererGameplayTags::State_Draw) && !bIsSheathing)
 	{
@@ -120,7 +120,7 @@ void UWandererActiveGameplayAbility_DrawWeapon::SheathAndEndAbility()
 	SheathSwordAnimTask->OnCompleted.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::OnSheathCompleted);
 	SheathSwordAnimTask->ReadyForActivation();
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Sheath and End")));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Sheath and End")));
 	
 	UAbilityTask_WaitGameplayEvent* WaitReleaseInHand = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, WandererGameplayTags::Event_Montage_SheathSword);
 	WaitReleaseInHand->EventReceived.AddDynamic(this, &UWandererActiveGameplayAbility_DrawWeapon::OnSheath);

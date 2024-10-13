@@ -36,6 +36,8 @@
 
 void AWandererBaseCharacter::Die()
 {
+ 	EquipmentComponent->DropAllDrawnEquipments();
+ 	
  	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->DisableMovement();
  	GetCharacterMovement()->GravityScale = 0;
@@ -44,8 +46,6 @@ void AWandererBaseCharacter::Die()
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
  	GetMesh()->SetPhysicsLinearVelocity(FVector::ZeroVector);
 	GetMesh()->SetSimulatePhysics(true);
-
- 	EquipmentComponent->DropAllDrawnEquipments();
 }
 
 void AWandererBaseCharacter::GrantStartupAbilities()

@@ -15,6 +15,7 @@
 #include "Character/WandererCharacter.h"
 #include "Character/Component/WandererCombatComponent.h"
 #include "Character/Component/WandererEquipmentComponent.h"
+#include "Character/Enemy/WandererEnemy.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tasks/WandererAbilityTask_RepeatUntil.h"
 #include "Weapon/WandererWeapon.h"
@@ -53,9 +54,7 @@ void UWandererActiveGameplayAbility_Melee::EndAbility(const FGameplayAbilitySpec
 bool UWandererActiveGameplayAbility_Melee::CanRetrigger() const
 {
 	check(bRetriggerInstancedAbility);
-	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("Can retrigger")));
-
-	return GetAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(WandererGameplayTags::State_Attack_ComboAvailable);
+	return DoesOwnerHaveTag(WandererGameplayTags::State_Attack_ComboAvailable);
 }
 
 void UWandererActiveGameplayAbility_Melee::SaveCurrentContext()
@@ -143,6 +142,10 @@ void UWandererActiveGameplayAbility_Melee::OnWeaponTrace()
 	{
 		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 5.0f, 12, FColor::Cyan, false, 1.0f);
 		AWandererBaseCharacter* Target = CastChecked<AWandererBaseCharacter>(HitResult.GetActor());
+
+		// basic team check
+		const bool bIsSameTeam = Cast<AWandererEnemy>(Instigator) && Cast<AWandererEnemy>(Target);
+		if(bIsSameTeam) return;
 
 		InstigatorASC->RemoveLooseGameplayTag(WandererGameplayTags::State_Weapon_Trace);
 		

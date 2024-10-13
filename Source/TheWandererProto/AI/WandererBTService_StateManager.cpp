@@ -23,7 +23,7 @@ void UWandererBTService_StateManager::TickNode(UBehaviorTreeComponent& OwnerComp
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("State AI")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Green, FString::Printf(TEXT("State AI")));
 
 	AWandererAIController* AIController = Cast<AWandererAIController>(OwnerComp.GetAIOwner());
 	UBlackboardComponent* Blackboard = AIController->GetBlackboardComponent();

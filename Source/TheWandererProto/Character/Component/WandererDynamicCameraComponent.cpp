@@ -24,11 +24,13 @@ void UWandererDynamicCameraComponent::TickComponent(float DeltaTime, ELevelTick 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	const float Distance = Subject.Get() ? GetOwner()->GetDistanceTo(Subject.Get()) : 400.0f;
+	float Distance = Subject.Get() ? GetOwner()->GetDistanceTo(Subject.Get()) : 400.0f;
+	Distance = FMath::Max(Distance, MinSpringArmLength);
+	Distance = FMath::Min(Distance, MaxSpringArmLength);
+	
 	const float Theta = FMath::DegreesToRadians(CameraComponent->FieldOfView) * 0.5f;
 
 	const float GoalDistance = FMath::Min(FMath::Max(MinSpringArmLength, Distance / FMath::Tan(Theta)), MaxSpringArmLength);
-	
 	SpringArmComponent->TargetArmLength = FMath::FInterpTo(SpringArmComponent->TargetArmLength, GoalDistance, DeltaTime, 5.0f);
 }
 

@@ -18,7 +18,6 @@ void UWandererAnimNotifyState_MontageEvent::NotifyBegin(USkeletalMeshComponent* 
 
 	check(StateTag.IsValid());
 	IAbilitySystemInterface* GASInterface = Cast<IAbilitySystemInterface>(MeshComp->GetOwner());
-	// Do not make assertion here : it is calling even at previewing montage
 	if(GASInterface)
 	{
 		check(Cast<AWandererBaseCharacter>(GASInterface->GetAbilitySystemComponent()->GetAvatarActor()));
@@ -32,7 +31,6 @@ void UWandererAnimNotifyState_MontageEvent::NotifyEnd(USkeletalMeshComponent* Me
 
 	check(StateTag.IsValid());
 	IAbilitySystemInterface* GASInterface = Cast<IAbilitySystemInterface>(MeshComp->GetOwner());
-	// Do not make assertion here : it is calling even at previewing montage
 	if(GASInterface)
 	{
 		check(Cast<AWandererBaseCharacter>(GASInterface->GetAbilitySystemComponent()->GetAvatarActor()));

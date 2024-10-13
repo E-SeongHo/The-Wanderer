@@ -50,7 +50,7 @@ bool UWandererCombatComponent::CanFinishTarget() const
 	
 	if((CombatTarget->GetHealthAttributeSet()->GetHealth() / CombatTarget->GetHealthAttributeSet()->GetMaxHealth()) < 0.2f)
 	{
-		return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance());
+		return UKismetMathLibrary::RandomBoolWithWeight(Owner->GetCombatAttributeSet()->GetFinisherChance() * 0.01f);
 	}
 
 	return false;
